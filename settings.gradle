@@ -1,0 +1,13 @@
+include 'apploader/common', 'apploader/client', 'apploader/apploader'
+include 'server/core', 'server/service', 'server/tomcat', 'server/desktop'
+
+rootProject.name = 'app-delivery'
+
+project(':apploader/common').name = 'apploader-common'
+project(':apploader/client').name = 'apploader-client'
+project(':apploader/apploader').name = 'apploader'
+
+project(':server/core').name = 'server-core'
+project(':server/service').name = 'server-service'
+project(':server/tomcat').name = 'server-tomcat'
+project(':server/desktop').name = 'server-desktop'

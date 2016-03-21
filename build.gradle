@@ -1,0 +1,104 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    group = 'com.github.osobolev.app-delivery'
+    version = '2.0'
+
+    targetCompatibility = '1.5'
+                             
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    jar {
+        manifest {
+            attributes("Implementation-Version": version)
+        }
+    }
+}
+
+def sqlg = 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
+def jetty = 'org.eclipse.jetty.aggregate:jetty-all-server:8.1.17.v20150415'
+def servlet = 'javax.servlet:javax.servlet-api:3.0.1'
+
+def buildSource(projects) {
+    def sd = ['src']
+    projects.each { 
+        sd.add("$rootProject.projectDir/$it/src")
+    }
+    sd
+}
+
+project(':apploader-common') {
+    sourceSets.main.java.srcDirs = buildSource([])
+}
+
+project(':apploader-client') {
+    sourceSets.main.java.srcDirs = buildSource(['apploader/common'])
+}
+
+project(':apploader') {
+    sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'apploader/client'])
+}
+
+project(':server-core') {
+    sourceSets.main.java.srcDirs = buildSource([])
+    dependencies {
+        compile sqlg
+    }
+}
+
+project(':server-service') {
+    sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http', 'server/jetty'])
+
+    repositories {
+        flatDir {
+            dirs "$rootProject.projectDir/lib"
+        }
+    }
+
+    dependencies {
+        compile name: 'WinRun4J'
+        compile sqlg
+        compile servlet
+        compile jetty
+    }
+}
+
+project(':server-tomcat') {
+    sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http'])
+    dependencies {
+        compile sqlg
+        compile servlet
+    }
+}
+
+project(':server-desktop') {
+    sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http', 'server/jetty'])
+    dependencies {
+        compile sqlg
+        compile servlet
+        compile jetty
+    }
+}
+
+project(':') {
+    apply plugin: 'java'
+
+    jar { onlyIf { false } }
+
+    task copyToTarget(type: Copy, dependsOn: subprojects.jar) {
+        from(subprojects.jar)
+        into 'target'
+        rename('apploader-[0-9.]*.jar', 'apploader.jar')
+    }
+    
+    task cleanTarget(type: Delete) {
+        delete 'target'
+    }
+
+    build.dependsOn(copyToTarget)
+    clean.dependsOn(cleanTarget)
+}
