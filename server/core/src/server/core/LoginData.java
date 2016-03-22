@@ -1,8 +1,8 @@
 package server.core;
 
+import sqlg2.db.DBSpecific;
 import sqlg2.db.SingleConnectionManager;
-import sqlg2.db.specific.DBSpecific;
-import sqlg2.db.specific.OracleDBSpecific;
+import sqlg2.db.specific.Oracle;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -47,6 +47,6 @@ public final class LoginData {
     }
 
     public static DBSpecific getSpecific(String specClass) throws Exception {
-        return specClass == null ? new OracleDBSpecific() : (DBSpecific) Class.forName(specClass).newInstance();
+        return specClass == null ? new Oracle() : (DBSpecific) Class.forName(specClass).newInstance();
     }
 }

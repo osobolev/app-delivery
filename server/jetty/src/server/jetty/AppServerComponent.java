@@ -7,7 +7,7 @@ import sqlg2.db.HttpDispatcher;
 import sqlg2.db.SessionFactory;
 import sqlg2.db.SimpleLogger;
 import sqlg2.db.SqlTrace;
-import sqlg2.db.specific.OracleDBSpecific;
+import sqlg2.db.specific.Oracle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,8 @@ public final class AppServerComponent {
     public void init(AppLogin login, AppAuthFactory authFactory, SimpleLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
         LoginData loginData = login.login(application);
         SessionFactory sf = authFactory.getAuthentificator(application, loginData);
-        this.http = new HttpDispatcher(application, sf, new OracleDBSpecific(), logger);
+        // todo!!! брать DBSpecific извне!!!
+        this.http = new HttpDispatcher(application, sf, new Oracle(), logger);
         http.setSqlTrace(trace);
         this.logger = logger;
     }
