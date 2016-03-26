@@ -4,6 +4,7 @@ import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;
 import server.install.SourceFiles;
+import sqlg2.db.SQLGLogger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -83,12 +84,10 @@ public abstract class InstallServletBase extends AppServletBase {
             resp.setHeader("Content-Disposition", "attachment; filename=\"" + encoded + "\"");
             IOUtils.copyFile(resp.getOutputStream(), installer);
         } catch (BuildException ex) {
-            error(ex.getMessage());
+            getLogger().error(ex.getMessage());
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
         }
     }
 
-    protected abstract void error(String message);
-
-    protected abstract void error(Throwable error);
+    protected abstract SQLGLogger getLogger();
 }

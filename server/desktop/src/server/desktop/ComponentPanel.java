@@ -1,7 +1,7 @@
 package server.desktop;
 
 import server.jetty.AppServerComponent;
-import sqlg2.db.SimpleLogger;
+import sqlg2.db.SQLGLogger;
 import sqlg2.db.SqlTrace;
 
 import javax.swing.*;
@@ -78,8 +78,8 @@ final class ComponentPanel extends JPanel {
         lblControl.setForeground(running ? null : Color.red);
     }
 
-    SimpleLogger getLogger() {
-        return new TextLogger(comp.application);
+    SQLGLogger wrap(SQLGLogger realLogger) {
+        return new TextLogger(realLogger);
     }
 
     SqlTrace getTrace() {
@@ -90,10 +90,12 @@ final class ComponentPanel extends JPanel {
         };
     }
 
-    private final class TextLogger extends SimpleLogger {
+    private final class TextLogger implements SQLGLogger {
 
-        TextLogger(String application) {
-            super(application + "_server_errors.log");
+        private final SQLGLogger logger;
+
+        TextLogger(SQLGLogger logger) {
+            this.logger = logger;
         }
 
         private void append(final String str) {
@@ -105,20 +107,24 @@ final class ComponentPanel extends JPanel {
             });
         }
 
+        public void trace(String message) {
+            logger.trace(message);
+        }
+
         public void info(String message) {
-            super.info(message);
+            logger.info(message);
             if (cbTrace.isSelected()) {
                 append(message);
             }
         }
 
         public void error(String message) {
-            super.error(message);
+            logger.error(message);
             append(message);
         }
 
         public void error(Throwable error) {
-            super.error(error);
+            logger.error(error);
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             error.printStackTrace(pw);

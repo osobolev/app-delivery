@@ -7,6 +7,8 @@ subprojects {
 
     targetCompatibility = '1.5'
                              
+    compileJava.options.encoding = 'windows-1251'
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -55,7 +57,7 @@ project(':server-service') {
 
     repositories {
         flatDir {
-            dirs "$rootProject.projectDir/lib"
+            dirs 'lib'
         }
     }
 
@@ -67,7 +69,7 @@ project(':server-service') {
     }
 }
 
-project(':server-tomcat') {
+project(':server-war') {
     sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http'])
     dependencies {
         compile sqlg
@@ -85,20 +87,17 @@ project(':server-desktop') {
 }
 
 project(':') {
-    apply plugin: 'java'
 
-    jar { onlyIf { false } }
-
-    task copyToTarget(type: Copy, dependsOn: subprojects.jar) {
-        from(subprojects.jar)
-        into 'target'
+    task build(type: Copy, dependsOn: subprojects.jar) {
+        from subprojects.jar
+        into 'lib'
         rename('apploader-[0-9.]*.jar', 'apploader.jar')
     }
-    
-    task cleanTarget(type: Delete) {
-        delete 'target'
+
+    task install(dependsOn: build) {
     }
 
-    build.dependsOn(copyToTarget)
-    clean.dependsOn(cleanTarget)
+    task clean(type: Delete) {
+        delete 'lib'
+    }
 }

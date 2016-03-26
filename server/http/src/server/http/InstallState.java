@@ -26,7 +26,7 @@ final class InstallState {
                     builder.getInstaller();
                 } catch (Exception ex) {
                     error = ex.toString();
-                    is.error(ex);
+                    is.getLogger().error(ex);
                 } finally {
                     creating = false;
                 }

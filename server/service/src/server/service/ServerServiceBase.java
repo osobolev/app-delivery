@@ -2,12 +2,12 @@ package server.service;
 
 import org.boris.winrun4j.AbstractService;
 import org.boris.winrun4j.ServiceException;
-import server.core.AppAuthFactory;
+import server.core.AppInit;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
 import server.jetty.ServerInitException;
-import sqlg2.db.SimpleLogger;
+import sqlg2.db.SQLGLogger;
 import sqlg2.db.SqlTrace;
 
 import java.io.File;
@@ -22,19 +22,19 @@ public abstract class ServerServiceBase extends AbstractService {
             File rootDir = getRoot();
             int port = getPort(rootDir);
             AppLogin login = getLogin();
-            AppAuthFactory authFactory = getAuthFactory();
             SqlTrace trace = getTrace();
             List<AppServerComponent> components = getComponents();
             for (AppServerComponent component : components) {
-                SimpleLogger logger = new SimpleLogger(component.application + "_server_errors.log");
                 boolean inited = false;
                 try {
-                    component.init(login, authFactory, logger, trace);
+                    AppInit appInit = component.getInit();
+                    SQLGLogger logger = appInit.createLogger();
+                    component.init(login, logger, trace);
                     container.addApplication(component);
                     inited = true;
                 } finally {
                     if (!inited) {
-                        logger.close();
+                        component.shutdown();
                     }
                 }
             }
@@ -63,8 +63,6 @@ public abstract class ServerServiceBase extends AbstractService {
     }
 
     protected abstract AppLogin getLogin();
-
-    protected abstract AppAuthFactory getAuthFactory();
 
     protected int getPort(File rootDir) throws ServerInitException {
         return container.getDefaultPort(rootDir);

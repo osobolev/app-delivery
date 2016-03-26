@@ -1,8 +1,8 @@
 package server.desktop;
 
-import server.core.AppAuthFactory;
+import server.core.AppInit;
 import server.jetty.*;
-import sqlg2.db.SimpleLogger;
+import sqlg2.db.SQLGLogger;
 
 import javax.swing.*;
 import java.io.File;
@@ -18,7 +18,7 @@ final class FrameBuilder {
         this.container = container;
     }
 
-    void build(String[] args, AppLogin login, AppAuthFactory authFactory, List<AppServerComponent> comps) {
+    void build(String[] args, AppLogin login, List<AppServerComponent> comps) {
         HttpConfig config;
         try {
             config = HttpConfig.parse(args);
@@ -34,10 +34,10 @@ final class FrameBuilder {
         } else {
             port = config.port.intValue();
         }
-        build(port, config.rootDir, login, authFactory, comps);
+        build(port, config.rootDir, login, comps);
     }
 
-    void build(int port, File rootDir, AppLogin login, AppAuthFactory authFactory, List<AppServerComponent> comps) {
+    void build(int port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
         if (!rootDir.isDirectory()) {
             String message = "'" + rootDir + "' - не каталог";
             container.error(message);
@@ -50,10 +50,11 @@ final class FrameBuilder {
             String name = comp.getName();
             JLabel lbl = new JLabel(name);
             ComponentPanel panel = new ComponentPanel(comp, lbl);
-            SimpleLogger logger = panel.getLogger();
             boolean inited = false;
+            AppInit appInit = comp.getInit();
+            SQLGLogger logger = panel.wrap(appInit.createLogger());
             try {
-                comp.init(login, authFactory, logger, panel.getTrace());
+                comp.init(login, logger, panel.getTrace());
 
                 tab.addTab(name, panel);
                 tab.setTabComponentAt(index, lbl);
@@ -69,7 +70,7 @@ final class FrameBuilder {
                 ServerFrame.showError("Ошибка при инициализации " + name + ": " + ex.getMessage());
             } finally {
                 if (!inited) {
-                    logger.close();
+                    comp.shutdown();
                 }
             }
         }

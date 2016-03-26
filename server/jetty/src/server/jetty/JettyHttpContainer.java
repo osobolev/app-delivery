@@ -10,7 +10,6 @@ import org.eclipse.jetty.util.resource.FileResource;
 import server.http.Application;
 import server.http.InstallServletBase;
 import server.http.ListServletBase;
-import sqlg2.db.SimpleLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +22,7 @@ public final class JettyHttpContainer {
 
     private final List<AppServerComponent> components = new ArrayList<AppServerComponent>();
 
-    private final SimpleLogger logger = new SimpleLogger("appserver.log");
+    private final JettyLogger logger = new JettyLogger("appserver.log");
 
     private Server jetty;
     private int port;
@@ -78,6 +77,7 @@ public final class JettyHttpContainer {
             comp.shutdown();
         }
         jetty.stop();
+        logger.close();
     }
 
     public int getComponents() {

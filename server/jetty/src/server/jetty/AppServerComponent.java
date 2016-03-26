@@ -1,13 +1,12 @@
 package server.jetty;
 
-import server.core.AppAuthFactory;
+import server.core.AppInit;
 import server.core.LoginData;
 import server.http.SessionUtil;
 import sqlg2.db.HttpDispatcher;
+import sqlg2.db.SQLGLogger;
 import sqlg2.db.SessionFactory;
-import sqlg2.db.SimpleLogger;
 import sqlg2.db.SqlTrace;
-import sqlg2.db.specific.Oracle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,32 +16,40 @@ public final class AppServerComponent {
 
     public final String application;
     private final String appName;
+    private final AppInit init;
 
+    private SQLGLogger logger;
     private volatile boolean running = false;
     private HttpDispatcher http = null;
-    private SimpleLogger logger;
 
-    public AppServerComponent(String application, String appName) {
+    public AppServerComponent(String application, String appName, AppInit init) {
         this.application = application;
         this.appName = appName;
+        this.init = init;
     }
 
     public String getName() {
         return appName;
     }
 
-    public void init(AppLogin login, AppAuthFactory authFactory, SimpleLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
-        LoginData loginData = login.login(application);
-        SessionFactory sf = authFactory.getAuthentificator(application, loginData);
-        // todo!!! брать DBSpecific извне!!!
-        this.http = new HttpDispatcher(application, sf, new Oracle(), logger);
-        http.setSqlTrace(trace);
+    public AppInit getInit() {
+        return init;
+    }
+
+    public void init(AppLogin login, SQLGLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
         this.logger = logger;
+        LoginData loginData = login.login(application);
+        SessionFactory sf = init.init(application, loginData);
+
+        this.http = new HttpDispatcher(application, sf, loginData.getSpecific(), logger);
+        http.setSqlTrace(trace);
     }
 
     public void start() {
         running = true;
-        logger.info("Сервер '" + appName + "' работает");
+        if (logger != null) {
+            logger.info("Сервер '" + appName + "' работает");
+        }
     }
 
     public boolean isRunning() {
@@ -51,7 +58,9 @@ public final class AppServerComponent {
 
     public void stop() {
         running = false;
-        logger.info("Сервер '" + appName + "' остановлен");
+        if (logger != null) {
+            logger.info("Сервер '" + appName + "' остановлен");
+        }
     }
 
     public void dispatch(String hostName, InputStream is, OutputStream os) throws IOException {
@@ -71,6 +80,6 @@ public final class AppServerComponent {
         if (http != null) {
             http.shutdown();
         }
-        logger.close();
+        init.destroy();
     }
 }

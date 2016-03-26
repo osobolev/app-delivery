@@ -1,13 +1,13 @@
 package server.jetty;
 
 import org.eclipse.jetty.util.log.Logger;
-import sqlg2.db.SimpleLogger;
+import sqlg2.db.SQLGLogger;
 
 public final class HttpLogger implements Logger {
 
-    private final SimpleLogger logger;
+    private final SQLGLogger logger;
 
-    public HttpLogger(SimpleLogger logger) {
+    public HttpLogger(SQLGLogger logger) {
         this.logger = logger;
     }
 

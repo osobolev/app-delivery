@@ -1,6 +1,5 @@
 package server.desktop;
 
-import server.core.AppAuthFactory;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
@@ -23,15 +22,15 @@ public final class DesktopServer {
         ServerFrame.showError(ex.toString());
     }
 
-    public void runServer(String[] args, AppLogin login, AppAuthFactory authFactory, List<AppServerComponent> comps) {
+    public void runServer(String[] args, AppLogin login, List<AppServerComponent> comps) {
         FrameBuilder builder = new FrameBuilder(container);
-        builder.build(args, login, authFactory, comps);
+        builder.build(args, login, comps);
         showFrame(builder);
     }
 
-    public void runServer(int port, File rootDir, AppLogin login, AppAuthFactory authFactory, List<AppServerComponent> comps) {
+    public void runServer(int port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
         FrameBuilder builder = new FrameBuilder(container);
-        builder.build(port, rootDir, login, authFactory, comps);
+        builder.build(port, rootDir, login, comps);
         showFrame(builder);
     }
 

@@ -1,4 +1,4 @@
-package server.tomcat;
+package server.war;
 
 import server.http.Application;
 
@@ -9,11 +9,15 @@ import java.util.List;
 
 final class SingleUtil {
 
-    static final String APPLICATION = "application";
+    private static final String APPLICATION = "application";
 
-    static List<Application> getApplication(ServletConfig config) {
+    static String getApplication(ServletContext ctx) {
+        return ctx.getInitParameter(APPLICATION);
+    }
+
+    static List<Application> getApplications(ServletConfig config) {
         ServletContext ctx = config.getServletContext();
-        String application = ctx.getInitParameter(APPLICATION);
+        String application = getApplication(ctx);
         String appName = ctx.getInitParameter("appName");
         if (appName == null) {
             appName = application;

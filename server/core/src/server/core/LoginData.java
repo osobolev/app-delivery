@@ -13,12 +13,14 @@ public final class LoginData {
     private final String url;
     private final String user;
     private final String password;
+    private final DBSpecific specific;
 
-    public LoginData(String driver, String url, String user, String password) {
+    public LoginData(String driver, String url, String user, String password, DBSpecific specific) {
         this.driver = driver;
         this.url = url;
         this.user = user;
         this.password = password;
+        this.specific = specific;
     }
 
     public String getDriver() {
@@ -35,6 +37,10 @@ public final class LoginData {
 
     public String getPassword() {
         return password;
+    }
+
+    public DBSpecific getSpecific() {
+        return specific;
     }
 
     public void testConnection() throws SQLException {

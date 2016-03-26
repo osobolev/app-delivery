@@ -1,5 +1,5 @@
 *.class
-out
-build
-target
-.gradle
+uiDesigner.xml
+out/
+build/
+.gradle/

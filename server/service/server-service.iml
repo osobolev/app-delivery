@@ -13,7 +13,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/WinRun4J.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/WinRun4J.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

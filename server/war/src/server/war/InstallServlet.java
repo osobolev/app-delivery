@@ -1,13 +1,14 @@
-package server.tomcat;
+package server.war;
 
 import server.http.Application;
 import server.http.InstallServletBase;
+import sqlg2.db.SQLGLogger;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
 import java.util.List;
 
-public final class InstallServlet extends InstallServletBase {
+public class InstallServlet extends InstallServletBase {
 
     protected File getRoot(ServletConfig config) {
         String path = config.getServletContext().getRealPath(".");
@@ -18,14 +19,10 @@ public final class InstallServlet extends InstallServletBase {
     }
 
     protected List<Application> loadApplications(ServletConfig config) {
-        return SingleUtil.getApplication(config);
+        return SingleUtil.getApplications(config);
     }
 
-    protected void error(String message) {
-        log(message);
-    }
-
-    protected void error(Throwable error) {
-        log(error.toString(), error);
+    protected SQLGLogger getLogger() {
+        return InitListener.getLogger(getServletContext());
     }
 }
