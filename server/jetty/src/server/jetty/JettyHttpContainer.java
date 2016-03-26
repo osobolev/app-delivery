@@ -26,6 +26,7 @@ public final class JettyHttpContainer {
 
     private Server jetty;
     private int port;
+    private File rootDir;
 
     public void addApplication(AppServerComponent component) {
         components.add(component);
@@ -35,6 +36,7 @@ public final class JettyHttpContainer {
         Log.setLog(new HttpLogger(logger));
         this.jetty = new Server(port);
         this.port = port;
+        this.rootDir = rootDir;
 
         ServletContextHandler ctx = new ServletContextHandler(jetty, "/", ServletContextHandler.NO_SESSIONS);
         try {
@@ -68,7 +70,7 @@ public final class JettyHttpContainer {
 
     public void start() throws Exception {
         jetty.start();
-        logger.info("Сервер запущен на порту " + port);
+        logger.info("Сервер запущен на порту " + port + " в папке " + rootDir.getAbsolutePath());
     }
 
     public void stop() throws Exception {
