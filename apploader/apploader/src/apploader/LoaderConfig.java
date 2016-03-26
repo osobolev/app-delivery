@@ -21,6 +21,10 @@ final class LoaderConfig {
         this.proxy = proxy;
     }
 
+    static LoaderConfig offline() {
+        return new LoaderConfig(null, false, null);
+    }
+
     static LoaderConfig load(LoaderGui gui) {
         Properties apploaderProperties = new Properties();
         ConfigReader.readAppProperties(new File("."), apploaderProperties);

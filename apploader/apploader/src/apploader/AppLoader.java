@@ -60,6 +60,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
 
     private final LoaderGui gui;
     private final URL base;
+    private final boolean offline;
 
     private boolean doNotShow;
     private ProxyConfig proxy;
@@ -67,11 +68,12 @@ public final class AppLoader implements AppInfo.AppClassLoader {
 
     private final AppClassLoader classLoader = new AppClassLoader();
 
-    AppLoader(LoaderGui gui, URL base, boolean doNotShow, ProxyConfig proxy) {
+    AppLoader(LoaderGui gui, URL base, boolean doNotShow, ProxyConfig proxy, boolean offline) {
         this.gui = gui;
         this.base = base;
         this.doNotShow = doNotShow;
         this.proxy = proxy;
+        this.offline = offline;
         Thread.currentThread().setContextClassLoader(classLoader);
     }
 
@@ -395,6 +397,16 @@ public final class AppLoader implements AppInfo.AppClassLoader {
 
     private FileResult receiveFile(String file, boolean silent, boolean noTrace) {
         File local = new File(file).getAbsoluteFile();
+        if (offline) {
+            if (local.exists()) {
+                return new FileResult(local, false, false);
+            } else {
+                if (!silent) {
+                    gui.showError("Файл " + file + " отсутствует");
+                }
+                return new FileResult(null, false, false);
+            }
+        }
         while (true) {
             String errorMessage;
             if (connectionProblem) {
@@ -540,31 +552,33 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     private boolean run(String app, String[] args) {
-        String available = updateGlobal();
-        if (available == null) {
-            gui.showError("Нет доступа к приложениям на сервере");
-            return false;
-        }
-        if (app == null) {
-            if (available.length() > 0) {
-                gui.showError("Не указано приложение для запуска.\nДоступные приложения:\n" + available);
-            } else {
-                gui.showError("Не указано приложение для запуска");
-            }
-            return false;
-        }
-        if ("install".equalsIgnoreCase(app)) {
-            if (available.length() <= 0) {
-                gui.showError("Нет доступных приложений");
+        if (!offline) {
+            String available = updateGlobal();
+            if (available == null) {
+                gui.showError("Нет доступа к приложениям на сервере");
                 return false;
-            } else {
-                if (args.length > 0) {
-                    String arg = args[0].trim();
-                    String message = arg.length() <= 0 || "-".equals(arg) ? "Установка программы завершена!" : arg;
-                    gui.showSuccess(message);
+            }
+            if (app == null) {
+                if (available.length() > 0) {
+                    gui.showError("Не указано приложение для запуска.\nДоступные приложения:\n" + available);
+                } else {
+                    gui.showError("Не указано приложение для запуска");
                 }
-                System.exit(0);
-                return true;
+                return false;
+            }
+            if ("install".equalsIgnoreCase(app)) {
+                if (available.length() <= 0) {
+                    gui.showError("Нет доступных приложений");
+                    return false;
+                } else {
+                    if (args.length > 0) {
+                        String arg = args[0].trim();
+                        String message = arg.length() <= 0 || "-".equals(arg) ? "Установка программы завершена!" : arg;
+                        gui.showSuccess(message);
+                    }
+                    System.exit(0);
+                    return true;
+                }
             }
         }
         try {
@@ -584,20 +598,26 @@ public final class AppLoader implements AppInfo.AppClassLoader {
 
     private static boolean doRun(String[] args) {
         LoaderGui gui = new LoaderGui();
-        LoaderConfig config = LoaderConfig.load(gui);
-        if (config == null)
-            return false;
+        boolean offline = System.getProperty("offline") != null;
         String app = System.getProperty(APPLICATION_PROPERTY);
-        if ("proxyConfig".equals(app)) {
-            gui.showProxyDialog(null, config.proxy, config.httpUrl, null);
-            System.exit(0);
-            return true;
-        } else if (config.httpUrl == null) {
-            gui.showError("Не задан адрес сервера");
-            return false;
+        LoaderConfig config;
+        if (offline) {
+            config = LoaderConfig.offline();
+        } else {
+            config = LoaderConfig.load(gui);
+            if (config == null)
+                return false;
+            if ("proxyConfig".equals(app)) {
+                gui.showProxyDialog(null, config.proxy, config.httpUrl, null);
+                System.exit(0);
+                return true;
+            } else if (config.httpUrl == null) {
+                gui.showError("Не задан адрес сервера");
+                return false;
+            }
         }
         AppInfo.httpServerUrl = config.httpUrl;
-        AppLoader loader = new AppLoader(gui, config.httpUrl, config.doNotShow, config.proxy);
+        AppLoader loader = new AppLoader(gui, config.httpUrl, config.doNotShow, config.proxy, offline);
         return loader.run(app, args);
     }
 
