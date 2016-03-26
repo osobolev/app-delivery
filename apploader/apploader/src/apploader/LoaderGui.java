@@ -17,11 +17,11 @@ final class LoaderGui {
     private boolean lnfSet = false;
 
     private Result showDialogInternal(Component parent,
-                                       String message,
-                                       String title, int style,
-                                       String[] optionNames,
-                                       Result[] retValues,
-                                       AppLoader check, final AppLoader proxy) {
+                                      String message,
+                                      String title, int style,
+                                      String[] optionNames,
+                                      Result[] retValues,
+                                      FileLoader check, final FileLoader proxy) {
         setLnF();
         JButton[] options = new JButton[optionNames.length];
         JPanel panel = new JPanel(new BasicOptionPaneUI.ButtonAreaLayout(true, 5));
@@ -134,7 +134,7 @@ final class LoaderGui {
         );
     }
 
-    Result showError2(String message, AppLoader loader) {
+    Result showError2(String message, FileLoader loader) {
         return showDialogInternal(
             null, message,
             ERROR, JOptionPane.ERROR_MESSAGE,
@@ -143,7 +143,7 @@ final class LoaderGui {
         );
     }
 
-    Result showWarning2(String message, AppLoader loader) {
+    Result showWarning2(String message, FileLoader loader) {
         return showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE,
@@ -152,7 +152,7 @@ final class LoaderGui {
         );
     }
 
-    Result showWarning3(String message, AppLoader loader) {
+    Result showWarning3(String message, FileLoader loader) {
         return showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE,
@@ -161,7 +161,7 @@ final class LoaderGui {
         );
     }
 
-    void showProxyDialog(Component owner, ProxyConfig proxy, URL url, AppLoader loader) {
+    void showProxyDialog(Component owner, ProxyConfig proxy, URL url, FileLoader loader) {
         setLnF();
         ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, new ProxyDialog.ErrorShow() {
             public void showError(String message) {
