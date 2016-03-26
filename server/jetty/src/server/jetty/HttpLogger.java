@@ -40,20 +40,12 @@ public final class HttpLogger implements Logger {
     }
 
     public void info(String msg, Object... args) {
-        logger.info(format(msg, args));
     }
 
     public void info(Throwable error) {
-        logger.error(error);
     }
 
     public void info(String msg, Throwable error) {
-        if (msg != null) {
-            logger.info(msg);
-        }
-        if (error != null) {
-            logger.error(error);
-        }
     }
 
     public void debug(String msg, Object... args) {

@@ -14,11 +14,7 @@ subprojects {
         mavenCentral()
     }
 
-    jar {
-        manifest {
-            attributes("Implementation-Version": version)
-        }
-    }
+    jar.manifest.attributes('Implementation-Version': version)
 }
 
 def sqlg = 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
@@ -43,10 +39,13 @@ project(':apploader-client') {
 
 project(':apploader') {
     sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'apploader/client'])
+
+    jar.manifest.attributes('Main-Class': 'apploader.AppLoader')
 }
 
 project(':server-core') {
     sourceSets.main.java.srcDirs = buildSource([])
+    
     dependencies {
         compile sqlg
     }
@@ -71,6 +70,7 @@ project(':server-service') {
 
 project(':server-war') {
     sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http'])
+    
     dependencies {
         compile sqlg
         compile servlet
@@ -79,6 +79,7 @@ project(':server-war') {
 
 project(':server-desktop') {
     sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http', 'server/jetty'])
+    
     dependencies {
         compile sqlg
         compile servlet

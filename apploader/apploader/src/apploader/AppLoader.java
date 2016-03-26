@@ -360,8 +360,9 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         HeadResult head = isNeedUpdate(url, local, creating);
         if (head.needUpdate) {
             setStatus("Обновление " + file + "...");
-            local.getParentFile().mkdirs();
-            File neo = new File(local.getParentFile(), local.getName() + ".tmp");
+            File parent = local.getAbsoluteFile().getParentFile();
+            parent.mkdirs();
+            File neo = new File(parent, local.getName() + ".tmp");
             boolean ok = false;
             IOException lastError = null;
             for (int i = 0; i < 3; i++) {
@@ -380,7 +381,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                     local.delete();
                 }
                 if (!neo.renameTo(local)) {
-                    File neoCopy = new File(neo.getParentFile(), local.getName() + ".new");
+                    File neoCopy = new File(parent, local.getName() + ".new");
                     neoCopy.delete();
                     neo.renameTo(neoCopy);
                     return ReceiveResult.UPDATE_FAIL;
@@ -393,7 +394,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     private FileResult receiveFile(String file, boolean silent, boolean noTrace) {
-        File local = new File(file);
+        File local = new File(file).getAbsoluteFile();
         while (true) {
             String errorMessage;
             if (connectionProblem) {
