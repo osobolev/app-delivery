@@ -1,10 +1,16 @@
 package apploader;
 
-import apploader.client.*;
+import apploader.client.AppFactory;
+import apploader.client.AppInfo;
+import apploader.client.AppRunner;
+import apploader.client.Application;
+import apploader.common.ClientBat;
 import apploader.common.ConfigReader;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -82,15 +88,11 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         return buf.toString();
     }
 
-    private static String getSplashName(String application) {
-        return application + "_splash.jpg";
-    }
-
     private AppProperties updateAll(String application) throws IOException {
         File list = fileLoader.receiveFile(application + "_jars.list", false, false).file;
         if (list == null)
             return null;
-        fileLoader.receiveFile(getSplashName(application), true, true);
+        fileLoader.receiveFile(ClientBat.getSplashName(application), true, true);
         final AppProperties properties = new AppProperties();
         boolean ok = ConfigReader.readConfig(list, new ConfigReader.LineWorker() {
             public boolean workLine(String left, String right) {
@@ -166,13 +168,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         if (file.exists())
             return;
         try {
-            PrintWriter pw = new PrintWriter(file);
-            pw.println("@echo off");
-            pw.println("call checknew.bat");
-            pw.println("call setjava.bat");
-            String splash = " -splash:" + getSplashName(app);
-            pw.println("%JAVABIN% -D" + APPLICATION_PROPERTY + "=" + app + splash + " -jar apploader.jar %*");
-            pw.close();
+            ClientBat.generateBatFile(file, app);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -270,7 +266,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         try {
             AppRunner runner = loadApplication(app);
             if (runner != null) {
-                runner.runGui(args, null);
+                runner.runGui(args);
                 return true;
             } else {
                 return false;

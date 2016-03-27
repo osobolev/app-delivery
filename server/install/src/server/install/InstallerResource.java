@@ -22,6 +22,13 @@ abstract class InstallerResource {
         return new InstallerFile(srcFile, srcFile.getName());
     }
 
+    static InstallerResource clientBat(File root, String name, String app) {
+        File srcFile = new File(root, name);
+        if (!srcFile.exists())
+            return new ClientResource(name, app);
+        return new InstallerFile(srcFile, srcFile.getName());
+    }
+
     static InstallerResource apploader(File root, String srcName, String destName, String url) {
         File srcFile = new File(root, srcName);
         if (srcFile.exists()) {

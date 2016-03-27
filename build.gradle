@@ -73,7 +73,7 @@ project(':server-war') {
     
     dependencies {
         compile sqlg
-        compile servlet
+        compileOnly servlet
     }
 }
 

@@ -33,7 +33,7 @@ public final class SourceFiles {
         addDependIfExists("install.bat");
         addDependIfExists("proxy.properties");
         for (String app : apps) {
-            addDependIfExists(app + "-client.bat");
+            depends.add(InstallerResource.clientBat(root, app + "-client.bat", app));
             addDependIfExists(app + "_splash.jpg");
             addDependIfExists(app + ".ico");
             addDependIfExists("uninst_" + app + ".ico");
