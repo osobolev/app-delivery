@@ -1,5 +1,5 @@
 include 'apploader/common', 'apploader/client', 'apploader/apploader'
-include 'server/core', 'server/service', 'server/war', 'server/desktop'
+include 'server/core', 'server/service', 'server/war', 'server/desktop', 'server/files'
 
 rootProject.name = 'app-delivery'
 
@@ -11,3 +11,4 @@ project(':server/core').name = 'server-core'
 project(':server/service').name = 'server-service'
 project(':server/war').name = 'server-war'
 project(':server/desktop').name = 'server-desktop'
+project(':server/files').name = 'server-files'

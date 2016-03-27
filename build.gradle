@@ -5,7 +5,7 @@ subprojects {
     group = 'com.github.osobolev.app-delivery'
     version = '2.0'
 
-    targetCompatibility = '1.5'
+    targetCompatibility = '1.6'
                              
     compileJava.options.encoding = 'windows-1251'
 
@@ -87,12 +87,18 @@ project(':server-desktop') {
     }
 }
 
+project(':server-files') {
+    apply plugin: 'war'
+    jar.onlyIf { false }
+    webAppDirName = 'webapp'
+}
+
 project(':') {
 
     task build(type: Copy, dependsOn: subprojects.jar) {
         from subprojects.jar
         into 'lib'
-        rename('apploader-[0-9.]*.jar', 'apploader.jar')
+        rename('apploader-[0-9.]*\\.jar', 'apploader.jar')
     }
 
     task install(dependsOn: build) {
