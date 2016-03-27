@@ -1,6 +1,6 @@
 package server.install;
 
-import apploader.common.ClientBat;
+import apploader.common.AppCommon;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +22,6 @@ final class ClientResource extends InstallerResource {
     }
 
     void copyTo(File dest) throws IOException {
-        ClientBat.generateBatFile(dest, app);
+        AppCommon.generateBatFile(dest, app);
     }
 }

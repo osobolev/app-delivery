@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public final class ClientBat {
+public final class AppCommon {
 
     public static final String APPLICATION_PROPERTY = "application";
 

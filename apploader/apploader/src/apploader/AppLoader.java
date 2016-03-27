@@ -4,13 +4,15 @@ import apploader.client.AppFactory;
 import apploader.client.AppInfo;
 import apploader.client.AppRunner;
 import apploader.client.Application;
-import apploader.common.ClientBat;
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -92,7 +94,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         File list = fileLoader.receiveFile(application + "_jars.list", false, false).file;
         if (list == null)
             return null;
-        fileLoader.receiveFile(ClientBat.getSplashName(application), true, true);
+        fileLoader.receiveFile(AppCommon.getSplashName(application), true, true);
         final AppProperties properties = new AppProperties();
         boolean ok = ConfigReader.readConfig(list, new ConfigReader.LineWorker() {
             public boolean workLine(String left, String right) {
@@ -168,7 +170,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         if (file.exists())
             return;
         try {
-            ClientBat.generateBatFile(file, app);
+            AppCommon.generateBatFile(file, app);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -229,8 +231,21 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         Class<?> cls = loadClass(properties);
         if (cls == null)
             return null;
-        AppFactory factory = (AppFactory) cls.newInstance();
-        return factory.newApplication(application);
+        if (AppFactory.class.isAssignableFrom(cls)) {
+            AppFactory factory = (AppFactory) cls.newInstance();
+            return factory.newApplication(application);
+        } else {
+            final Method main = cls.getMethod("main", String[].class);
+            if (main == null || !Modifier.isStatic(main.getModifiers())) {
+                gui.showError("Главный класс не является AppFactory и не содержит main");
+                return null;
+            }
+            return new AppRunner() {
+                public void runGui(String[] args) throws Exception {
+                    main.invoke(null, (Object) args);
+                }
+            };
+        }
     }
 
     private boolean run(String app, String[] args) {
