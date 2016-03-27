@@ -91,7 +91,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     private AppProperties updateAll(String application) throws IOException {
-        File list = fileLoader.receiveFile(application + "_jars.list", false, false).file;
+        File list = fileLoader.receiveFile(application + "_jars.list", false).file;
         if (list == null)
             return null;
         fileLoader.receiveFile(AppCommon.getSplashName(application), true, true);
@@ -110,7 +110,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                     jar = corejar = false;
                 }
                 if (jar) {
-                    FileResult jarResult = fileLoader.receiveFile(right, corejar, false);
+                    FileResult jarResult = fileLoader.receiveFile(right, corejar);
                     if (corejar && jarResult.isFailCopy) {
                         gui.showWarning("Обновлен загрузчик приложения, перезапустите его");
                         return false;
@@ -122,12 +122,12 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 } else if ("mainClass".equalsIgnoreCase(left)) {
                     properties.mainClass = right;
                 } else if ("dll".equalsIgnoreCase(left)) {
-                    File file = fileLoader.receiveFile(right, false, false).file;
+                    File file = fileLoader.receiveFile(right, false).file;
                     if (file == null)
                         return false;
                     properties.dllList.add(file);
                 } else if ("file".equalsIgnoreCase(left)) {
-                    FileResult fileResult = fileLoader.receiveFile(right, false, false);
+                    FileResult fileResult = fileLoader.receiveFile(right, false);
                     File file = fileResult.file;
                     if (file == null)
                         return false;
