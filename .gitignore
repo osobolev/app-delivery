@@ -3,3 +3,4 @@ uiDesigner.xml
 out/
 build/
 .gradle/
+/lib/
