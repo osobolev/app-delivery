@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <description>Example application</description>
+    <display-name>Example application</display-name>
+
+    <context-param>
+        <param-name>application</param-name>
+        <param-value>sample</param-value>
+    </context-param>
+    <context-param>
+        <param-name>appName</param-name>
+        <param-value>Пример приложения</param-value>
+    </context-param>
+    <context-param>
+        <param-name>appInit</param-name>
+        <param-value>sample.SampleInit</param-value>
+    </context-param>
+    <context-param>
+        <param-name>dbSpec</param-name>
+        <param-value>sqlg2.db.specific.Generic</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbcDriver</param-name>
+        <param-value>org.postgresql.Driver</param-value>
+    </context-param>
+    <context-param>
+        <param-name>jdbcUrl</param-name>
+        <param-value>jdbc:postgresql://localhost/</param-value>
+    </context-param>
+    <context-param>
+        <param-name>username</param-name>
+        <param-value>postgres</param-value>
+    </context-param>
+    <context-param>
+        <param-name>password</param-name>
+        <param-value>admin123</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>AppServlet</servlet-name>
+        <servlet-class>server.war.SingleAppServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InstallServlet</servlet-name>
+        <servlet-class>server.war.InstallServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ListServlet</servlet-name>
+        <servlet-class>server.war.ListServlet</servlet-class>
+    </servlet>
+
+    <listener>
+        <listener-class>server.war.InitListener</listener-class>
+    </listener>
+
+    <servlet-mapping>
+        <servlet-name>AppServlet</servlet-name>
+        <url-pattern>/remoting</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InstallServlet</servlet-name>
+        <url-pattern>/install</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListServlet</servlet-name>
+        <url-pattern>/global_app.list</url-pattern>
+    </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,104 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    group = 'com.github.osobolev.app-delivery.sample'
+    version = '1.0'
+
+    targetCompatibility = '1.6'
+                             
+    compileJava.options.encoding = 'windows-1251'
+
+    sourceSets.main.java.srcDirs = ['src']
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+project(':sample_db') {
+
+    configurations {
+        sqlg
+    }
+
+    dependencies {
+        compileOnly 'com.github.osobolev.sqlg2:sqlg2-full:4.0'
+        runtime 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
+        sqlg 'postgresql:postgresql:8.4-702.jdbc4'
+        sqlg 'com.github.osobolev.sqlg2:sqlg2-full:4.0'
+    }
+
+    task preprocess << {
+        ant.taskdef(name: 'sqlg', classname: 'sqlg2.Preprocess', classpath: configurations.sqlg.asPath)
+        ant.sqlg(classpath: configurations.sqlg.asPath,
+                 driverclass: 'org.postgresql.Driver', dbclass: 'sqlg2.db.specific.Generic',
+                 url: 'jdbc:postgresql://localhost/', user: 'postgres', password: 'admin123',
+                 implpack: 'wrapper', wrappack: 'wrapper',
+                 srcroot: 'src', encoding: compileJava.options.encoding) {
+            fileset(dir: 'src') {
+                include(name: 'sample/dao/ClientDB.java')
+            }
+        }
+    }
+    compileJava.dependsOn(preprocess)
+}
+
+project(':sample_client') {
+    dependencies {
+        compileOnly 'com.github.osobolev.app-delivery:apploader-client:2.0'
+        compile 'com.github.osobolev.sqlg2:sqlg2-client:4.0'
+        compile(project(':sample_db')) {
+            exclude module: 'sqlg2-runtime'
+        }
+    }
+}
+
+project(':sample_server') {
+    
+    apply plugin: 'war'
+
+    configurations {
+        webapploader
+        webdistr
+        webfiles
+    }
+
+    dependencies {
+        compile 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
+        compile 'com.github.osobolev.app-delivery:server-war:2.0'
+        runtime project(':sample_db')
+
+        webfiles 'com.github.osobolev.app-delivery:server-files:2.0@war'
+        webapploader 'com.github.osobolev.app-delivery:apploader:2.0'
+        webdistr project(':sample_client')
+    }
+
+    task createList << {
+        def list = ['corejar=apploader.jar']
+        configurations.webdistr.each {
+            list.add("jar=distr/${it.getName()}")
+        }
+        list.add('mainClass=sample.Client')
+        def file = file('build/list/sample_jars.list')
+        file.parentFile.mkdirs()
+        def eoln = '\n'
+        file.setText(list.join(eoln) + eoln, compileJava.options.encoding)
+    }
+    war.dependsOn(createList)
+
+    war {
+        archiveName 'sample_app.war'
+        webAppDirName = 'webapp'
+
+        from(configurations.webdistr) {
+            into 'distr'
+        }
+        from(configurations.webapploader) {
+            rename('apploader-.*\\.jar', 'apploader.jar')
+        }
+        from('build/list')
+        from(zipTree(configurations.webfiles.find({true})))
+    }
+}
