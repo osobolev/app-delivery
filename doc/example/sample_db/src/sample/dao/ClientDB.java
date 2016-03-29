@@ -15,10 +15,6 @@ public final class ClientDB extends GBase {
     
     @Business
     public Timestamp getTime() throws SQLException {
-        /**
-         * SELECT CURRENT_TIMESTAMP
-         */
-        @Prepare PreparedStatement stmt = prepareStatement("SELECT CURRENT_TIMESTAMP");
-        return singleRowQueryReturningTimestamp(stmt);
+        return new Timestamp(System.currentTimeMillis());
     }
 }

@@ -26,15 +26,15 @@ project(':sample_db') {
     dependencies {
         compileOnly 'com.github.osobolev.sqlg2:sqlg2-full:4.0'
         runtime 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
-        sqlg 'postgresql:postgresql:8.4-702.jdbc4'
+        sqlg 'com.h2database:h2:1.4.191'
         sqlg 'com.github.osobolev.sqlg2:sqlg2-full:4.0'
     }
 
     task preprocess << {
         ant.taskdef(name: 'sqlg', classname: 'sqlg2.Preprocess', classpath: configurations.sqlg.asPath)
         ant.sqlg(classpath: configurations.sqlg.asPath,
-                 driverclass: 'org.postgresql.Driver', dbclass: 'sqlg2.db.specific.Generic',
-                 url: 'jdbc:postgresql://localhost/', user: 'postgres', password: 'admin123',
+                 driverclass: 'org.h2.Driver', dbclass: 'sqlg2.db.specific.Generic',
+                 url: 'jdbc:h2:mem:', user: '', password: '',
                  implpack: 'wrapper', wrappack: 'wrapper',
                  srcroot: 'src', encoding: compileJava.options.encoding) {
             fileset(dir: 'src') {
