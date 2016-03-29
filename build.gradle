@@ -5,6 +5,7 @@ subprojects {
     group = 'com.github.osobolev.app-delivery'
     version = '2.0'
 
+    sourceCompatibility = '1.6'
     targetCompatibility = '1.6'
                              
     compileJava.options.encoding = 'windows-1251'
