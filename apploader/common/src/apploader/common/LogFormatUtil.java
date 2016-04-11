@@ -42,7 +42,11 @@ public final class LogFormatUtil {
     }
 
     public static void printHeader(PrintWriter pw, String type) {
-        pw.println("[" + type + "] " + getTimestamp());
+        printMessage(pw, type, null);
+    }
+
+    public static void printMessage(PrintWriter pw, String type, String message) {
+        pw.println("[" + type + "] " + getTimestamp() + (message == null ? "" : " | " + message));
     }
 
     public static void output(PrintWriter pw, String type, String line) {
@@ -51,7 +55,7 @@ public final class LogFormatUtil {
     }
 
     public static void printStackTrace(PrintWriter pw, Throwable error) {
-        printHeader(pw, "ERROR");
+        printMessage(pw, "ERROR", error.toString());
         error.printStackTrace(pw);
         pw.println("-------------------------------");
     }
