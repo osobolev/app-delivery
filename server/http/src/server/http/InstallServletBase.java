@@ -70,7 +70,7 @@ public abstract class InstallServletBase extends AppServletBase {
             done = true;
             ok = state.builder.getReadyInstaller() != null;
         }
-        String json = "{'percent':'" + state.builder.getPercent() + "%', 'done':" + done + ", 'ok':" + ok + ", 'error':'" + state.error.replace('\'', '"') + "'}";
+        String json = "{'percent':'" + state.builder.getPercentCell().get() + "%', 'done':" + done + ", 'ok':" + ok + ", 'error':'" + state.error.replace('\'', '"') + "'}";
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().println(json);
     }

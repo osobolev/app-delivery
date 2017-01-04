@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-final class CountOutputEater implements Runnable {
+public final class CountOutputEater implements Runnable {
 
     private final BufferedReader in;
     private final int total;
-    private final InstallBuilder builder;
+    private final PercentCell percentCell;
 
-    CountOutputEater(InputStream in, int total, InstallBuilder builder) {
+    public CountOutputEater(InputStream in, int total, PercentCell percentCell) {
         this.in = new BufferedReader(new InputStreamReader(in));
         this.total = total;
-        this.builder = builder;
+        this.percentCell = percentCell;
     }
 
     public void run() {
@@ -24,7 +24,7 @@ final class CountOutputEater implements Runnable {
                 String str = in.readLine();
                 if (str == null)
                     break;
-                builder.workPercent(1, 2, count++, total);
+                percentCell.workPercent(1, 2, count++, total);
             } catch (IOException ex) {
                 // ignore
             }

@@ -4,7 +4,7 @@ import java.io.*;
 
 public final class IOUtils {
 
-    static void copyStream(OutputStream os, InputStream is) throws IOException {
+    public static void copyStream(OutputStream os, InputStream is) throws IOException {
         try {
             byte[] buffer = new byte[8192];
             while (true) {
@@ -25,7 +25,7 @@ public final class IOUtils {
         copyStream(os, is);
     }
 
-    static void copyFile(File to, File from) throws IOException {
+    public static void copyFile(File to, File from) throws IOException {
         OutputStream os = new FileOutputStream(to);
         try {
             copyFile(os, from);
@@ -34,12 +34,7 @@ public final class IOUtils {
         }
     }
 
-    static void copyTo(File dirTo, File from) throws IOException {
-        File to = new File(dirTo, from.getName());
-        copyFile(to, from);
-    }
-
-    static void close(Closeable is) {
+    public static void close(Closeable is) {
         try {
             is.close();
         } catch (IOException ex) {

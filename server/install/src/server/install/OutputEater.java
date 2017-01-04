@@ -3,11 +3,11 @@ package server.install;
 import java.io.IOException;
 import java.io.InputStream;
 
-final class OutputEater implements Runnable {
+public final class OutputEater implements Runnable {
 
     private final InputStream in;
 
-    OutputEater(InputStream in) {
+    public OutputEater(InputStream in) {
         this.in = in;
     }
 

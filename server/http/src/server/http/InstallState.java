@@ -17,7 +17,7 @@ final class InstallState {
             return;
         if (!init && error.length() > 0)
             return;
-        builder.resetPercent();
+        builder.getPercentCell().reset();
         error = "";
         creating = true;
         Runnable createInstaller = new Runnable() {
