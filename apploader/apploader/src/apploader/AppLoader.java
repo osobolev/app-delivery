@@ -1,13 +1,9 @@
 package apploader;
 
-import apploader.client.AppFactory;
-import apploader.client.AppInfo;
-import apploader.client.AppRunner;
-import apploader.client.Application;
+import apploader.client.*;
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -189,8 +185,8 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "tzupdater.bat");
         try {
+            ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "tzupdater.bat");
             Process process = pb.start();
             process.waitFor();
         } catch (Exception ex) {
@@ -200,32 +196,9 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         return true;
     }
 
-    public static void setStatus(String status) {
-        if (status.length() > 0) {
-            System.out.println(status);
-        }
-        SplashScreen splash = SplashScreen.getSplashScreen();
-        if (splash == null)
-            return;
-        Graphics2D g = splash.createGraphics();
-        if (g == null)
-            return;
-        g.setFont(new Font("Dialog", Font.BOLD, 16));
-        FontMetrics fm = g.getFontMetrics();
-        int height = fm.getHeight();
-        int y0 = splash.getSize().height - 10 - height;
-        g.setComposite(AlphaComposite.Clear);
-        g.fillRect(0, y0, splash.getSize().width, height);
-        g.setPaintMode();
-        g.setColor(Color.black);
-        int y1 = y0 + fm.getAscent();
-        g.drawString(status, 10, y1);
-        splash.update();
-    }
-
     public AppRunner loadApplication(String application) throws Exception {
         AppProperties properties = updateAll(application);
-        setStatus("");
+        SplashStatus.setStatus("");
         if (properties == null)
             return null;
         Class<?> cls = loadClass(properties);

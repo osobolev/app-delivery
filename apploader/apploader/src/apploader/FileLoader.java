@@ -2,9 +2,9 @@ package apploader;
 
 import apploader.client.Application;
 import apploader.client.ProxyConfig;
+import apploader.client.SplashStatus;
 import apploader.common.ConfigReader;
 
-import java.awt.*;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 final class FileLoader extends IFileLoader {
 
     private final LoaderGui gui;
@@ -149,35 +148,12 @@ final class FileLoader extends IFileLoader {
         }
     }
 
-    public static void setStatus(String status) {
-        if (status.length() > 0) {
-            System.out.println(status);
-        }
-        SplashScreen splash = SplashScreen.getSplashScreen();
-        if (splash == null)
-            return;
-        Graphics2D g = splash.createGraphics();
-        if (g == null)
-            return;
-        g.setFont(new Font("Dialog", Font.BOLD, 16));
-        FontMetrics fm = g.getFontMetrics();
-        int height = fm.getHeight();
-        int y0 = splash.getSize().height - 10 - height;
-        g.setComposite(AlphaComposite.Clear);
-        g.fillRect(0, y0, splash.getSize().width, height);
-        g.setPaintMode();
-        g.setColor(Color.black);
-        int y1 = y0 + fm.getAscent();
-        g.drawString(status, 10, y1);
-        splash.update();
-    }
-
     private ReceiveResult receiveFileAttempt(File local, String file) throws IOException {
         URL url = new URL(base, file);
         boolean creating = !local.exists();
         HeadResult head = isNeedUpdate(url, local, creating);
         if (head.needUpdate) {
-            setStatus("Обновление " + file + "...");
+            SplashStatus.setStatus("Обновление " + file + "...");
             File parent = local.getAbsoluteFile().getParentFile();
             parent.mkdirs();
             File neo = new File(parent, local.getName() + ".tmp");
@@ -228,7 +204,7 @@ final class FileLoader extends IFileLoader {
                     }
                 } catch (IOException ex) {
                     if (!noTrace) {
-                        ex.printStackTrace(System.err);
+                        SplashStatus.error(ex);
                         if (ex instanceof ConnectException) {
                             connectionProblem = true;
                         }
@@ -320,7 +296,7 @@ final class FileLoader extends IFileLoader {
                 try {
                     return loadApplicationsAttempt(file);
                 } catch (IOException ex) {
-                    ex.printStackTrace(System.err);
+                    SplashStatus.error(ex);
                     if (ex instanceof ConnectException) {
                         connectionProblem = true;
                     }

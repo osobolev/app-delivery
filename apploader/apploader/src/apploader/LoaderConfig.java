@@ -1,8 +1,9 @@
 package apploader;
 
 import apploader.client.AppInfo;
-import apploader.common.ConfigReader;
 import apploader.client.ProxyConfig;
+import apploader.client.SplashStatus;
+import apploader.common.ConfigReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +22,6 @@ final class LoaderConfig {
         this.proxy = proxy;
     }
 
-    static LoaderConfig offline() {
-        return new LoaderConfig(null, false, null);
-    }
-
     static LoaderConfig load(LoaderGui gui) {
         Properties apploaderProperties = new Properties();
         ConfigReader.readAppProperties(new File("."), apploaderProperties);
@@ -39,7 +36,7 @@ final class LoaderConfig {
         try {
             httpUrl = ConfigReader.getServerUrl(apploaderProperties);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            SplashStatus.error(ex);
             gui.showError(ex.getMessage());
             return null;
         }
