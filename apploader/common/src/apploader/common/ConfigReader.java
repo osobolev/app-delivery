@@ -18,7 +18,7 @@ public final class ConfigReader {
     /**
      * Encoding used for app-delivery config files (apploader.properties, install.properties, *_jars.list, proxy.properties)
      */
-    public static final String CHARSET = "Cp1251";
+    public static final String CHARSET = "UTF-8";
 
     public interface LineWorker {
 
