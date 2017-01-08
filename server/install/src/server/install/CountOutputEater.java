@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 public final class CountOutputEater implements Runnable {
 
@@ -12,7 +13,7 @@ public final class CountOutputEater implements Runnable {
     private final PercentCell percentCell;
 
     public CountOutputEater(InputStream in, int total, PercentCell percentCell) {
-        this.in = new BufferedReader(new InputStreamReader(in));
+        this.in = new BufferedReader(new InputStreamReader(in, Charset.defaultCharset()));
         this.total = total;
         this.percentCell = percentCell;
     }

@@ -16,14 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 
 @SuppressWarnings({
-    "ResultOfMethodCallIgnored", "AssignmentToStaticFieldFromInstanceMethod",
-    "CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"
+    "ResultOfMethodCallIgnored", "AssignmentToStaticFieldFromInstanceMethod"
 })
 public final class AppLoader implements AppInfo.AppClassLoader {
-
-    private static final String GLOBAL_APP_LIST = "global_app.list";
-
-    private static final String APPLICATION_PROPERTY = "application";
 
     private static final class AppProperties {
 
@@ -72,7 +67,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     private String updateGlobal(String appToRun) {
-        List<Application> allApplications = fileLoader.loadApplications(GLOBAL_APP_LIST, appToRun);
+        List<Application> allApplications = fileLoader.loadApplications(AppCommon.GLOBAL_APP_LIST, appToRun);
         if (allApplications == null)
             return null;
         AppInfo.applications = allApplications.toArray(new Application[allApplications.size()]);
@@ -168,7 +163,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         try {
             AppCommon.generateBatFile(file, app);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            AppCommon.error(ex);
         }
     }
 
@@ -177,20 +172,20 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         if (file.exists() && !freshUpdater)
             return false;
         try {
-            PrintWriter pw = new PrintWriter(file);
+            PrintWriter pw = new PrintWriter(file, AppCommon.BAT_CHARSET);
             pw.println("@echo off");
             pw.println("call setjava.bat");
             pw.println("%JAVABIN% -jar tzupdater.jar -u -v");
             pw.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            AppCommon.error(ex);
         }
         try {
             ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "tzupdater.bat");
             Process process = pb.start();
             process.waitFor();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            AppCommon.error(ex);
             file.delete();
         }
         return true;
@@ -260,7 +255,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 return false;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            AppCommon.error(ex);
             gui.showError(ex.toString());
             return false;
         }
@@ -269,7 +264,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     private static boolean doRun(String[] args) {
         LoaderGui gui = new LoaderGui();
         boolean offline = System.getProperty("offline") != null;
-        String app = System.getProperty(APPLICATION_PROPERTY);
+        String app = System.getProperty(AppCommon.APPLICATION_PROPERTY);
         IFileLoader fileLoader;
         if (offline) {
             fileLoader = new OfflineFileLoader(gui);

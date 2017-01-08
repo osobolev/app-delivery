@@ -7,8 +7,17 @@ import java.util.Properties;
 
 public final class ConfigReader {
 
+    /**
+     * Name of the client config file
+     */
     public static final String APPLOADER_PROPERTIES = "apploader.properties";
+    /**
+     * Name of the URL property in apploader.properties
+     */
     public static final String HTTP_SERVER_PROPERTY = "server.url";
+    /**
+     * Encoding used for app-delivery config files (apploader.properties, install.properties, *_jars.list, proxy.properties)
+     */
     public static final String CHARSET = "Cp1251";
 
     public interface LineWorker {
@@ -66,7 +75,7 @@ public final class ConfigReader {
                 }
             });
         } catch (IOException ex) {
-            ex.printStackTrace();
+            AppCommon.error(ex);
         }
     }
 

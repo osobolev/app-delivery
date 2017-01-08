@@ -3,12 +3,14 @@ package apploader;
 import apploader.client.Application;
 import apploader.client.ProxyConfig;
 import apploader.client.SplashStatus;
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,24 +60,6 @@ final class FileLoader extends IFileLoader {
         }
     }
 
-    private static boolean isGood(char ch) {
-        if (ch >= ' ' && ch < 127)
-            return true;
-        Character.UnicodeBlock block = Character.UnicodeBlock.of(ch);
-        return block != null && Character.UnicodeBlock.CYRILLIC.equals(block);
-    }
-
-    private static int countGood(String str) {
-        int good = 0;
-        for (int i = 0; i < str.length(); i++) {
-            char ch = str.charAt(i);
-            if (isGood(ch)) {
-                good++;
-            }
-        }
-        return good;
-    }
-
     private HeadResult isNeedUpdate(URL url, File local, boolean creating) throws IOException {
         HttpURLConnection conn = null;
         try {
@@ -100,17 +84,7 @@ final class FileLoader extends IFileLoader {
             } else {
                 String response = conn.getResponseMessage();
                 if (response != null) {
-                    char[] chars = response.toCharArray();
-                    byte[] bytes = new byte[chars.length];
-                    for (int i = 0; i < chars.length; i++)
-                        bytes[i] = (byte) chars[i];
-                    String response2 = new String(bytes);
-                    String realResponse;
-                    if (countGood(response) > countGood(response2)) {
-                        realResponse = response;
-                    } else {
-                        realResponse = response2;
-                    }
+                    String realResponse = URLDecoder.decode(response, "UTF-8");
                     throw new IOException(code + ": " + realResponse);
                 } else {
                     throw new IOException("Ошибка " + code);
@@ -204,7 +178,7 @@ final class FileLoader extends IFileLoader {
                     }
                 } catch (IOException ex) {
                     if (!noTrace) {
-                        SplashStatus.error(ex);
+                        AppCommon.error(ex);
                         if (ex instanceof ConnectException) {
                             connectionProblem = true;
                         }
@@ -296,7 +270,7 @@ final class FileLoader extends IFileLoader {
                 try {
                     return loadApplicationsAttempt(file);
                 } catch (IOException ex) {
-                    SplashStatus.error(ex);
+                    AppCommon.error(ex);
                     if (ex instanceof ConnectException) {
                         connectionProblem = true;
                     }

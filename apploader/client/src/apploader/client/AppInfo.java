@@ -1,9 +1,10 @@
 package apploader.client;
 
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -89,7 +90,7 @@ public final class AppInfo {
     static void storeProxy(ProxyConfig proxy) {
         try {
             File file = new File(PROXY_PROPERTIES);
-            PrintWriter pw = new PrintWriter(file);
+            PrintWriter pw = new PrintWriter(file, ConfigReader.CHARSET);
             if (proxy.proxy.type() != Proxy.Type.DIRECT) {
                 pw.println(PTYPE_PROPERTY + "=" + proxy.proxy.type().name());
                 pw.println(PADDR_PROPERTY + "=" + proxy.proxy.address().toString());
@@ -97,8 +98,8 @@ public final class AppInfo {
                 pw.println(PPASS_PROPERTY + "=" + proxy.password);
             }
             pw.close();
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+        } catch (IOException ex) {
+            AppCommon.error(ex);
         }
     }
 }

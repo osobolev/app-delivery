@@ -2,9 +2,9 @@ package apploader.client;
 
 import java.awt.*;
 
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public final class SplashStatus {
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void setStatus(String status) {
         if (status.length() > 0) {
             System.out.println(status);
@@ -26,9 +26,5 @@ public final class SplashStatus {
         int y1 = y0 + fm.getAscent();
         g.drawString(status, 10, y1);
         splash.update();
-    }
-
-    public static void error(Throwable ex) {
-        ex.printStackTrace(System.err);
     }
 }

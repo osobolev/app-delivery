@@ -2,8 +2,6 @@ package server.http;
 
 import server.install.InstallBuilder;
 
-import java.io.IOException;
-
 final class InstallState {
 
     final InstallBuilder builder;
@@ -14,7 +12,7 @@ final class InstallState {
         this.builder = builder;
     }
 
-    synchronized void createInstaller(boolean init, final InstallServletBase is) throws IOException {
+    synchronized void createInstaller(boolean init, final InstallServletBase is) {
         if (creating || builder.getReadyInstaller() != null)
             return;
         if (!init && error.length() > 0)

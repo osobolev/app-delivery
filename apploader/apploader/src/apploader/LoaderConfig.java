@@ -2,7 +2,7 @@ package apploader;
 
 import apploader.client.AppInfo;
 import apploader.client.ProxyConfig;
-import apploader.client.SplashStatus;
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 
 import java.io.File;
@@ -36,7 +36,7 @@ final class LoaderConfig {
         try {
             httpUrl = ConfigReader.getServerUrl(apploaderProperties);
         } catch (IOException ex) {
-            SplashStatus.error(ex);
+            AppCommon.error(ex);
             gui.showError(ex.getMessage());
             return null;
         }

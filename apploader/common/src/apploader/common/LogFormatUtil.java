@@ -1,9 +1,7 @@
 package apploader.common;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -14,15 +12,20 @@ public final class LogFormatUtil {
             return DateFormat.getDateTimeInstance();
         }
     };
+    private static final Charset LOG_CHARSET = Charset.defaultCharset();
 
     public static String getTimestamp() {
         return TIMESTAMP_FORMAT.get().format(new Date());
     }
 
+    private static PrintWriter pw(OutputStream os) {
+        return new PrintWriter(new OutputStreamWriter(os, LOG_CHARSET), true);
+    }
+
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static PrintWriter open(String fileName) {
         try {
-            PrintWriter fileOutput = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)), true);
+            PrintWriter fileOutput = pw(new BufferedOutputStream(new FileOutputStream(fileName, true)));
             start(fileOutput);
             return fileOutput;
         } catch (IOException ex) {
@@ -33,7 +36,7 @@ public final class LogFormatUtil {
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static PrintWriter getWriter(PrintWriter fileOutput) {
-        return fileOutput == null ? new PrintWriter(System.out, true) : fileOutput;
+        return fileOutput == null ? pw(System.out) : fileOutput;
     }
 
     public static void start(PrintWriter pw) {

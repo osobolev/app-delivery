@@ -85,7 +85,7 @@ public abstract class InstallServletBase extends AppServletBase {
             IOUtils.copyFile(resp.getOutputStream(), installer);
         } catch (BuildException ex) {
             getLogger().error(ex.getMessage());
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, ex.getMessage());
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, URLEncoder.encode(ex.getMessage(), "UTF-8"));
         }
     }
 

@@ -1,10 +1,14 @@
 package server.install;
 
+import apploader.common.AppCommon;
+import apploader.common.ConfigReader;
 import server.install.packers.InnoPacker;
 import server.install.packers.RarPacker;
 import server.install.packers.ZipPacker;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -20,13 +24,14 @@ public final class InstallBuilder {
 
     private final List<Packer> packers = Arrays.asList(new InnoPacker(), new RarPacker(), new ZipPacker());
 
-    private Properties installProperties = null;
+    private final Properties installProperties = new Properties();
 
     public InstallBuilder(SourceFiles src) {
         this.root = src.root;
         this.baseDir = src.baseDir;
         this.buildDir = new File(baseDir, "install");
         this.depends = src.depends;
+        ConfigReader.readProperties(installProperties, new File(root, "install.properties"));
     }
 
     private static void clean(File dir) {
@@ -77,9 +82,9 @@ public final class InstallBuilder {
         }
     }
 
-    private int buildInstaller(Properties installProps) throws IOException, BuildException {
+    private int buildInstaller() throws IOException, BuildException {
         clean(buildDir);
-        String javaHomePath = installProps.getProperty("java.dir");
+        String javaHomePath = installProperties.getProperty("java.dir");
         if (javaHomePath == null) {
             javaHomePath = System.getProperty("java.home");
         }
@@ -94,7 +99,7 @@ public final class InstallBuilder {
             depend.checkExists();
             depend.copyTo(destFile);
         }
-        PrintWriter pw = new PrintWriter(new File(buildDir, "setjava.bat"));
+        PrintWriter pw = new PrintWriter(new File(buildDir, "setjava.bat"), AppCommon.BAT_CHARSET);
         pw.println("set JAVABIN=start jre\\bin\\javaw.exe");
         pw.close();
         countFiles++;
@@ -102,9 +107,8 @@ public final class InstallBuilder {
         return countFiles;
     }
 
-    private File getResultFile(Packer packer) throws IOException {
-        Properties installProps = getInstallProps();
-        String baseName = installProps.getProperty("base.name", "install");
+    private File getResultFile(Packer packer) {
+        String baseName = installProperties.getProperty("base.name", "install");
         return new File(baseDir, packer.getResultFileName(baseName));
     }
 
@@ -119,7 +123,7 @@ public final class InstallBuilder {
         return false;
     }
 
-    public File getReadyInstaller() throws IOException {
+    public File getReadyInstaller() {
         for (Packer packer : packers) {
             File result = getResultFile(packer);
             if (!isModified(result))
@@ -128,34 +132,12 @@ public final class InstallBuilder {
         return null;
     }
 
-    private Properties loadInstallProps() throws IOException {
-        File properties = new File(root, "install.properties");
-        Properties props = new Properties();
-        if (properties.canRead()) {
-            Reader rdr = new FileReader(properties);
-            try {
-                props.load(rdr);
-            } finally {
-                IOUtils.close(rdr);
-            }
-        }
-        return props;
-    }
-
-    private synchronized Properties getInstallProps() throws IOException {
-        if (installProperties == null) {
-            installProperties = loadInstallProps();
-        }
-        return installProperties;
-    }
-
     public File getInstaller() throws IOException, BuildException {
         File ready = getReadyInstaller();
         if (ready != null)
             return ready;
-        Properties installProps = getInstallProps();
-        int countFiles = buildInstaller(installProps);
-        BuildInfo info = new BuildInfo(root, buildDir, countFiles, installProps);
+        int countFiles = buildInstaller();
+        BuildInfo info = new BuildInfo(root, buildDir, countFiles, installProperties);
         for (Packer packer : packers) {
             File result = getResultFile(packer);
             if (packer.buildResultFile(info, percentCell, result)) {

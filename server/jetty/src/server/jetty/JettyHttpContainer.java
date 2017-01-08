@@ -1,5 +1,6 @@
 package server.jetty;
 
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -63,7 +64,7 @@ public final class JettyHttpContainer {
         ListServletBase listServlet = new ListServlet(applications);
         ServletHolder listHolder = new ServletHolder(listServlet);
         listHolder.setName("list");
-        ctx.addServlet(listHolder, "/global_app.list");
+        ctx.addServlet(listHolder, "/" + AppCommon.GLOBAL_APP_LIST);
 
         ctx.addServlet(new ServletHolder(new DefaultServlet()), "/");
     }
