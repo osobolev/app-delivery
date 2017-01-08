@@ -3,7 +3,7 @@ subprojects {
     apply plugin: 'maven'
 
     group = 'com.github.osobolev.app-delivery'
-    version = '2.0'
+    version = '2.1'
 
     sourceCompatibility = '1.6'
     targetCompatibility = '1.6'
