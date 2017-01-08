@@ -9,7 +9,7 @@ subprojects {
     targetCompatibility = '1.6'
                              
     compileJava.options.compilerArgs << '-Xlint:-options,deprecation,unchecked'
-    compileJava.options.encoding = 'windows-1251'
+    compileJava.options.encoding = 'UTF-8'
 
     repositories {
         mavenLocal()
