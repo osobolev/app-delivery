@@ -3,7 +3,7 @@ subprojects {
     apply plugin: 'maven'
 
     group = 'com.github.osobolev.app-delivery.sample'
-    version = '1.0'
+    version = '1.1'
 
     targetCompatibility = '1.6'
                              
@@ -47,7 +47,7 @@ project(':sample_db') {
 
 project(':sample_client') {
     dependencies {
-        compileOnly 'com.github.osobolev.app-delivery:apploader-client:2.0'
+        compileOnly 'com.github.osobolev.app-delivery:apploader-client:2.1'
         compile 'com.github.osobolev.sqlg2:sqlg2-client:4.0'
         compile(project(':sample_db')) {
             exclude module: 'sqlg2-runtime'
@@ -67,11 +67,11 @@ project(':sample_server') {
 
     dependencies {
         compile 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
-        compile 'com.github.osobolev.app-delivery:server-war:2.0'
+        compile 'com.github.osobolev.app-delivery:server-war:2.1'
         runtime project(':sample_db')
 
-        webfiles 'com.github.osobolev.app-delivery:server-files:2.0@war'
-        webapploader 'com.github.osobolev.app-delivery:apploader:2.0'
+        webfiles 'com.github.osobolev.app-delivery:server-files:2.1@war'
+        webapploader 'com.github.osobolev.app-delivery:apploader:2.1'
         webdistr project(':sample_client')
     }
 
