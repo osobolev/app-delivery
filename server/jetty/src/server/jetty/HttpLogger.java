@@ -1,9 +1,10 @@
 package server.jetty;
 
+import org.eclipse.jetty.util.log.AbstractLogger;
 import org.eclipse.jetty.util.log.Logger;
 import sqlg2.db.SQLGLogger;
 
-public final class HttpLogger implements Logger {
+public final class HttpLogger extends AbstractLogger {
 
     private final SQLGLogger logger;
 
@@ -79,7 +80,7 @@ public final class HttpLogger implements Logger {
         return buf.toString();
     }
 
-    public Logger getLogger(String name) {
+    protected Logger newLogger(String s) {
         return this;
     }
 }
