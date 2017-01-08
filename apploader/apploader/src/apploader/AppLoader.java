@@ -103,7 +103,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 if (jar) {
                     FileResult jarResult = fileLoader.receiveFile(right, corejar);
                     if (corejar && jarResult.isFailCopy) {
-                        gui.showWarning("Обновлен загрузчик приложения, перезапустите его");
+                        gui.showWarning("РћР±РЅРѕРІР»РµРЅ Р·Р°РіСЂСѓР·С‡РёРє РїСЂРёР»РѕР¶РµРЅРёСЏ, РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚Рµ РµРіРѕ");
                         return false;
                     }
                     File file = jarResult.file;
@@ -124,7 +124,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                         return false;
                     if ("tzupdater.jar".equals(right)) {
                         if (updateTimeZones(fileResult.updated)) {
-                            gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
+                            gui.showWarning("РћР±РЅРѕРІР»РµРЅС‹ РґР°РЅРЅС‹Рµ РІСЂРµРјРµРЅРЅС‹С… Р·РѕРЅ, РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚Рµ РїСЂРёР»РѕР¶РµРЅРёРµ");
                             return false;
                         }
                     }
@@ -141,7 +141,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
 
     private Class<?> loadClass(AppProperties properties) throws Exception {
         if (properties.mainClass == null) {
-            gui.showError("Не указан атрибут mainClass");
+            gui.showError("РќРµ СѓРєР°Р·Р°РЅ Р°С‚СЂРёР±СѓС‚ mainClass");
             return null;
         }
         AppInfo.loader = this;
@@ -205,7 +205,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         } else {
             final Method main = cls.getMethod("main", String[].class);
             if (main == null || !Modifier.isStatic(main.getModifiers())) {
-                gui.showError("Главный класс не является AppFactory и не содержит main");
+                gui.showError("Р“Р»Р°РІРЅС‹Р№ РєР»Р°СЃСЃ РЅРµ СЏРІР»СЏРµС‚СЃСЏ AppFactory Рё РЅРµ СЃРѕРґРµСЂР¶РёС‚ main");
                 return null;
             }
             return new AppRunner() {
@@ -220,25 +220,25 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         if (!offline) {
             String available = updateGlobal(app);
             if (available == null) {
-                gui.showError("Нет доступа к приложениям на сервере");
+                gui.showError("РќРµС‚ РґРѕСЃС‚СѓРїР° Рє РїСЂРёР»РѕР¶РµРЅРёСЏРј РЅР° СЃРµСЂРІРµСЂРµ");
                 return false;
             }
             if (app == null) {
                 if (available.length() > 0) {
-                    gui.showError("Не указано приложение для запуска.\nДоступные приложения:\n" + available);
+                    gui.showError("РќРµ СѓРєР°Р·Р°РЅРѕ РїСЂРёР»РѕР¶РµРЅРёРµ РґР»СЏ Р·Р°РїСѓСЃРєР°.\nР”РѕСЃС‚СѓРїРЅС‹Рµ РїСЂРёР»РѕР¶РµРЅРёСЏ:\n" + available);
                 } else {
-                    gui.showError("Не указано приложение для запуска");
+                    gui.showError("РќРµ СѓРєР°Р·Р°РЅРѕ РїСЂРёР»РѕР¶РµРЅРёРµ РґР»СЏ Р·Р°РїСѓСЃРєР°");
                 }
                 return false;
             }
             if ("install".equalsIgnoreCase(app)) {
                 if (available.length() <= 0) {
-                    gui.showError("Нет доступных приложений");
+                    gui.showError("РќРµС‚ РґРѕСЃС‚СѓРїРЅС‹С… РїСЂРёР»РѕР¶РµРЅРёР№");
                     return false;
                 } else {
                     if (args.length > 0) {
                         String arg = args[0].trim();
-                        String message = arg.length() <= 0 || "-".equals(arg) ? "Установка программы завершена!" : arg;
+                        String message = arg.length() <= 0 || "-".equals(arg) ? "РЈСЃС‚Р°РЅРѕРІРєР° РїСЂРѕРіСЂР°РјРјС‹ Р·Р°РІРµСЂС€РµРЅР°!" : arg;
                         gui.showSuccess(message);
                     }
                     System.exit(0);
@@ -277,7 +277,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 System.exit(0);
                 return true;
             } else if (config.httpUrl == null) {
-                gui.showError("Не задан адрес сервера");
+                gui.showError("РќРµ Р·Р°РґР°РЅ Р°РґСЂРµСЃ СЃРµСЂРІРµСЂР°");
                 return false;
             }
             fileLoader = new FileLoader(gui, config.httpUrl, config.doNotShow, config.proxy);

@@ -15,7 +15,7 @@ public class SingleAppServlet extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
         HttpDispatcher http = InitListener.getHttpDispatcher(getServletContext());
         if (http == null) {
-            String error = "Ошибка при инициализации сервера";
+            String error = "РћС€РёР±РєР° РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё СЃРµСЂРІРµСЂР°";
             InitListener.getLogger(getServletContext()).error(error);
             HttpDispatcher.writeResponse(resp.getOutputStream(), null, new SQLException(error));
             return;

@@ -27,11 +27,11 @@ final class HttpConfig {
             new Class<?>[] {Integer.class, String.class, Boolean.class}
         );
         if (map.get(OP_HELP) != null) {
-            System.out.println("Запуск HTTP-сервера:");
-            System.out.println("http-server.bat <опции>");
-            System.out.println("  " + OP_PORT + ":<порт>    - запустить сервер на этом порту");
-            System.out.println("  " + OP_ROOT + ":<каталог> - корневой каталог сервера");
-            System.out.println("  " + OP_HELP + "           - эта справка");
+            System.out.println("Р—Р°РїСѓСЃРє HTTP-СЃРµСЂРІРµСЂР°:");
+            System.out.println("http-server.bat <РѕРїС†РёРё>");
+            System.out.println("  " + OP_PORT + ":<РїРѕСЂС‚>    - Р·Р°РїСѓСЃС‚РёС‚СЊ СЃРµСЂРІРµСЂ РЅР° СЌС‚РѕРј РїРѕСЂС‚Сѓ");
+            System.out.println("  " + OP_ROOT + ":<РєР°С‚Р°Р»РѕРі> - РєРѕСЂРЅРµРІРѕР№ РєР°С‚Р°Р»РѕРі СЃРµСЂРІРµСЂР°");
+            System.out.println("  " + OP_HELP + "           - СЌС‚Р° СЃРїСЂР°РІРєР°");
         }
         Integer port = (Integer) map.get(OP_PORT);
         String sRoot = (String) map.get(OP_ROOT);
@@ -64,7 +64,7 @@ final class HttpConfig {
                         try {
                             value = Integer.valueOf(arg);
                         } catch (NumberFormatException ex) {
-                            throw new ServerInitException("Не число для " + option + ": " + arg);
+                            throw new ServerInitException("РќРµ С‡РёСЃР»Рѕ РґР»СЏ " + option + ": " + arg);
                         }
                     } else if (Boolean.class.equals(types[j])) {
                         value = Boolean.TRUE;

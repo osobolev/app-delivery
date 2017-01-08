@@ -34,12 +34,12 @@ public class InitListener implements ServletContextListener {
             initClassName = ctx.getInitParameter("authFactory");
         }
         if (initClassName == null) {
-            ctx.log("Не задан параметр appInit");
+            ctx.log("РќРµ Р·Р°РґР°РЅ РїР°СЂР°РјРµС‚СЂ appInit");
         } else {
             try {
                 return (AppInit) Class.forName(initClassName).newInstance();
             } catch (Exception ex) {
-                ctx.log("Невозможно создать объект " + initClassName, ex);
+                ctx.log("РќРµРІРѕР·РјРѕР¶РЅРѕ СЃРѕР·РґР°С‚СЊ РѕР±СЉРµРєС‚ " + initClassName, ex);
             }
         }
         return null;

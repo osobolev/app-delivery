@@ -17,7 +17,7 @@ public final class ProxyDialog extends JDialog {
     }
 
     private final ErrorShow error;
-    private final JCheckBox cbUseProxy = new JCheckBox("Использовать прокси-сервер");
+    private final JCheckBox cbUseProxy = new JCheckBox("РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РїСЂРѕРєСЃРё-СЃРµСЂРІРµСЂ");
     private final JComboBox chType = new JComboBox(new Proxy.Type[] {Proxy.Type.HTTP, Proxy.Type.SOCKS});
     private final JTextField tfHost = new JTextField(20);
     private final JTextField tfPort = new JTextField(5);
@@ -31,7 +31,7 @@ public final class ProxyDialog extends JDialog {
     }
 
     public ProxyDialog(Component owner, ProxyConfig proxy, URL url, ErrorShow error) {
-        super(owner == null ? null : SwingUtilities.getWindowAncestor(owner), "Настройки прокси", ModalityType.DOCUMENT_MODAL);
+        super(owner == null ? null : SwingUtilities.getWindowAncestor(owner), "РќР°СЃС‚СЂРѕР№РєРё РїСЂРѕРєСЃРё", ModalityType.DOCUMENT_MODAL);
         this.error = error;
 
         if (proxy != null && proxy.proxy.type() != Proxy.Type.DIRECT) {
@@ -60,7 +60,7 @@ public final class ProxyDialog extends JDialog {
         }
 
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close");
-        AbstractAction closeAction = new AbstractAction("Отмена") {
+        AbstractAction closeAction = new AbstractAction("РћС‚РјРµРЅР°") {
             public void actionPerformed(ActionEvent e) {
                 dispose();
             }
@@ -73,16 +73,16 @@ public final class ProxyDialog extends JDialog {
         add(up, BorderLayout.NORTH);
 
         JPanel main1 = new JPanel();
-        main1.add(new JLabel("Тип:"));
+        main1.add(new JLabel("РўРёРї:"));
         main1.add(chType);
-        main1.add(new JLabel("Адрес:"));
+        main1.add(new JLabel("РђРґСЂРµСЃ:"));
         main1.add(tfHost);
-        main1.add(new JLabel("Порт:"));
+        main1.add(new JLabel("РџРѕСЂС‚:"));
         main1.add(tfPort);
         JPanel main2 = new JPanel();
-        main2.add(new JLabel("Пользователь:"));
+        main2.add(new JLabel("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ:"));
         main2.add(tfUser);
-        main2.add(new JLabel("Пароль:"));
+        main2.add(new JLabel("РџР°СЂРѕР»СЊ:"));
         main2.add(tfPass);
         JPanel main = new JPanel(new BorderLayout());
         main.add(main1, BorderLayout.CENTER);
@@ -143,19 +143,19 @@ public final class ProxyDialog extends JDialog {
         if (!cbUseProxy.isSelected())
             return ProxyConfig.NO_PROXY;
         if (tfHost.getText().trim().isEmpty()) {
-            showError("Введите адрес прокси-сервера");
+            showError("Р’РІРµРґРёС‚Рµ Р°РґСЂРµСЃ РїСЂРѕРєСЃРё-СЃРµСЂРІРµСЂР°");
             return null;
         }
         String host = tfHost.getText();
         if (tfPort.getText().trim().isEmpty()) {
-            showError("Введите номер порта прокси-сервера");
+            showError("Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РїРѕСЂС‚Р° РїСЂРѕРєСЃРё-СЃРµСЂРІРµСЂР°");
             return null;
         }
         int port;
         try {
             port = Integer.parseInt(tfPort.getText());
         } catch (NumberFormatException nfex) {
-            showError("Введите число для порта прокси-сервера");
+            showError("Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ РґР»СЏ РїРѕСЂС‚Р° РїСЂРѕРєСЃРё-СЃРµСЂРІРµСЂР°");
             return null;
         }
         InetSocketAddress address = InetSocketAddress.createUnresolved(host, port);

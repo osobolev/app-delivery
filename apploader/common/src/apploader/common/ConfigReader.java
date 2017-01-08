@@ -98,7 +98,7 @@ public final class ConfigReader {
         try {
             return new URL("http://" + serverUrl);
         } catch (MalformedURLException ex) {
-            throw new IOException("Неправильно задан адрес " + serverUrl, ex);
+            throw new IOException("РќРµРїСЂР°РІРёР»СЊРЅРѕ Р·Р°РґР°РЅ Р°РґСЂРµСЃ " + serverUrl, ex);
         }
     }
 }

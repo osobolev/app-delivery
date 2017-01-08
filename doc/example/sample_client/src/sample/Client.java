@@ -20,6 +20,6 @@ public final class Client extends SimpleApp {
         IRemoteDBInterface conn = new SafeDBInterface(logger, factory.openConnection("postgres", "admin123"));
         IClientDB db = conn.getSimpleTransaction().getInterface(IClientDB.class);
         Timestamp t = db.getTime();
-        JOptionPane.showMessageDialog(null, "Текущее время: " + DateFormat.getDateTimeInstance().format(t));
+        JOptionPane.showMessageDialog(null, "РўРµРєСѓС‰РµРµ РІСЂРµРјСЏ: " + DateFormat.getDateTimeInstance().format(t));
     }
 }

@@ -11,8 +11,8 @@ import java.net.URL;
 
 final class LoaderGui {
 
-    private static final String WARNING = "Предупреждение";
-    private static final String ERROR = "Ошибка";
+    private static final String WARNING = "РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ";
+    private static final String ERROR = "РћС€РёР±РєР°";
 
     private boolean lnfSet = false;
 
@@ -25,7 +25,7 @@ final class LoaderGui {
         setLnF();
         JButton[] options = new JButton[optionNames.length];
         JPanel panel = new JPanel(new BasicOptionPaneUI.ButtonAreaLayout(true, 5));
-        JButton wideButton = new JButton("Отмена");
+        JButton wideButton = new JButton("РћС‚РјРµРЅР°");
         int prefWidth = wideButton.getPreferredSize().width;
         for (int i = 0; i < optionNames.length; i++) {
             options[i] = new JButton(optionNames[i]);
@@ -36,7 +36,7 @@ final class LoaderGui {
             }
             panel.add(options[i]);
         }
-        JCheckBox cbShow = new JCheckBox("Не показывать больше", false);
+        JCheckBox cbShow = new JCheckBox("РќРµ РїРѕРєР°Р·С‹РІР°С‚СЊ Р±РѕР»СЊС€Рµ", false);
         if (check != null || proxy != null) {
             final JPanel chk = new JPanel(new BorderLayout());
             JPanel optPanel = new JPanel();
@@ -46,7 +46,7 @@ final class LoaderGui {
                 optPanel.add(cbShow);
             }
             if (proxy != null) {
-                JButton btnProxy = new JButton(new AbstractAction("Изменить прокси") {
+                JButton btnProxy = new JButton(new AbstractAction("РР·РјРµРЅРёС‚СЊ РїСЂРѕРєСЃРё") {
                     public void actionPerformed(ActionEvent e) {
                         showProxyDialog(chk, proxy.getProxy(), proxy.getUrl(), proxy);
                     }
@@ -129,7 +129,7 @@ final class LoaderGui {
     void showSuccess(String message) {
         showDialogInternal(
             null, message,
-            "Успешное завершение", JOptionPane.INFORMATION_MESSAGE, new String[] {"OK"}, null,
+            "РЈСЃРїРµС€РЅРѕРµ Р·Р°РІРµСЂС€РµРЅРёРµ", JOptionPane.INFORMATION_MESSAGE, new String[] {"OK"}, null,
             null, null
         );
     }
@@ -138,7 +138,7 @@ final class LoaderGui {
         return showDialogInternal(
             null, message,
             ERROR, JOptionPane.ERROR_MESSAGE,
-            new String[] {"Отмена", "Повторить"}, new Result[] {Result.ABORT, Result.RETRY},
+            new String[] {"РћС‚РјРµРЅР°", "РџРѕРІС‚РѕСЂРёС‚СЊ"}, new Result[] {Result.ABORT, Result.RETRY},
             null, loader
         );
     }
@@ -147,7 +147,7 @@ final class LoaderGui {
         return showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE,
-            new String[] {"Продолжить", "Отмена"}, new Result[] {Result.IGNORE, Result.ABORT},
+            new String[] {"РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "РћС‚РјРµРЅР°"}, new Result[] {Result.IGNORE, Result.ABORT},
             loader, null
         );
     }
@@ -156,7 +156,7 @@ final class LoaderGui {
         return showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE,
-            new String[] {"Пропустить", "Отмена", "Повторить"}, new Result[] {Result.IGNORE, Result.ABORT, Result.RETRY},
+            new String[] {"РџСЂРѕРїСѓСЃС‚РёС‚СЊ", "РћС‚РјРµРЅР°", "РџРѕРІС‚РѕСЂРёС‚СЊ"}, new Result[] {Result.IGNORE, Result.ABORT, Result.RETRY},
             loader, loader
         );
     }

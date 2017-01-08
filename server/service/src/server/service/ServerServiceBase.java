@@ -39,7 +39,7 @@ public abstract class ServerServiceBase extends AbstractService {
                 }
             }
             if (container.getComponents() <= 0) {
-                container.error("Нет ни одного серверного компонента");
+                container.error("РќРµС‚ РЅРё РѕРґРЅРѕРіРѕ СЃРµСЂРІРµСЂРЅРѕРіРѕ РєРѕРјРїРѕРЅРµРЅС‚Р°");
                 System.exit(3);
             } else {
                 container.init(port, rootDir);

@@ -15,10 +15,10 @@ import java.io.StringWriter;
 final class ComponentPanel extends JPanel {
 
     private final JLabel lbl;
-    private final JCheckBox cbControl = new JCheckBox("Остановить/запустить");
+    private final JCheckBox cbControl = new JCheckBox("РћСЃС‚Р°РЅРѕРІРёС‚СЊ/Р·Р°РїСѓСЃС‚РёС‚СЊ");
     private final JLabel lblControl;
-    private final SyncBox cbTrace = new SyncBox(new JCheckBox("Все сообщения", true));
-    private final SyncBox cbSqlTrace = new SyncBox(new JCheckBox("Выводить SQL", false));
+    private final SyncBox cbTrace = new SyncBox(new JCheckBox("Р’СЃРµ СЃРѕРѕР±С‰РµРЅРёСЏ", true));
+    private final SyncBox cbSqlTrace = new SyncBox(new JCheckBox("Р’С‹РІРѕРґРёС‚СЊ SQL", false));
     private final JTextArea taLog = new JTextArea(15, 80);
 
     private final AppServerComponent comp;
@@ -29,11 +29,11 @@ final class ComponentPanel extends JPanel {
         this.lblControl = lblControl;
 
         taLog.setEditable(false);
-        lbl = new JLabel("Сервер '" + comp.getName() + "'", JLabel.LEFT);
+        lbl = new JLabel("РЎРµСЂРІРµСЂ '" + comp.getName() + "'", JLabel.LEFT);
         lbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
         JPanel mode = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        mode.add(new JLabel("Вывод:"));
+        mode.add(new JLabel("Р’С‹РІРѕРґ:"));
         mode.add(cbTrace.getVisual());
         mode.add(cbSqlTrace.getVisual());
 

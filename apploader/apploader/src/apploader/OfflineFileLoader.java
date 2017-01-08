@@ -20,7 +20,7 @@ final class OfflineFileLoader extends IFileLoader {
             return new FileResult(local, false, false);
         } else {
             if (!silent) {
-                gui.showError("Файл " + file + " отсутствует");
+                gui.showError("Р¤Р°Р№Р» " + file + " РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚");
             }
             return new FileResult(null, false, false);
         }

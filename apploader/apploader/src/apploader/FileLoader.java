@@ -49,7 +49,7 @@ final class FileLoader extends IFileLoader {
     }
 
     private String connectionErrorMessage() {
-        return "Ошибка соединения с " + base;
+        return "РћС€РёР±РєР° СЃРѕРµРґРёРЅРµРЅРёСЏ СЃ " + base;
     }
 
     private String translate(IOException ex) {
@@ -87,7 +87,7 @@ final class FileLoader extends IFileLoader {
                     String realResponse = URLDecoder.decode(response, "UTF-8");
                     throw new IOException(code + ": " + realResponse);
                 } else {
-                    throw new IOException("Ошибка " + code);
+                    throw new IOException("РћС€РёР±РєР° " + code);
                 }
             }
         } finally {
@@ -127,7 +127,7 @@ final class FileLoader extends IFileLoader {
         boolean creating = !local.exists();
         HeadResult head = isNeedUpdate(url, local, creating);
         if (head.needUpdate) {
-            SplashStatus.setStatus("Обновление " + file + "...");
+            SplashStatus.setStatus("РћР±РЅРѕРІР»РµРЅРёРµ " + file + "...");
             File parent = local.getAbsoluteFile().getParentFile();
             parent.mkdirs();
             File neo = new File(parent, local.getName() + ".tmp");
@@ -171,7 +171,7 @@ final class FileLoader extends IFileLoader {
                 try {
                     ReceiveResult rr = receiveFileAttempt(local, file);
                     if (rr == ReceiveResult.UPDATE_FAIL) {
-                        Result ans = showFileError(local, silent, file, "Ошибка перезаписи новой версии файла", false);
+                        Result ans = showFileError(local, silent, file, "РћС€РёР±РєР° РїРµСЂРµР·Р°РїРёСЃРё РЅРѕРІРѕР№ РІРµСЂСЃРёРё С„Р°Р№Р»Р°", false);
                         return new FileResult(ans == Result.IGNORE ? local : null, true, false);
                     } else {
                         return new FileResult(local, false, rr == ReceiveResult.OK_UPDATE);
@@ -199,7 +199,7 @@ final class FileLoader extends IFileLoader {
         if (local != null && local.isFile()) {
             if (silent || doNotShow)
                 return Result.IGNORE;
-            String message = "Ошибка обновления файла " + file + ":\n" + error + "\nПродолжить?";
+            String message = "РћС€РёР±РєР° РѕР±РЅРѕРІР»РµРЅРёСЏ С„Р°Р№Р»Р° " + file + ":\n" + error + "\nРџСЂРѕРґРѕР»Р¶РёС‚СЊ?";
             if (allowRetry) {
                 return gui.showWarning3(message, this);
             } else {
@@ -207,7 +207,7 @@ final class FileLoader extends IFileLoader {
             }
         } else {
             if (!silent) {
-                String message = "Ошибка обновления файла " + file + ":\n" + error;
+                String message = "РћС€РёР±РєР° РѕР±РЅРѕРІР»РµРЅРёСЏ С„Р°Р№Р»Р° " + file + ":\n" + error;
                 if (allowRetry) {
                     return gui.showError2(message, this);
                 } else {
@@ -287,7 +287,7 @@ final class FileLoader extends IFileLoader {
     }
 
     private Result showAppError(String file, String error) {
-        String message = "Ошибка обновления файла " + file + ":\n" + error;
+        String message = "РћС€РёР±РєР° РѕР±РЅРѕРІР»РµРЅРёСЏ С„Р°Р№Р»Р° " + file + ":\n" + error;
         return gui.showError2(message, this);
     }
 }

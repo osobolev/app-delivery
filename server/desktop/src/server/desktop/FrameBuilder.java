@@ -39,7 +39,7 @@ final class FrameBuilder {
 
     void build(int port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
         if (!rootDir.isDirectory()) {
-            String message = "'" + rootDir + "' - не каталог";
+            String message = "'" + rootDir + "' - РЅРµ РєР°С‚Р°Р»РѕРі";
             container.error(message);
             ServerFrame.showError(message);
             System.exit(1);
@@ -67,7 +67,7 @@ final class FrameBuilder {
                 // ignore
             } catch (ServerInitException ex) {
                 logger.error(ex);
-                ServerFrame.showError("Ошибка при инициализации " + name + ": " + ex.getMessage());
+                ServerFrame.showError("РћС€РёР±РєР° РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё " + name + ": " + ex.getMessage());
             } finally {
                 if (!inited) {
                     comp.shutdown();
@@ -76,7 +76,7 @@ final class FrameBuilder {
         }
 
         if (container.getComponents() <= 0) {
-            ServerFrame.showError("Нет ни одного серверного компонента");
+            ServerFrame.showError("РќРµС‚ РЅРё РѕРґРЅРѕРіРѕ СЃРµСЂРІРµСЂРЅРѕРіРѕ РєРѕРјРїРѕРЅРµРЅС‚Р°");
             System.exit(3);
         }
 

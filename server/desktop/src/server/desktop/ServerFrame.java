@@ -13,11 +13,11 @@ final class ServerFrame extends JFrame {
     private final JettyHttpContainer container;
 
     ServerFrame(JettyHttpContainer container, JTabbedPane tab) {
-        super("Сервер");
+        super("РЎРµСЂРІРµСЂ");
         this.container = container;
 
         add(tab, BorderLayout.CENTER);
-        JButton btnStop = new JButton(new AbstractAction("Выход") {
+        JButton btnStop = new JButton(new AbstractAction("Р’С‹С…РѕРґ") {
             public void actionPerformed(ActionEvent e) {
                 actionClose();
             }
@@ -41,12 +41,12 @@ final class ServerFrame extends JFrame {
     }
 
     private static void showError(JFrame frame, String str) {
-        JOptionPane.showMessageDialog(frame, str, "Ошибка", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(frame, str, "РћС€РёР±РєР°", JOptionPane.ERROR_MESSAGE);
     }
 
     private boolean onClosing() {
         int ans = JOptionPane.showConfirmDialog(
-            this, "Действительно закрыть?", "Подтверждение", JOptionPane.OK_CANCEL_OPTION
+            this, "Р”РµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ Р·Р°РєСЂС‹С‚СЊ?", "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ", JOptionPane.OK_CANCEL_OPTION
         );
         return ans == JOptionPane.YES_OPTION;
     }

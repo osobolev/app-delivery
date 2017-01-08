@@ -75,7 +75,7 @@ function downloadInstallerFor(prof, percentId) {
                         if (ok) {
                             window.open("install" + profile);
                         } else {
-                            alert("Ошибка при создании установочного файла: " + error);
+                            alert("РћС€РёР±РєР° РїСЂРё СЃРѕР·РґР°РЅРёРё СѓСЃС‚Р°РЅРѕРІРѕС‡РЅРѕРіРѕ С„Р°Р№Р»Р°: " + error);
                         }
                     }
                 } else {

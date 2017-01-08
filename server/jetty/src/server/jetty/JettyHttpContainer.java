@@ -71,11 +71,11 @@ public final class JettyHttpContainer {
 
     public void start() throws Exception {
         jetty.start();
-        logger.info("Сервер запущен на порту " + port + " в папке " + rootDir.getAbsolutePath());
+        logger.info("РЎРµСЂРІРµСЂ Р·Р°РїСѓС‰РµРЅ РЅР° РїРѕСЂС‚Сѓ " + port + " РІ РїР°РїРєРµ " + rootDir.getAbsolutePath());
     }
 
     public void stop() throws Exception {
-        logger.info("Остановка сервера");
+        logger.info("РћСЃС‚Р°РЅРѕРІРєР° СЃРµСЂРІРµСЂР°");
         for (AppServerComponent comp : components) {
             comp.shutdown();
         }

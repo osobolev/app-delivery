@@ -20,18 +20,18 @@ public final class SessionUtil {
         buf.append("<html>\n");
         buf.append("<head>\n");
         buf.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + ENCODING + "\">");
-        String title = "Активные сессии для приложения " + application;
+        String title = "РђРєС‚РёРІРЅС‹Рµ СЃРµСЃСЃРёРё РґР»СЏ РїСЂРёР»РѕР¶РµРЅРёСЏ " + application;
         buf.append("<title>" + title + "</title>");
         buf.append("</head>\n");
         buf.append("<body>\n");
         buf.append("<h2>" + title + "</h2>\n");
         buf.append("<table border=1>\n");
         buf.append("<tr>\n");
-        buf.append("<th>ID сессии</th>\n");
-        buf.append("<th>Пользователь</th>\n");
-        buf.append("<th>Адрес</th>\n");
-        buf.append("<th>Время работы</th>\n");
-        buf.append("<th>Фоновый процесс</th>\n");
+        buf.append("<th>ID СЃРµСЃСЃРёРё</th>\n");
+        buf.append("<th>РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ</th>\n");
+        buf.append("<th>РђРґСЂРµСЃ</th>\n");
+        buf.append("<th>Р’СЂРµРјСЏ СЂР°Р±РѕС‚С‹</th>\n");
+        buf.append("<th>Р¤РѕРЅРѕРІС‹Р№ РїСЂРѕС†РµСЃСЃ</th>\n");
         buf.append("</tr>\n");
         for (SessionInfo session : sessions) {
             buf.append("<tr>\n");
@@ -45,7 +45,7 @@ public final class SessionUtil {
             long hours = total / 60;
             String time = hours + ":" + lpad2(minutes) + ":" + lpad2(seconds);
             buf.append("<td>").append(time).append("</td>\n");
-            buf.append("<td>").append(session.background ? "Да" : "&nbsp;").append("</td>\n");
+            buf.append("<td>").append(session.background ? "Р”Р°" : "&nbsp;").append("</td>\n");
             buf.append("</tr>\n");
         }
         buf.append("</table>");

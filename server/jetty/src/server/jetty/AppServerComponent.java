@@ -48,7 +48,7 @@ public final class AppServerComponent {
     public void start() {
         running = true;
         if (logger != null) {
-            logger.info("Сервер '" + appName + "' работает");
+            logger.info("РЎРµСЂРІРµСЂ '" + appName + "' СЂР°Р±РѕС‚Р°РµС‚");
         }
     }
 
@@ -59,7 +59,7 @@ public final class AppServerComponent {
     public void stop() {
         running = false;
         if (logger != null) {
-            logger.info("Сервер '" + appName + "' остановлен");
+            logger.info("РЎРµСЂРІРµСЂ '" + appName + "' РѕСЃС‚Р°РЅРѕРІР»РµРЅ");
         }
     }
 

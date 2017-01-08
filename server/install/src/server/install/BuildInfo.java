@@ -9,15 +9,15 @@ import java.util.Properties;
 public final class BuildInfo {
 
     /**
-     * Папка с исходными файлами для инсталлятора (корневая папка веб-приложения)
+     * РџР°РїРєР° СЃ РёСЃС…РѕРґРЅС‹РјРё С„Р°Р№Р»Р°РјРё РґР»СЏ РёРЅСЃС‚Р°Р»Р»СЏС‚РѕСЂР° (РєРѕСЂРЅРµРІР°СЏ РїР°РїРєР° РІРµР±-РїСЂРёР»РѕР¶РµРЅРёСЏ)
      */
     public final File root;
     /**
-     * Папка, в которую копируются файлы для создания инсталлятора (client/install или client/profile/install)
+     * РџР°РїРєР°, РІ РєРѕС‚РѕСЂСѓСЋ РєРѕРїРёСЂСѓСЋС‚СЃСЏ С„Р°Р№Р»С‹ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РёРЅСЃС‚Р°Р»Р»СЏС‚РѕСЂР° (client/install РёР»Рё client/profile/install)
      */
     public final File buildDir;
     /**
-     * Количество файлов в папке buildDir
+     * РљРѕР»РёС‡РµСЃС‚РІРѕ С„Р°Р№Р»РѕРІ РІ РїР°РїРєРµ buildDir
      */
     public final int countFiles;
     private final Properties installProps;

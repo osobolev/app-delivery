@@ -16,8 +16,8 @@ import java.util.Properties;
 public final class InstallBuilder {
 
     private final File root;     // ./
-    private final File baseDir;  // ./client или ./client/profile
-    private final File buildDir; // ./client/install или ./client/profile/install
+    private final File baseDir;  // ./client РёР»Рё ./client/profile
+    private final File buildDir; // ./client/install РёР»Рё ./client/profile/install
     private final List<InstallerResource> depends;
 
     private final PercentCell percentCell = new PercentCell();
@@ -49,7 +49,7 @@ public final class InstallBuilder {
     private static int countFiles(File root, File exclude) throws BuildException {
         File[] files = root.listFiles();
         if (files == null)
-            throw new BuildException("JRE не найдена");
+            throw new BuildException("JRE РЅРµ РЅР°Р№РґРµРЅР°");
         int count = 0;
         for (File file : files) {
             if (file.isDirectory()) {

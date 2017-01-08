@@ -18,7 +18,7 @@ final class InstallerFile extends InstallerResource {
 
     void checkExists() throws BuildException {
         if (!src.exists())
-            throw new BuildException("Файл '" + src.getName() + "' не существует");
+            throw new BuildException("Р¤Р°Р№Р» '" + src.getName() + "' РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
     }
 
     void copyTo(File dest) throws IOException {
