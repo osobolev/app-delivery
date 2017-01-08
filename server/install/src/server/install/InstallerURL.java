@@ -3,9 +3,8 @@ package server.install;
 import apploader.common.ConfigReader;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 
 final class InstallerURL extends InstallerResource {
 
@@ -24,12 +23,8 @@ final class InstallerURL extends InstallerResource {
     }
 
     void copyTo(File dest) throws IOException {
-        OutputStream os = new FileOutputStream(dest);
-        try {
-            String urlProp = ConfigReader.HTTP_SERVER_PROPERTY + "=" + url + "\n";
-            os.write(urlProp.getBytes(ConfigReader.CHARSET));
-        } finally {
-            IOUtils.close(os);
-        }
+        PrintWriter pw = new PrintWriter(dest, ConfigReader.CHARSET);
+        pw.println(ConfigReader.HTTP_SERVER_PROPERTY + "=" + url);
+        pw.close();
     }
 }
