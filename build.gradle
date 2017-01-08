@@ -55,14 +55,8 @@ project(':server-core') {
 project(':server-service') {
     sourceSets.main.java.srcDirs = buildSource(['apploader/common', 'server/core', 'server/install', 'server/http', 'server/jetty'])
 
-    repositories {
-        flatDir {
-            dirs 'lib'
-        }
-    }
-
     dependencies {
-        compile name: 'WinRun4J'
+        compile 'org.boris.winrun4j:winrun4j:0.4.5'
         compile sqlg
         compile servlet
         compile jetty
