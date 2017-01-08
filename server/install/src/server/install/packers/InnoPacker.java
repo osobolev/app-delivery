@@ -8,8 +8,8 @@ import java.io.IOException;
 public final class InnoPacker implements Packer {
 
     @Override
-    public String getResultFileName() {
-        return "install.exe";
+    public String getResultFileName(String baseName) {
+        return baseName + ".exe";
     }
 
     @Override
@@ -42,6 +42,11 @@ public final class InnoPacker implements Packer {
         } catch (InterruptedException ex) {
             throw new IOException(ex);
         }
-        return true;
+        File installer = new File(result.getParentFile(), "install.exe");
+        if (!installer.equals(result)) {
+            return installer.renameTo(result);
+        } else {
+            return true;
+        }
     }
 }

@@ -20,6 +20,8 @@ public final class InstallBuilder {
 
     private final List<Packer> packers = Arrays.asList(new InnoPacker(), new RarPacker(), new ZipPacker());
 
+    private Properties installProperties = null;
+
     public InstallBuilder(SourceFiles src) {
         this.root = src.root;
         this.baseDir = src.baseDir;
@@ -77,12 +79,7 @@ public final class InstallBuilder {
 
     private int buildInstaller(Properties installProps) throws IOException, BuildException {
         clean(buildDir);
-        String javaHomePath;
-        if (installProps != null) {
-            javaHomePath = installProps.getProperty("java.dir");
-        } else {
-            javaHomePath = null;
-        }
+        String javaHomePath = installProps.getProperty("java.dir");
         if (javaHomePath == null) {
             javaHomePath = System.getProperty("java.home");
         }
@@ -105,8 +102,10 @@ public final class InstallBuilder {
         return countFiles;
     }
 
-    private File getResultFile(Packer packer) {
-        return new File(baseDir, packer.getResultFileName());
+    private File getResultFile(Packer packer) throws IOException {
+        Properties installProps = getInstallProps();
+        String baseName = installProps.getProperty("base.name", "install");
+        return new File(baseDir, packer.getResultFileName(baseName));
     }
 
     private boolean isModified(File installer) {
@@ -120,7 +119,7 @@ public final class InstallBuilder {
         return false;
     }
 
-    public File getReadyInstaller() {
+    public File getReadyInstaller() throws IOException {
         for (Packer packer : packers) {
             File result = getResultFile(packer);
             if (!isModified(result))
@@ -131,23 +130,30 @@ public final class InstallBuilder {
 
     private Properties loadInstallProps() throws IOException {
         File properties = new File(root, "install.properties");
-        if (!properties.canRead())
-            return null;
-        Reader rdr = new FileReader(properties);
         Properties props = new Properties();
-        try {
-            props.load(rdr);
-        } finally {
-            IOUtils.close(rdr);
+        if (properties.canRead()) {
+            Reader rdr = new FileReader(properties);
+            try {
+                props.load(rdr);
+            } finally {
+                IOUtils.close(rdr);
+            }
         }
         return props;
+    }
+
+    private synchronized Properties getInstallProps() throws IOException {
+        if (installProperties == null) {
+            installProperties = loadInstallProps();
+        }
+        return installProperties;
     }
 
     public File getInstaller() throws IOException, BuildException {
         File ready = getReadyInstaller();
         if (ready != null)
             return ready;
-        Properties installProps = loadInstallProps();
+        Properties installProps = getInstallProps();
         int countFiles = buildInstaller(installProps);
         BuildInfo info = new BuildInfo(root, buildDir, countFiles, installProps);
         for (Packer packer : packers) {
@@ -157,7 +163,7 @@ public final class InstallBuilder {
                 return result;
             }
         }
-        throw new IllegalStateException("All packers failed!");
+        throw new BuildException("All packers failed!");
     }
 
     public PercentCell getPercentCell() {

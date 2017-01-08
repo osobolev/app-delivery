@@ -6,7 +6,6 @@ OutputBaseFilename="install"
 DefaultDirName={sd}\{#apDir}
 DefaultGroupName={#apName}
 
-EnableDirDoesntExistWarning=true
 ShowLanguageDialog=no
 
 AppName={#apName}
@@ -37,7 +36,6 @@ Source: "uninst_{#apId}.ico"; DestDir: {app}; Flags: skipifsourcedoesntexist
 
 [Tasks]
 Name: desktopicon; Description: "Создать иконку запуска на рабочем столе"; GroupDescription: "Дополнительные иконки"
-;Name: groupicons; Description: "Создать иконки в меню ПУСК"; GroupDescription: "Дополнительные иконки"
 
 
 [Icons]

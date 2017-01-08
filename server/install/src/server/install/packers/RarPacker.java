@@ -8,8 +8,8 @@ import java.io.IOException;
 public final class RarPacker implements Packer {
 
     @Override
-    public String getResultFileName() {
-        return "install.exe";
+    public String getResultFileName(String baseName) {
+        return baseName + ".exe";
     }
 
     @Override

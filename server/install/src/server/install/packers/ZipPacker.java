@@ -37,8 +37,8 @@ public final class ZipPacker implements Packer {
     }
 
     @Override
-    public String getResultFileName() {
-        return "install.zip";
+    public String getResultFileName(String baseName) {
+        return baseName + ".zip";
     }
 
     @Override

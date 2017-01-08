@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public interface Packer {
 
-    String getResultFileName();
+    String getResultFileName(String baseName);
 
     boolean buildResultFile(BuildInfo info, PercentCell percentCell, File result) throws IOException;
 }
