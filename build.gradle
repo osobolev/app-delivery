@@ -20,7 +20,6 @@ subprojects {
 }
 
 def sqlg = 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
-//def jetty = 'org.eclipse.jetty.aggregate:jetty-all-server:8.1.17.v20150415'
 def jetty = 'org.eclipse.jetty:jetty-servlet:8.1.22.v20160922'
 
 def servlet = 'javax.servlet:javax.servlet-api:3.0.1'
