@@ -36,5 +36,6 @@ final class JettyLogger implements SQLGLogger {
         if (fileOutput != null) {
             fileOutput.close();
         }
+        LogFormatUtil.shutdown();
     }
 }

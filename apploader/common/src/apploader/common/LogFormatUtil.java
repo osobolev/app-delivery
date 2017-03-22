@@ -62,4 +62,8 @@ public final class LogFormatUtil {
         error.printStackTrace(pw);
         pw.println("-------------------------------");
     }
+
+    public static void shutdown() {
+        TIMESTAMP_FORMAT.remove();
+    }
 }
