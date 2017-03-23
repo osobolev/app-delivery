@@ -167,12 +167,10 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         File file = new File("tzupdater.bat");
         if (file.exists() && !freshUpdater)
             return false;
-        try {
-            PrintWriter pw = new PrintWriter(file, AppCommon.BAT_CHARSET);
+        try (PrintWriter pw = new PrintWriter(file, AppCommon.BAT_CHARSET)) {
             pw.println("@echo off");
             pw.println("call setjava.bat");
             pw.println("%JAVABIN% -jar tzupdater.jar -u -v");
-            pw.close();
         } catch (IOException ex) {
             AppCommon.error(ex);
         }

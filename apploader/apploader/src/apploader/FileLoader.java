@@ -104,15 +104,9 @@ final class FileLoader extends IFileLoader {
             conn.setRequestMethod("GET");
             conn.connect();
             to.delete();
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                in = conn.getInputStream();
-                out = new FileOutputStream(to);
+            try (InputStream in = conn.getInputStream();
+                 OutputStream out = new FileOutputStream(to)) {
                 head.copyStream(in, out);
-            } finally {
-                ConfigReader.close(in);
-                ConfigReader.close(out);
             }
             to.setLastModified(head.lastModified);
         } finally {
@@ -224,20 +218,13 @@ final class FileLoader extends IFileLoader {
             conn = (HttpURLConnection) url.openConnection(proxy.proxy);
             conn.setRequestMethod("GET");
             conn.connect();
-            InputStream in = null;
-            try {
-                in = conn.getInputStream();
+            try (InputStream in = conn.getInputStream()) {
                 List<Application> applications = new ArrayList<>();
-                ConfigReader.readConfig(
-                    in,
-                    (left, right) -> {
-                        applications.add(new Application(left, right));
-                        return true;
-                    }
-                );
+                ConfigReader.readConfig(in, (left, right) -> {
+                    applications.add(new Application(left, right));
+                    return true;
+                });
                 return applications;
-            } finally {
-                ConfigReader.close(in);
             }
         } finally {
             if (conn != null) {

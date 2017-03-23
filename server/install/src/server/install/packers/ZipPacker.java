@@ -43,13 +43,9 @@ public final class ZipPacker implements Packer {
 
     @Override
     public boolean buildResultFile(BuildInfo info, PercentCell percentCell, File result) throws IOException {
-        OutputStream os = new FileOutputStream(result);
-        try {
-            ZipOutputStream zos = new ZipOutputStream(os);
-            os = zos;
+        try (OutputStream os = new FileOutputStream(result);
+             ZipOutputStream zos = new ZipOutputStream(os)) {
             addToZip(percentCell, info, zos, info.buildDir, null, new int[1]);
-        } finally {
-            IOUtils.close(os);
         }
         return true;
     }

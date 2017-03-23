@@ -64,12 +64,10 @@ final class LoaderGui {
         );
         JDialog dlg = pane.createDialog(parent, title);
         for (JButton option : options) {
-            option.addActionListener(
-                e -> {
-                    pane.setValue(option);
-                    dlg.dispose();
-                }
-            );
+            option.addActionListener(e -> {
+                pane.setValue(option);
+                dlg.dispose();
+            });
         }
         dlg.getRootPane().setDefaultButton(defaultOption);
         dlg.getRootPane().registerKeyboardAction(e -> dlg.dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);

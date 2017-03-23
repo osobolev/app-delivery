@@ -1,4 +1,4 @@
 .idea/
-classes/
+out/
 .gradle/
 build/

@@ -88,16 +88,14 @@ public final class AppInfo {
     }
 
     static void storeProxy(ProxyConfig proxy) {
-        try {
-            File file = new File(PROXY_PROPERTIES);
-            PrintWriter pw = new PrintWriter(file, ConfigReader.CHARSET);
+        File file = new File(PROXY_PROPERTIES);
+        try (PrintWriter pw = new PrintWriter(file, ConfigReader.CHARSET)) {
             if (proxy.proxy.type() != Proxy.Type.DIRECT) {
                 pw.println(PTYPE_PROPERTY + "=" + proxy.proxy.type().name());
                 pw.println(PADDR_PROPERTY + "=" + proxy.proxy.address().toString());
                 pw.println(PUSER_PROPERTY + "=" + proxy.login);
                 pw.println(PPASS_PROPERTY + "=" + proxy.password);
             }
-            pw.close();
         } catch (IOException ex) {
             AppCommon.error(ex);
         }

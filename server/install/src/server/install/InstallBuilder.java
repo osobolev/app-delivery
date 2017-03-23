@@ -99,9 +99,9 @@ public final class InstallBuilder {
             depend.checkExists();
             depend.copyTo(destFile);
         }
-        PrintWriter pw = new PrintWriter(new File(buildDir, "setjava.bat"), AppCommon.BAT_CHARSET);
-        pw.println("set JAVABIN=start jre\\bin\\javaw.exe");
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(new File(buildDir, "setjava.bat"), AppCommon.BAT_CHARSET)) {
+            pw.println("set JAVABIN=start jre\\bin\\javaw.exe");
+        }
         countFiles++;
         percentCell.setPercent(50);
         return countFiles;

@@ -1,44 +1,18 @@
 package server.install;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public final class IOUtils {
 
-    public static void copyStream(OutputStream os, InputStream is) throws IOException {
-        try {
-            byte[] buffer = new byte[8192];
-            while (true) {
-                int read = is.read(buffer);
-                if (read < 0)
-                    break;
-                if (read > 0) {
-                    os.write(buffer, 0, read);
-                }
-            }
-        } finally {
-            close(is);
-        }
-    }
-
     public static void copyFile(OutputStream os, File from) throws IOException {
-        InputStream is = new FileInputStream(from);
-        copyStream(os, is);
+        Files.copy(from.toPath(), os);
     }
 
     public static void copyFile(File to, File from) throws IOException {
-        OutputStream os = new FileOutputStream(to);
-        try {
-            copyFile(os, from);
-        } finally {
-            close(os);
-        }
-    }
-
-    public static void close(Closeable is) {
-        try {
-            is.close();
-        } catch (IOException ex) {
-            // ignore
-        }
+        Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }

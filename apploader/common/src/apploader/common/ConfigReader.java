@@ -36,11 +36,8 @@ public final class ConfigReader {
     }
 
     public static boolean readConfig(File file, LineWorker worker) throws IOException {
-        InputStream is = new FileInputStream(file);
-        try {
+        try (InputStream is = new FileInputStream(file)) {
             return readConfig(is, worker);
-        } finally {
-            close(is);
         }
     }
 

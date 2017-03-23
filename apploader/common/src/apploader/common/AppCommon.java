@@ -24,13 +24,13 @@ public final class AppCommon {
     }
 
     public static void generateBatFile(File file, String app) throws IOException {
-        PrintWriter pw = new PrintWriter(file, BAT_CHARSET);
-        pw.println("@echo off");
-        pw.println("call checknew.bat");
-        pw.println("call setjava.bat");
-        String splash = " -splash:" + getSplashName(app);
-        pw.println("%JAVABIN% -D" + APPLICATION_PROPERTY + "=" + app + splash + " -jar apploader.jar %*");
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(file, BAT_CHARSET)) {
+            pw.println("@echo off");
+            pw.println("call checknew.bat");
+            pw.println("call setjava.bat");
+            String splash = " -splash:" + getSplashName(app);
+            pw.println("%JAVABIN% -D" + APPLICATION_PROPERTY + "=" + app + splash + " -jar apploader.jar %*");
+        }
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")

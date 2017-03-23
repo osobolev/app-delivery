@@ -23,8 +23,8 @@ final class InstallerURL extends InstallerResource {
     }
 
     void copyTo(File dest) throws IOException {
-        PrintWriter pw = new PrintWriter(dest, ConfigReader.CHARSET);
-        pw.println(ConfigReader.HTTP_SERVER_PROPERTY + "=" + url);
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(dest, ConfigReader.CHARSET)) {
+            pw.println(ConfigReader.HTTP_SERVER_PROPERTY + "=" + url);
+        }
     }
 }

@@ -120,9 +120,9 @@ final class ComponentPanel extends JPanel {
         public void error(Throwable error) {
             logger.error(error);
             StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            error.printStackTrace(pw);
-            pw.close();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                error.printStackTrace(pw);
+            }
             append(sw.toString());
         }
     }
