@@ -24,7 +24,7 @@ public final class AppInfo {
     public static AppClassLoader loader = null;
     public static boolean usingApploader = false;
 
-    private static final HashMap<String, IFrame> runningApplications = new HashMap<String, IFrame>();
+    private static final HashMap<String, IFrame> runningApplications = new HashMap<>();
 
     public static boolean isRunning(String application) {
         IFrame frame;

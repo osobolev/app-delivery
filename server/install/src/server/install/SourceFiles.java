@@ -12,7 +12,7 @@ public final class SourceFiles {
 
     final File root;
     final File baseDir;
-    final List<InstallerResource> depends = new ArrayList<InstallerResource>();
+    final List<InstallerResource> depends = new ArrayList<>();
 
     public SourceFiles(File root, List<String> apps, String profile, String url) {
         this.root = root;

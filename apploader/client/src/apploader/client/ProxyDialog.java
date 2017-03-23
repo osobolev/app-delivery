@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.*;
 import java.util.List;
@@ -18,7 +17,7 @@ public final class ProxyDialog extends JDialog {
 
     private final ErrorShow error;
     private final JCheckBox cbUseProxy = new JCheckBox("Использовать прокси-сервер");
-    private final JComboBox chType = new JComboBox(new Proxy.Type[] {Proxy.Type.HTTP, Proxy.Type.SOCKS});
+    private final JComboBox<Proxy.Type> chType = new JComboBox<>(new Proxy.Type[] {Proxy.Type.HTTP, Proxy.Type.SOCKS});
     private final JTextField tfHost = new JTextField(20);
     private final JTextField tfPort = new JTextField(5);
     private final JTextField tfUser = new JTextField(15);
@@ -89,11 +88,7 @@ public final class ProxyDialog extends JDialog {
         main.add(main2, BorderLayout.SOUTH);
         add(main, BorderLayout.CENTER);
 
-        cbUseProxy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                enableDisable();
-            }
-        });
+        cbUseProxy.addActionListener(e -> enableDisable());
         enableDisable();
 
         JPanel butt = new JPanel(new BasicOptionPaneUI.ButtonAreaLayout(true, 5));

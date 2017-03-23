@@ -21,7 +21,7 @@ import java.util.Map;
 public abstract class InstallServletBase extends AppServletBase {
 
     private volatile File root = new File(".");
-    private final Map<String, InstallState> map = new HashMap<String, InstallState>();
+    private final Map<String, InstallState> map = new HashMap<>();
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -36,7 +36,7 @@ public abstract class InstallServletBase extends AppServletBase {
         InstallState state = map.get(profile);
 
         if (state == null) {
-            List<String> apps = new ArrayList<String>();
+            List<String> apps = new ArrayList<>();
             List<Application> applications = getApplications();
             for (Application application : applications) {
                 apps.add(application.id);

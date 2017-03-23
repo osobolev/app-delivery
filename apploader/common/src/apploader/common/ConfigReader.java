@@ -64,15 +64,13 @@ public final class ConfigReader {
         return true;
     }
 
-    public static void readProperties(final Properties props, File file) {
+    public static void readProperties(Properties props, File file) {
         try {
             if (!file.exists())
                 return;
-            readConfig(file, new LineWorker() {
-                public boolean workLine(String left, String right) {
-                    props.put(left, right);
-                    return true;
-                }
+            readConfig(file, (left, right) -> {
+                props.put(left, right);
+                return true;
             });
         } catch (IOException ex) {
             AppCommon.error(ex);

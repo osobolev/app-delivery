@@ -227,14 +227,12 @@ final class FileLoader extends IFileLoader {
             InputStream in = null;
             try {
                 in = conn.getInputStream();
-                final List<Application> applications = new ArrayList<Application>();
+                List<Application> applications = new ArrayList<>();
                 ConfigReader.readConfig(
                     in,
-                    new ConfigReader.LineWorker() {
-                        public boolean workLine(String left, String right) {
-                            applications.add(new Application(left, right));
-                            return true;
-                        }
+                    (left, right) -> {
+                        applications.add(new Application(left, right));
+                        return true;
                     }
                 );
                 return applications;

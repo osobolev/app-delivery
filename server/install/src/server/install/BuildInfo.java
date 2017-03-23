@@ -42,7 +42,7 @@ public final class BuildInfo {
     }
 
     public static File findExe(Properties installProps, String propName, String exeFolder, String exeName) {
-        List<String> tryPaths = new ArrayList<String>(3);
+        List<String> tryPaths = new ArrayList<>(3);
         String propValue = installProps.getProperty(propName);
         if (propValue != null) {
             tryPaths.add(propValue);

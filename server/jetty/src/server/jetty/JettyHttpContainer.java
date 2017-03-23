@@ -7,7 +7,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.resource.FileResource;
+import org.eclipse.jetty.util.resource.Resource;
 import server.http.Application;
 import server.http.InstallServletBase;
 import server.http.ListServletBase;
@@ -21,7 +21,7 @@ import java.util.Properties;
 
 public final class JettyHttpContainer {
 
-    private final List<AppServerComponent> components = new ArrayList<AppServerComponent>();
+    private final List<AppServerComponent> components = new ArrayList<>();
 
     private final JettyLogger logger = new JettyLogger("appserver.log");
 
@@ -41,11 +41,11 @@ public final class JettyHttpContainer {
 
         ServletContextHandler ctx = new ServletContextHandler(jetty, "/", ServletContextHandler.NO_SESSIONS);
         try {
-            ctx.setBaseResource(FileResource.newResource(rootDir.getCanonicalFile().toURI().toURL()));
+            ctx.setBaseResource(Resource.newResource(rootDir.getCanonicalFile().toURI()));
         } catch (IOException ex) {
             throw new ServerInitException(ex);
         }
-        List<Application> applications = new ArrayList<Application>();
+        List<Application> applications = new ArrayList<>();
         for (AppServerComponent comp : components) {
             String application = comp.application;
             applications.add(new Application(application, comp.getName()));

@@ -48,9 +48,6 @@ public abstract class ServerServiceBase extends AbstractService {
                     component.start();
                 }
             }
-        } catch (ServerInitException ex) {
-            container.error(ex);
-            System.exit(2);
         } catch (Throwable ex) {
             container.error(ex);
             System.exit(2);

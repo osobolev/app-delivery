@@ -3,9 +3,10 @@ subprojects {
     apply plugin: 'maven'
 
     group = 'com.github.osobolev.app-delivery.sample'
-    version = '1.1'
+    version = '3.0'
 
-    targetCompatibility = '1.6'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
                              
     compileJava.options.encoding = 'UTF-8'
 
@@ -47,7 +48,7 @@ project(':sample_db') {
 
 project(':sample_client') {
     dependencies {
-        compileOnly 'com.github.osobolev.app-delivery:apploader-client:2.1'
+        compile 'com.github.osobolev.app-delivery:apploader-client:3.0'
         compile 'com.github.osobolev.sqlg2:sqlg2-client:4.0'
         compile(project(':sample_db')) {
             exclude module: 'sqlg2-runtime'
@@ -67,18 +68,18 @@ project(':sample_server') {
 
     dependencies {
         compile 'com.github.osobolev.sqlg2:sqlg2-runtime:4.0'
-        compile 'com.github.osobolev.app-delivery:server-war:2.1'
+        compile 'com.github.osobolev.app-delivery:server-war:3.0'
         runtime project(':sample_db')
 
-        webfiles 'com.github.osobolev.app-delivery:server-files:2.1@war'
-        webapploader 'com.github.osobolev.app-delivery:apploader:2.1'
+        webfiles 'com.github.osobolev.app-delivery:server-files:3.0@war'
+        webapploader 'com.github.osobolev.app-delivery:apploader:3.0'
         webdistr project(':sample_client')
     }
 
     task createList << {
         def list = ['corejar=apploader.jar']
         configurations.webdistr.each {
-            list.add("jar=distr/${it.getName()}")
+            list.add("jar=distr/${it.name}")
         }
         list.add('mainClass=sample.Client')
         def file = file('build/list/sample_jars.list')

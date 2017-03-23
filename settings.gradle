@@ -1,14 +1,20 @@
-include 'apploader/common', 'apploader/client', 'apploader/apploader'
-include 'server/core', 'server/service', 'server/war', 'server/desktop', 'server/files'
-
 rootProject.name = 'app-delivery'
 
-project(':apploader/common').name = 'apploader-common'
-project(':apploader/client').name = 'apploader-client'
-project(':apploader/apploader').name = 'apploader'
+def add(name, path) {
+    def dir = file(path)
+    include name
+    project(":${name}").projectDir = dir
+}
 
-project(':server/core').name = 'server-core'
-project(':server/service').name = 'server-service'
-project(':server/war').name = 'server-war'
-project(':server/desktop').name = 'server-desktop'
-project(':server/files').name = 'server-files'
+add('apploader-common', 'apploader/common')
+add('apploader-client', 'apploader/client')
+add('apploader', 'apploader/apploader')
+
+add('server-core', 'server/core')
+add('server-install', 'server/install')
+add('server-http', 'server/http')
+add('server-jetty', 'server/jetty')
+add('server-service', 'server/service')
+add('server-war', 'server/war')
+add('server-desktop', 'server/desktop')
+add('server-files', 'server/files')

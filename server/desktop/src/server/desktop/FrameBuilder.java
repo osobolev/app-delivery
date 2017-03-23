@@ -28,23 +28,17 @@ final class FrameBuilder {
             System.exit(1);
             return;
         }
-        int port;
-        if (config.port == null) {
-            port = container.getDefaultPort(config.rootDir);
-        } else {
-            port = config.port.intValue();
-        }
-        build(port, config.rootDir, login, comps);
+        build(config.port, config.rootDir, login, comps);
     }
 
-    void build(int port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
+    void build(Integer port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
         if (!rootDir.isDirectory()) {
             String message = "'" + rootDir + "' - не каталог";
             container.error(message);
             ServerFrame.showError(message);
             System.exit(1);
         }
-        List<ComponentPanel> panels = new ArrayList<ComponentPanel>();
+        List<ComponentPanel> panels = new ArrayList<>();
         int index = 0;
         for (AppServerComponent comp : comps) {
             String name = comp.getName();
@@ -81,7 +75,7 @@ final class FrameBuilder {
         }
 
         try {
-            container.init(port, rootDir);
+            container.init(port == null ? container.getDefaultPort(rootDir) : port.intValue(), rootDir);
             container.start();
         } catch (Exception ex) {
             container.error(ex);

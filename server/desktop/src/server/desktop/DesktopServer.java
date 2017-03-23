@@ -28,17 +28,13 @@ public final class DesktopServer {
         showFrame(builder);
     }
 
-    public void runServer(int port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
+    public void runServer(Integer port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
         FrameBuilder builder = new FrameBuilder(container);
         builder.build(port, rootDir, login, comps);
         showFrame(builder);
     }
 
-    private void showFrame(final FrameBuilder builder) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new ServerFrame(container, builder.tab);
-            }
-        });
+    private void showFrame(FrameBuilder builder) {
+        SwingUtilities.invokeLater(() -> new ServerFrame(container, builder.tab));
     }
 }

@@ -1,6 +1,4 @@
-*.class
-uiDesigner.xml
-out/
-build/
+.idea/
+classes/
 .gradle/
-/lib/
+build/

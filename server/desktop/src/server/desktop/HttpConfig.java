@@ -43,7 +43,7 @@ final class HttpConfig {
     }
 
     public static Map<String, Object> parseArgs(String[] args, String[] options, Class<?>[] types) throws ServerInitException {
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         for (String arg : args) {
             String sw;
             int p = arg.indexOf(':');

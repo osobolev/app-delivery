@@ -6,7 +6,10 @@ import apploader.client.ProxyDialog;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 
 final class LoaderGui {
@@ -21,7 +24,7 @@ final class LoaderGui {
                                       String title, int style,
                                       String[] optionNames,
                                       Result[] retValues,
-                                      FileLoader check, final FileLoader proxy) {
+                                      FileLoader check, FileLoader proxy) {
         setLnF();
         JButton[] options = new JButton[optionNames.length];
         JPanel panel = new JPanel(new BasicOptionPaneUI.ButtonAreaLayout(true, 5));
@@ -38,7 +41,7 @@ final class LoaderGui {
         }
         JCheckBox cbShow = new JCheckBox("Не показывать больше", false);
         if (check != null || proxy != null) {
-            final JPanel chk = new JPanel(new BorderLayout());
+            JPanel chk = new JPanel(new BorderLayout());
             JPanel optPanel = new JPanel();
             chk.add(panel, BorderLayout.SOUTH);
             chk.add(optPanel, BorderLayout.CENTER);
@@ -55,27 +58,21 @@ final class LoaderGui {
             }
             panel = chk;
         }
-        final JButton defaultOption = options[options.length - 1];
-        final JOptionPane pane = new JOptionPane(
+        JButton defaultOption = options[options.length - 1];
+        JOptionPane pane = new JOptionPane(
             message, style, JOptionPane.DEFAULT_OPTION, null, new Object[] {panel}
         );
-        final JDialog dlg = pane.createDialog(parent, title);
-        for (final JButton option : options) {
+        JDialog dlg = pane.createDialog(parent, title);
+        for (JButton option : options) {
             option.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        pane.setValue(option);
-                        dlg.dispose();
-                    }
+                e -> {
+                    pane.setValue(option);
+                    dlg.dispose();
                 }
             );
         }
         dlg.getRootPane().setDefaultButton(defaultOption);
-        dlg.getRootPane().registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dlg.dispose();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        dlg.getRootPane().registerKeyboardAction(e -> dlg.dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         dlg.addWindowListener(new WindowAdapter() {
             public void windowOpened(WindowEvent e) {
                 defaultOption.requestFocus();
@@ -163,11 +160,7 @@ final class LoaderGui {
 
     void showProxyDialog(Component owner, ProxyConfig proxy, URL url, FileLoader loader) {
         setLnF();
-        ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, new ProxyDialog.ErrorShow() {
-            public void showError(String message) {
-                LoaderGui.this.showError(message);
-            }
-        });
+        ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, this::showError);
         ProxyConfig newProxy = pdlg.getProxy();
         if (newProxy != null && loader != null) {
             loader.setProxy(newProxy);

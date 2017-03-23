@@ -15,21 +15,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@SuppressWarnings({
-    "ResultOfMethodCallIgnored", "AssignmentToStaticFieldFromInstanceMethod"
-})
+@SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
 public final class AppLoader implements AppInfo.AppClassLoader {
 
     private static final class AppProperties {
 
-        private final List<File> jarList = new ArrayList<File>();
-        private final List<File> dllList = new ArrayList<File>();
+        private final List<File> jarList = new ArrayList<>();
+        private final List<File> dllList = new ArrayList<>();
         private String mainClass = null;
     }
 
     private static final class AppClassLoader extends URLClassLoader {
 
-        private final HashMap<String, File> dllMap = new HashMap<String, File>();
+        private final HashMap<String, File> dllMap = new HashMap<>();
 
         private AppClassLoader() {
             super(new URL[0]);
@@ -86,53 +84,51 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         if (list == null)
             return null;
         fileLoader.receiveFile(AppCommon.getSplashName(application), true, true);
-        final AppProperties properties = new AppProperties();
-        boolean ok = ConfigReader.readConfig(list, new ConfigReader.LineWorker() {
-            public boolean workLine(String left, String right) {
-                boolean jar;
-                boolean corejar;
-                if ("jar".equalsIgnoreCase(left)) {
-                    jar = true;
-                    corejar = false;
-                } else if ("corejar".equalsIgnoreCase(left)) {
-                    jar = true;
-                    corejar = true;
-                } else {
-                    jar = corejar = false;
-                }
-                if (jar) {
-                    FileResult jarResult = fileLoader.receiveFile(right, corejar);
-                    if (corejar && jarResult.isFailCopy) {
-                        gui.showWarning("Обновлен загрузчик приложения, перезапустите его");
-                        return false;
-                    }
-                    File file = jarResult.file;
-                    if (file == null)
-                        return false;
-                    properties.jarList.add(file);
-                } else if ("mainClass".equalsIgnoreCase(left)) {
-                    properties.mainClass = right;
-                } else if ("dll".equalsIgnoreCase(left)) {
-                    File file = fileLoader.receiveFile(right, false).file;
-                    if (file == null)
-                        return false;
-                    properties.dllList.add(file);
-                } else if ("file".equalsIgnoreCase(left)) {
-                    FileResult fileResult = fileLoader.receiveFile(right, false);
-                    File file = fileResult.file;
-                    if (file == null)
-                        return false;
-                    if ("tzupdater.jar".equals(right)) {
-                        if (updateTimeZones(fileResult.updated)) {
-                            gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
-                            return false;
-                        }
-                    }
-                } else if ("?file".equalsIgnoreCase(left)) {
-                    fileLoader.receiveFile(right, true, true);
-                }
-                return true;
+        AppProperties properties = new AppProperties();
+        boolean ok = ConfigReader.readConfig(list, (left, right) -> {
+            boolean jar;
+            boolean corejar;
+            if ("jar".equalsIgnoreCase(left)) {
+                jar = true;
+                corejar = false;
+            } else if ("corejar".equalsIgnoreCase(left)) {
+                jar = true;
+                corejar = true;
+            } else {
+                jar = corejar = false;
             }
+            if (jar) {
+                FileResult jarResult = fileLoader.receiveFile(right, corejar);
+                if (corejar && jarResult.isFailCopy) {
+                    gui.showWarning("Обновлен загрузчик приложения, перезапустите его");
+                    return false;
+                }
+                File file = jarResult.file;
+                if (file == null)
+                    return false;
+                properties.jarList.add(file);
+            } else if ("mainClass".equalsIgnoreCase(left)) {
+                properties.mainClass = right;
+            } else if ("dll".equalsIgnoreCase(left)) {
+                File file = fileLoader.receiveFile(right, false).file;
+                if (file == null)
+                    return false;
+                properties.dllList.add(file);
+            } else if ("file".equalsIgnoreCase(left)) {
+                FileResult fileResult = fileLoader.receiveFile(right, false);
+                File file = fileResult.file;
+                if (file == null)
+                    return false;
+                if ("tzupdater.jar".equals(right)) {
+                    if (updateTimeZones(fileResult.updated)) {
+                        gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
+                        return false;
+                    }
+                }
+            } else if ("?file".equalsIgnoreCase(left)) {
+                fileLoader.receiveFile(right, true, true);
+            }
+            return true;
         });
         if (!ok)
             return null;
@@ -203,16 +199,12 @@ public final class AppLoader implements AppInfo.AppClassLoader {
             AppFactory factory = (AppFactory) cls.newInstance();
             return factory.newApplication(application);
         } else {
-            final Method main = cls.getMethod("main", String[].class);
+            Method main = cls.getMethod("main", String[].class);
             if (main == null || !Modifier.isStatic(main.getModifiers())) {
                 gui.showError("Главный класс не является AppFactory и не содержит main");
                 return null;
             }
-            return new AppRunner() {
-                public void runGui(String[] args) throws Exception {
-                    main.invoke(null, (Object) args);
-                }
-            };
+            return args -> main.invoke(null, (Object) args);
         }
     }
 

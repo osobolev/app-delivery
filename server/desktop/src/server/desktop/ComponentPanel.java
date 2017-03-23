@@ -7,8 +7,6 @@ import sqlg2.db.SqlTrace;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -23,7 +21,7 @@ final class ComponentPanel extends JPanel {
 
     private final AppServerComponent comp;
 
-    ComponentPanel(final AppServerComponent comp, JLabel lblControl) {
+    ComponentPanel(AppServerComponent comp, JLabel lblControl) {
         super(new BorderLayout());
         this.comp = comp;
         this.lblControl = lblControl;
@@ -48,13 +46,11 @@ final class ComponentPanel extends JPanel {
 
         add(cbControl, BorderLayout.SOUTH);
 
-        cbControl.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (comp.isRunning()) {
-                    stop();
-                } else {
-                    start();
-                }
+        cbControl.addActionListener(e -> {
+            if (comp.isRunning()) {
+                stop();
+            } else {
+                start();
             }
         });
 
@@ -98,12 +94,10 @@ final class ComponentPanel extends JPanel {
             this.logger = logger;
         }
 
-        private void append(final String str) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    taLog.append(str + "\n");
-                    taLog.setCaretPosition(taLog.getDocument().getLength());
-                }
+        private void append(String str) {
+            SwingUtilities.invokeLater(() -> {
+                taLog.append(str + "\n");
+                taLog.setCaretPosition(taLog.getDocument().getLength());
             });
         }
 
