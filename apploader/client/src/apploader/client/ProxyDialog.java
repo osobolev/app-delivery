@@ -1,5 +1,7 @@
 package apploader.client;
 
+import apploader.common.ProxyConfig;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
 import java.awt.*;

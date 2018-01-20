@@ -1,5 +1,6 @@
 package server.http;
 
+import apploader.common.Application;
 import apploader.common.ConfigReader;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package apploader.client;
+package apploader.common;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;

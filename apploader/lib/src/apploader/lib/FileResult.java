@@ -1,4 +1,4 @@
-package apploader;
+package apploader.lib;
 
 import java.io.File;
 

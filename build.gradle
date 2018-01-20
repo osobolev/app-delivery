@@ -27,9 +27,16 @@ project(':apploader-client') {
     }
 }
 
+project(':apploader-lib') {
+    dependencies {
+        compile project(':apploader-common')
+    }
+}
+
 project(':apploader') {
     dependencies {
         compileOnly project(':apploader-client')
+        compileOnly project(':apploader-lib')
     }
 
     jar {

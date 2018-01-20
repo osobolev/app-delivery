@@ -1,16 +1,16 @@
-package apploader;
+package apploader.lib;
 
-import apploader.client.Application;
+import apploader.common.Application;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-final class OfflineFileLoader extends IFileLoader {
+public final class OfflineFileLoader extends IFileLoader {
 
-    private final LoaderGui gui;
+    private final ILoaderGui gui;
 
-    OfflineFileLoader(LoaderGui gui) {
+    public OfflineFileLoader(ILoaderGui gui) {
         this.gui = gui;
     }
 
@@ -26,7 +26,7 @@ final class OfflineFileLoader extends IFileLoader {
         }
     }
 
-    List<Application> loadApplications(String file, String app) {
+    public List<Application> loadApplications(String file, String app) {
         return Collections.singletonList(new Application(app, app));
     }
 }

@@ -1,6 +1,7 @@
 package server.jetty;
 
 import apploader.common.AppCommon;
+import apploader.common.Application;
 import apploader.common.ConfigReader;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -8,7 +9,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.resource.Resource;
-import server.http.Application;
 import server.http.InstallServletBase;
 import server.http.ListServletBase;
 

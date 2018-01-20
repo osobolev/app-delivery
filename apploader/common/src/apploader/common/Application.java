@@ -1,4 +1,4 @@
-package server.http;
+package apploader.common;
 
 public final class Application {
 
@@ -8,5 +8,9 @@ public final class Application {
     public Application(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public String toString() {
+        return name;
     }
 }

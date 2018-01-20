@@ -1,7 +1,11 @@
 package apploader;
 
-import apploader.client.ProxyConfig;
 import apploader.client.ProxyDialog;
+import apploader.client.SplashStatus;
+import apploader.common.ProxyConfig;
+import apploader.lib.FileLoader;
+import apploader.lib.ILoaderGui;
+import apploader.lib.Result;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
@@ -12,12 +16,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 
-final class LoaderGui {
+final class LoaderGui implements ILoaderGui {
 
     private static final String WARNING = "Предупреждение";
     private static final String ERROR = "Ошибка";
 
     private boolean lnfSet = false;
+
+    @Override
+    public void showStatus(String status) {
+        SplashStatus.setStatus(status);
+    }
 
     private Result showDialogInternal(Component parent,
                                       String message,
@@ -106,14 +115,14 @@ final class LoaderGui {
         }
     }
 
-    void showError(String message) {
+    public void showError(String message) {
         showDialogInternal(
             null, message, ERROR, JOptionPane.ERROR_MESSAGE, new String[] {"OK"}, null,
             null, null
         );
     }
 
-    void showWarning(String message) {
+    public void showWarning(String message) {
         showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE, new String[] {"OK"}, null,
@@ -129,7 +138,7 @@ final class LoaderGui {
         );
     }
 
-    Result showError2(String message, FileLoader loader) {
+    public Result showError2(String message, FileLoader loader) {
         return showDialogInternal(
             null, message,
             ERROR, JOptionPane.ERROR_MESSAGE,
@@ -138,7 +147,7 @@ final class LoaderGui {
         );
     }
 
-    Result showWarning2(String message, FileLoader loader) {
+    public Result showWarning2(String message, FileLoader loader) {
         return showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE,
@@ -147,7 +156,7 @@ final class LoaderGui {
         );
     }
 
-    Result showWarning3(String message, FileLoader loader) {
+    public Result showWarning3(String message, FileLoader loader) {
         return showDialogInternal(
             null, message,
             WARNING, JOptionPane.WARNING_MESSAGE,

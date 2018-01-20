@@ -1,5 +1,6 @@
 package server.http;
 
+import apploader.common.Application;
 import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;

@@ -1,5 +1,7 @@
 package server.http;
 
+import apploader.common.Application;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

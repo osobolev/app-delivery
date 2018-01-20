@@ -66,8 +66,7 @@ public class InitListener implements ServletContextListener {
         try {
             data.testConnection();
         } catch (SQLException ex) {
-            logger.error(ex);
-            return;
+            logger.error("CANNOT CONNECT TO DB: " + ex);
         }
 
         String application = SingleUtil.getApplication(ctx);

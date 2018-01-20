@@ -1,6 +1,6 @@
 package server.war;
 
-import server.http.Application;
+import apploader.common.Application;
 import server.http.ListServletBase;
 
 import javax.servlet.ServletConfig;

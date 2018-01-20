@@ -1,9 +1,9 @@
 package apploader;
 
 import apploader.client.AppInfo;
-import apploader.client.ProxyConfig;
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
+import apploader.common.ProxyConfig;
 
 import java.io.File;
 import java.io.IOException;

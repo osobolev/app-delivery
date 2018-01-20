@@ -1,10 +1,10 @@
-package apploader;
+package apploader.lib;
 
-import apploader.client.Application;
+import apploader.common.Application;
 
 import java.util.List;
 
-abstract class IFileLoader {
+public abstract class IFileLoader {
 
     final FileResult receiveFile(String file, boolean silent) {
         return receiveFile(file, silent, false);
@@ -12,5 +12,5 @@ abstract class IFileLoader {
 
     abstract FileResult receiveFile(String file, boolean silent, boolean noTrace);
 
-    abstract List<Application> loadApplications(String file, String app);
+    public abstract List<Application> loadApplications(String file, String app);
 }

@@ -1,67 +1,35 @@
 package apploader;
 
-import apploader.client.*;
+import apploader.client.AppFactory;
+import apploader.client.AppInfo;
+import apploader.client.AppRunner;
+import apploader.client.SplashStatus;
 import apploader.common.AppCommon;
-import apploader.common.ConfigReader;
+import apploader.common.Application;
+import apploader.lib.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
 public final class AppLoader implements AppInfo.AppClassLoader {
 
-    private static final class AppProperties {
-
-        private final List<File> jarList = new ArrayList<>();
-        private final List<File> dllList = new ArrayList<>();
-        private String mainClass = null;
-    }
-
-    private static final class AppClassLoader extends URLClassLoader {
-
-        private final HashMap<String, File> dllMap = new HashMap<>();
-
-        private AppClassLoader() {
-            super(new URL[0]);
-        }
-
-        void addJar(URL url) {
-            addURL(url);
-        }
-
-        void addDLL(File file) {
-            dllMap.put(file.getName().toUpperCase(), file);
-        }
-
-        protected String findLibrary(String libname) {
-            File file = dllMap.get(libname.toUpperCase());
-            if (file == null) {
-                file = dllMap.get(System.mapLibraryName(libname).toUpperCase());
-            }
-            if (file == null)
-                return null;
-            return file.getAbsolutePath();
-        }
-    }
-
     private final LoaderGui gui;
     private final boolean offline;
     private final IFileLoader fileLoader;
-    private final AppClassLoader classLoader = new AppClassLoader();
+    private final AppLoaderLib lib;
 
     AppLoader(LoaderGui gui, IFileLoader fileLoader, boolean offline) {
         this.gui = gui;
         this.offline = offline;
+        this.lib = new AppLoaderLib(gui, fileLoader, new URL[0], ClassLoader.getSystemClassLoader());
         this.fileLoader = fileLoader;
-        Thread.currentThread().setContextClassLoader(classLoader);
+        Thread.currentThread().setContextClassLoader(lib.getClassLoader());
     }
 
     private String updateGlobal(String appToRun) {
@@ -79,79 +47,6 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         return buf.toString();
     }
 
-    private AppProperties updateAll(String application) throws IOException {
-        File list = fileLoader.receiveFile(application + "_jars.list", false).file;
-        if (list == null)
-            return null;
-        fileLoader.receiveFile(AppCommon.getSplashName(application), true, true);
-        AppProperties properties = new AppProperties();
-        boolean ok = ConfigReader.readConfig(list, (left, right) -> {
-            boolean jar;
-            boolean corejar;
-            if ("jar".equalsIgnoreCase(left)) {
-                jar = true;
-                corejar = false;
-            } else if ("corejar".equalsIgnoreCase(left)) {
-                jar = true;
-                corejar = true;
-            } else {
-                jar = corejar = false;
-            }
-            if (jar) {
-                FileResult jarResult = fileLoader.receiveFile(right, corejar);
-                if (corejar && jarResult.isFailCopy) {
-                    gui.showWarning("Обновлен загрузчик приложения, перезапустите его");
-                    return false;
-                }
-                File file = jarResult.file;
-                if (file == null)
-                    return false;
-                properties.jarList.add(file);
-            } else if ("mainClass".equalsIgnoreCase(left)) {
-                properties.mainClass = right;
-            } else if ("dll".equalsIgnoreCase(left)) {
-                File file = fileLoader.receiveFile(right, false).file;
-                if (file == null)
-                    return false;
-                properties.dllList.add(file);
-            } else if ("file".equalsIgnoreCase(left)) {
-                FileResult fileResult = fileLoader.receiveFile(right, false);
-                File file = fileResult.file;
-                if (file == null)
-                    return false;
-                if ("tzupdater.jar".equals(right)) {
-                    if (updateTimeZones(fileResult.updated)) {
-                        gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
-                        return false;
-                    }
-                }
-            } else if ("?file".equalsIgnoreCase(left)) {
-                fileLoader.receiveFile(right, true, true);
-            }
-            return true;
-        });
-        if (!ok)
-            return null;
-        return properties;
-    }
-
-    private Class<?> loadClass(AppProperties properties) throws Exception {
-        if (properties.mainClass == null) {
-            gui.showError("Не указан атрибут mainClass");
-            return null;
-        }
-        AppInfo.loader = this;
-        List<File> jarList = properties.jarList;
-        for (File file : jarList) {
-            classLoader.addJar(file.toURI().toURL());
-        }
-        List<File> dllList = properties.dllList;
-        for (File file : dllList) {
-            classLoader.addDLL(file);
-        }
-        return Class.forName(properties.mainClass, true, classLoader);
-    }
-
     private static void generateBatFile(String app) {
         File file = new File(app + "-client.bat");
         if (file.exists())
@@ -163,36 +58,20 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         }
     }
 
-    private static boolean updateTimeZones(boolean freshUpdater) {
-        File file = new File("tzupdater.bat");
-        if (file.exists() && !freshUpdater)
-            return false;
-        try (PrintWriter pw = new PrintWriter(file, AppCommon.BAT_CHARSET)) {
-            pw.println("@echo off");
-            pw.println("call setjava.bat");
-            pw.println("%JAVABIN% -jar tzupdater.jar -u -v");
-        } catch (IOException ex) {
-            AppCommon.error(ex);
-        }
-        try {
-            ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "tzupdater.bat");
-            Process process = pb.start();
-            process.waitFor();
-        } catch (Exception ex) {
-            AppCommon.error(ex);
-            file.delete();
-        }
-        return true;
-    }
-
     public AppRunner loadApplication(String application) throws Exception {
-        AppProperties properties = updateAll(application);
+        AppProperties properties = lib.updateAppFiles(application);
         SplashStatus.setStatus("");
         if (properties == null)
             return null;
-        Class<?> cls = loadClass(properties);
-        if (cls == null)
+        String mainClass = properties.getMainClass();
+        if (mainClass == null) {
+            gui.showError("Не указан атрибут mainClass");
             return null;
+        }
+        lib.updateClassLoader(properties);
+        URLClassLoader classLoader = lib.getClassLoader();
+        AppInfo.loader = this;
+        Class<?> cls = Class.forName(mainClass, true, classLoader);
         if (AppFactory.class.isAssignableFrom(cls)) {
             AppFactory factory = (AppFactory) cls.newInstance();
             return factory.newApplication(application);

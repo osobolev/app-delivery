@@ -1,10 +1,9 @@
-package apploader;
+package apploader.lib;
 
-import apploader.client.Application;
-import apploader.client.ProxyConfig;
-import apploader.client.SplashStatus;
 import apploader.common.AppCommon;
+import apploader.common.Application;
 import apploader.common.ConfigReader;
+import apploader.common.ProxyConfig;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -15,36 +14,36 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-final class FileLoader extends IFileLoader {
+public final class FileLoader extends IFileLoader {
 
-    private final LoaderGui gui;
+    private final ILoaderGui gui;
     private final URL base;
 
     private boolean doNotShow;
     private ProxyConfig proxy;
     private boolean connectionProblem = false;
 
-    FileLoader(LoaderGui gui, URL base, boolean doNotShow, ProxyConfig proxy) {
+    public FileLoader(ILoaderGui gui, URL base, boolean doNotShow, ProxyConfig proxy) {
         this.gui = gui;
         this.base = base;
         this.doNotShow = doNotShow;
         this.proxy = proxy;
     }
 
-    void setDoNotShow(boolean doNotShow) {
+    public void setDoNotShow(boolean doNotShow) {
         this.doNotShow = doNotShow;
     }
 
-    ProxyConfig getProxy() {
+    public ProxyConfig getProxy() {
         return proxy;
     }
 
-    void setProxy(ProxyConfig proxy) {
+    public void setProxy(ProxyConfig proxy) {
         this.proxy = proxy;
         proxy.setLogin();
     }
 
-    URL getUrl() {
+    public URL getUrl() {
         return base;
     }
 
@@ -121,7 +120,7 @@ final class FileLoader extends IFileLoader {
         boolean creating = !local.exists();
         HeadResult head = isNeedUpdate(url, local, creating);
         if (head.needUpdate) {
-            SplashStatus.setStatus("Обновление " + file + "...");
+            gui.showStatus("Обновление " + file + "...");
             File parent = local.getAbsoluteFile().getParentFile();
             parent.mkdirs();
             File neo = new File(parent, local.getName() + ".tmp");
@@ -246,7 +245,7 @@ final class FileLoader extends IFileLoader {
         throw lastError;
     }
 
-    List<Application> loadApplications(String file, String app) {
+    public List<Application> loadApplications(String file, String app) {
         while (true) {
             String errorMessage;
             if (connectionProblem) {

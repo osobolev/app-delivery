@@ -1,6 +1,6 @@
 package server.jetty;
 
-import server.http.Application;
+import apploader.common.Application;
 import server.http.InstallServletBase;
 import sqlg2.db.SQLGLogger;
 

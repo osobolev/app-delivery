@@ -25,16 +25,6 @@ public final class ConfigReader {
         boolean workLine(String left, String right);
     }
 
-    public static void close(Closeable rdr) {
-        if (rdr != null) {
-            try {
-                rdr.close();
-            } catch (IOException ex) {
-                // ignore
-            }
-        }
-    }
-
     public static boolean readConfig(File file, LineWorker worker) throws IOException {
         try (InputStream is = new FileInputStream(file)) {
             return readConfig(is, worker);
