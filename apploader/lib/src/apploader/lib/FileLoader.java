@@ -18,14 +18,16 @@ public final class FileLoader extends IFileLoader {
 
     private final ILoaderGui gui;
     private final URL base;
+    private final File root;
 
     private boolean doNotShow;
     private ProxyConfig proxy;
     private boolean connectionProblem = false;
 
-    public FileLoader(ILoaderGui gui, URL base, boolean doNotShow, ProxyConfig proxy) {
+    public FileLoader(ILoaderGui gui, URL base, File root, boolean doNotShow, ProxyConfig proxy) {
         this.gui = gui;
         this.base = base;
+        this.root = root;
         this.doNotShow = doNotShow;
         this.proxy = proxy;
     }
@@ -154,8 +156,8 @@ public final class FileLoader extends IFileLoader {
         }
     }
 
-    FileResult receiveFile(String file, boolean silent, boolean noTrace) {
-        File local = new File(file).getAbsoluteFile();
+    public FileResult receiveFile(String file, boolean silent, boolean noTrace) {
+        File local = (root == null ? new File(file) : new File(root, file)).getAbsoluteFile();
         while (true) {
             String errorMessage;
             if (connectionProblem) {

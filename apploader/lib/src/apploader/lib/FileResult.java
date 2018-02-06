@@ -2,11 +2,11 @@ package apploader.lib;
 
 import java.io.File;
 
-final class FileResult {
+public final class FileResult {
 
-    final File file;
-    final boolean isFailCopy;
-    final boolean updated;
+    public final File file;
+    public final boolean isFailCopy;
+    public final boolean updated;
 
     FileResult(File file, boolean failCopy, boolean updated) {
         this.file = file;

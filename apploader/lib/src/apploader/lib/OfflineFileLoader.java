@@ -14,7 +14,7 @@ public final class OfflineFileLoader extends IFileLoader {
         this.gui = gui;
     }
 
-    FileResult receiveFile(String file, boolean silent, boolean noTrace) {
+    public FileResult receiveFile(String file, boolean silent, boolean noTrace) {
         File local = new File(file).getAbsoluteFile();
         if (local.exists()) {
             return new FileResult(local, false, false);

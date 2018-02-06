@@ -6,14 +6,16 @@ import apploader.client.AppRunner;
 import apploader.client.SplashStatus;
 import apploader.common.AppCommon;
 import apploader.common.Application;
-import apploader.lib.*;
+import apploader.lib.AppClassLoader;
+import apploader.lib.FileLoader;
+import apploader.lib.IFileLoader;
+import apploader.lib.OfflineFileLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 
 @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
@@ -22,14 +24,14 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     private final LoaderGui gui;
     private final boolean offline;
     private final IFileLoader fileLoader;
-    private final AppLoaderLib lib;
+    private final AppClassLoader classLoader;
 
     AppLoader(LoaderGui gui, IFileLoader fileLoader, boolean offline) {
         this.gui = gui;
         this.offline = offline;
-        this.lib = new AppLoaderLib(gui, fileLoader, new URL[0], ClassLoader.getSystemClassLoader());
         this.fileLoader = fileLoader;
-        Thread.currentThread().setContextClassLoader(lib.getClassLoader());
+        this.classLoader = new AppClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
+        Thread.currentThread().setContextClassLoader(classLoader);
     }
 
     private String updateGlobal(String appToRun) {
@@ -59,7 +61,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     public AppRunner loadApplication(String application) throws Exception {
-        AppProperties properties = lib.updateAppFiles(application);
+        AppProperties properties = AppProperties.updateAppFiles(gui, fileLoader, application);
         SplashStatus.setStatus("");
         if (properties == null)
             return null;
@@ -68,8 +70,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
             gui.showError("Не указан атрибут mainClass");
             return null;
         }
-        lib.updateClassLoader(properties);
-        URLClassLoader classLoader = lib.getClassLoader();
+        classLoader.update(properties.jarList, properties.dllList);
         AppInfo.loader = this;
         Class<?> cls = Class.forName(mainClass, true, classLoader);
         if (AppFactory.class.isAssignableFrom(cls)) {
@@ -149,7 +150,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 gui.showError("Не задан адрес сервера");
                 return false;
             }
-            fileLoader = new FileLoader(gui, config.httpUrl, config.doNotShow, config.proxy);
+            fileLoader = new FileLoader(gui, config.httpUrl, null, config.doNotShow, config.proxy);
             AppInfo.httpServerUrl = config.httpUrl;
         }
         AppLoader loader = new AppLoader(gui, fileLoader, offline);
