@@ -77,7 +77,6 @@ project(':server-jetty') {
 
 project(':server-service') {
     dependencies {
-        compile 'org.boris.winrun4j:winrun4j:0.4.5'
         compile project(':server-jetty')
     }
 }
