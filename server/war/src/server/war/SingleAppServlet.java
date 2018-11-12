@@ -2,7 +2,9 @@ package server.war;
 
 import server.http.SessionUtil;
 import sqlg2.db.HttpDispatcher;
+import sqlg2.db.IServerSerializer;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,11 +15,13 @@ public class SingleAppServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
-        HttpDispatcher http = InitListener.getHttpDispatcher(getServletContext());
+        ServletContext ctx = getServletContext();
+        HttpDispatcher http = InitListener.getHttpDispatcher(ctx);
         if (http == null) {
             String error = "Ошибка при инициализации сервера";
-            InitListener.getLogger(getServletContext()).error(error);
-            HttpDispatcher.writeResponse(resp.getOutputStream(), null, new SQLException(error));
+            InitListener.getLogger(ctx).error(error);
+            IServerSerializer serializer = InitListener.getSerializer(ctx);
+            HttpDispatcher.writeResponse(serializer, resp.getOutputStream(), null, new SQLException(error));
             return;
         }
         http.dispatch(req.getRemoteHost(), req.getInputStream(), resp.getOutputStream());

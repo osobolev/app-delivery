@@ -42,6 +42,7 @@ public final class AppServerComponent {
         SessionFactory sf = init.init(application, loginData);
 
         this.http = new HttpDispatcher(application, sf, loginData.getSpecific(), logger);
+        http.setSerializer(init.getSerializer());
         http.setSqlTrace(trace);
     }
 
@@ -65,7 +66,7 @@ public final class AppServerComponent {
 
     public void dispatch(String hostName, InputStream is, OutputStream os) throws IOException {
         if (!running) {
-            HttpDispatcher.writeResponse(os, null, new IOException("Server not running"));
+            HttpDispatcher.writeResponse(init.getSerializer(), os, null, new IOException("Server not running"));
         } else {
             http.dispatch(hostName, is, os);
         }

@@ -2,10 +2,7 @@ package server.war;
 
 import server.core.AppInit;
 import server.core.LoginData;
-import sqlg2.db.DBSpecific;
-import sqlg2.db.HttpDispatcher;
-import sqlg2.db.SQLGLogger;
-import sqlg2.db.SessionFactory;
+import sqlg2.db.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -16,6 +13,7 @@ public class InitListener implements ServletContextListener {
 
     private static final String APP_INIT_ATTR = "appInit";
     private static final String LOGGER_ATTR = "logger";
+    private static final String SERIALIZER_ATTR = "serializer";
     private static final String DISPATCH_ATTR = "httpDispatch";
 
     private static LoginData getDbParameters(ServletContext ctx) throws Exception {
@@ -50,6 +48,8 @@ public class InitListener implements ServletContextListener {
         AppInit init = getInit(ctx);
         SQLGLogger logger = init == null ? new SQLGLogger.Simple() : init.createLogger();
         ctx.setAttribute(LOGGER_ATTR, logger);
+        IServerSerializer serializer = init == null ? new ServerJavaSerializer() : init.getSerializer();
+        ctx.setAttribute(SERIALIZER_ATTR, serializer);
         if (init == null)
             return;
         ctx.setAttribute(APP_INIT_ATTR, init);
@@ -89,6 +89,10 @@ public class InitListener implements ServletContextListener {
 
     static SQLGLogger getLogger(ServletContext ctx) {
         return (SQLGLogger) ctx.getAttribute(LOGGER_ATTR);
+    }
+
+    static IServerSerializer getSerializer(ServletContext ctx) {
+        return (IServerSerializer) ctx.getAttribute(SERIALIZER_ATTR);
     }
 
     static HttpDispatcher getHttpDispatcher(ServletContext ctx) {
