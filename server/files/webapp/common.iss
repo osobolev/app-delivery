@@ -13,6 +13,7 @@ AppId={#apId}
 AppVerName={#apName} {#apVersion}
 
 UsePreviousSetupType=no
+TimeStampRounding=0
 
 
 [Languages]
