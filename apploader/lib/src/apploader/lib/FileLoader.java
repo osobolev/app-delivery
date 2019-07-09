@@ -6,10 +6,8 @@ import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
 
 import java.io.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +59,26 @@ public final class FileLoader extends IFileLoader {
         }
     }
 
-    private HeadResult isNeedUpdate(URL url, File local, boolean creating) throws IOException {
+    private static File toFile(URL url) {
+        if ("file".equalsIgnoreCase(url.getProtocol())) {
+            try {
+                return Paths.get(url.toURI()).toFile();
+            } catch (Exception ex) {
+                // ignore
+            }
+        }
+        return null;
+    }
+
+    private HeadResult isNeedUpdate(URL url) throws IOException {
+        File file = toFile(url);
+        if (file != null) {
+            HeadResult head = HeadResult.fromFile(file);
+            if (head == null) {
+                throw new IOException("Файл не найден");
+            }
+            return head;
+        }
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) url.openConnection(proxy.proxy);
@@ -70,18 +87,8 @@ public final class FileLoader extends IFileLoader {
             int code = conn.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK) {
                 long lastModified = conn.getLastModified();
-                int length = conn.getContentLength();
-                boolean needUpdate;
-                if (!creating) {
-                    if (lastModified > 0) {
-                        needUpdate = lastModified > local.lastModified();
-                    } else {
-                        needUpdate = length != local.length();
-                    }
-                } else {
-                    needUpdate = length >= 0;
-                }
-                return new HeadResult(lastModified, length, needUpdate);
+                long length = conn.getContentLengthLong();
+                return new HeadResult(lastModified, length);
             } else {
                 String response = conn.getResponseMessage();
                 if (response != null) {
@@ -99,10 +106,9 @@ public final class FileLoader extends IFileLoader {
     }
 
     private void transferFile(URL url, File to, HeadResult head) throws IOException {
-        HttpURLConnection conn = null;
+        URLConnection conn = null;
         try {
-            conn = (HttpURLConnection) url.openConnection(proxy.proxy);
-            conn.setRequestMethod("GET");
+            conn = url.openConnection(proxy.proxy);
             conn.connect();
             to.delete();
             try (InputStream in = conn.getInputStream();
@@ -111,17 +117,16 @@ public final class FileLoader extends IFileLoader {
             }
             to.setLastModified(head.lastModified);
         } finally {
-            if (conn != null) {
-                conn.disconnect();
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).disconnect();
             }
         }
     }
 
     private ReceiveResult receiveFileAttempt(File local, String file) throws IOException {
         URL url = new URL(base, file);
-        boolean creating = !local.exists();
-        HeadResult head = isNeedUpdate(url, local, creating);
-        if (head.needUpdate) {
+        HeadResult head = isNeedUpdate(url);
+        if (head.isNeedUpdate(HeadResult.fromFile(local))) {
             gui.showStatus("Обновление " + file + "...");
             File parent = local.getAbsoluteFile().getParentFile();
             parent.mkdirs();
@@ -140,7 +145,7 @@ public final class FileLoader extends IFileLoader {
             if (!ok) {
                 throw lastError;
             } else {
-                if (!creating) {
+                if (local.exists()) {
                     local.delete();
                 }
                 if (!neo.renameTo(local)) {
@@ -214,10 +219,9 @@ public final class FileLoader extends IFileLoader {
     }
 
     private List<Application> transferApplications(URL url) throws IOException {
-        HttpURLConnection conn = null;
+        URLConnection conn = null;
         try {
-            conn = (HttpURLConnection) url.openConnection(proxy.proxy);
-            conn.setRequestMethod("GET");
+            conn = url.openConnection(proxy.proxy);
             conn.connect();
             try (InputStream in = conn.getInputStream()) {
                 List<Application> applications = new ArrayList<>();
@@ -228,8 +232,8 @@ public final class FileLoader extends IFileLoader {
                 return applications;
             }
         } finally {
-            if (conn != null) {
-                conn.disconnect();
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).disconnect();
             }
         }
     }

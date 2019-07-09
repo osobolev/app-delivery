@@ -1,5 +1,6 @@
 package apploader.lib;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,26 +8,46 @@ import java.io.OutputStream;
 final class HeadResult {
 
     final long lastModified;
-    final int length;
-    final boolean needUpdate;
+    final long length;
 
-    HeadResult(long lastModified, int length, boolean needUpdate) {
+    HeadResult(long lastModified, long length) {
         this.lastModified = lastModified;
         this.length = length;
-        this.needUpdate = needUpdate;
+    }
+
+    static HeadResult fromFile(File file) {
+        if (file.exists()) {
+            return new HeadResult(file.lastModified(), file.length());
+        } else {
+            return null;
+        }
+    }
+
+    boolean isNeedUpdate(HeadResult local) {
+        if (local != null) {
+            if (this.lastModified > 0) {
+                return this.lastModified > local.lastModified;
+            } else {
+                return this.length != local.length;
+            }
+        } else {
+            return this.length >= 0;
+        }
     }
 
     void copyStream(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[8192];
         if (length >= 0) {
-            int totalRead = 0;
-            while (totalRead < length) {
-                int rest = length - totalRead;
+            long totalRead = 0;
+            while (true) {
+                long rest = length - totalRead;
+                if (rest <= 0)
+                    break;
                 int read;
                 if (rest > buffer.length) {
                     read = in.read(buffer);
                 } else {
-                    read = in.read(buffer, 0, rest);
+                    read = in.read(buffer, 0, (int) rest);
                 }
                 if (read < 0)
                     break;
@@ -38,8 +59,7 @@ final class HeadResult {
                 int read = in.read(buffer);
                 if (read < 0)
                     break;
-                if (read > 0)
-                    out.write(buffer, 0, read);
+                out.write(buffer, 0, read);
             }
         }
     }

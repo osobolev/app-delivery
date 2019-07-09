@@ -38,7 +38,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         List<Application> allApplications = fileLoader.loadApplications(AppCommon.GLOBAL_APP_LIST, appToRun);
         if (allApplications == null)
             return null;
-        AppInfo.applications = allApplications.toArray(new Application[allApplications.size()]);
+        AppInfo.applications = allApplications.toArray(new Application[0]);
         StringBuilder buf = new StringBuilder();
         for (Application app : allApplications) {
             if (buf.length() > 0)
