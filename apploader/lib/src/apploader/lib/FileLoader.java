@@ -75,7 +75,7 @@ public final class FileLoader extends IFileLoader {
         if (file != null) {
             HeadResult head = HeadResult.fromFile(file);
             if (head == null) {
-                throw new IOException("Файл не найден");
+                throw new IOException("Файл " + file + " + не найден");
             }
             return head;
         }
