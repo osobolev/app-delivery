@@ -2,7 +2,7 @@ package server.jetty;
 
 import org.eclipse.jetty.util.log.AbstractLogger;
 import org.eclipse.jetty.util.log.Logger;
-import sqlg2.db.SQLGLogger;
+import sqlg3.remote.common.SQLGLogger;
 
 public final class HttpLogger extends AbstractLogger {
 

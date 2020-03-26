@@ -1,8 +1,8 @@
 package server.war;
 
 import server.http.SessionUtil;
-import sqlg2.db.HttpDispatcher;
-import sqlg2.db.IServerSerializer;
+import sqlg3.remote.server.HttpDispatcher;
+import sqlg3.remote.server.IServerSerializer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;

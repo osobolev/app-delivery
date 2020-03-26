@@ -3,10 +3,11 @@ package server.jetty;
 import server.core.AppInit;
 import server.core.LoginData;
 import server.http.SessionUtil;
-import sqlg2.db.HttpDispatcher;
-import sqlg2.db.SQLGLogger;
-import sqlg2.db.SessionFactory;
-import sqlg2.db.SqlTrace;
+import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.HttpDispatcher;
+import sqlg3.remote.server.SessionFactory;
+import sqlg3.runtime.GlobalContext;
+import sqlg3.runtime.SqlTrace;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +42,9 @@ public final class AppServerComponent {
         LoginData loginData = login.login(application);
         SessionFactory sf = init.init(application, loginData);
 
-        this.http = new HttpDispatcher(application, sf, loginData.getSpecific(), logger);
+        GlobalContext global = new GlobalContext(loginData.getSpecific(), loginData.getMappers(), trace);
+        this.http = new HttpDispatcher(application, sf, logger, global);
         http.setSerializer(init.getSerializer());
-        http.setSqlTrace(trace);
     }
 
     public void start() {

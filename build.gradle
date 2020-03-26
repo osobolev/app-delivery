@@ -1,35 +1,43 @@
 subprojects {
+
+    apply plugin: project.name == 'server-files' ? 'war' : 'java-library'
+    apply plugin: 'maven-publish'
+
     group = 'com.github.osobolev.app-delivery'
-    version = '4.0'
+    version = '5.0'
 
-    apply plugin: 'java'
-    apply plugin: 'maven'
-
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = '8'
+    targetCompatibility = '8'
 
     compileJava.options.compilerArgs << '-Xlint:-options,deprecation,unchecked'
     compileJava.options.encoding = 'UTF-8'
-
+    sourceSets.main.java.srcDirs = ['src']
+    
     repositories {
         mavenLocal()
         mavenCentral()
     }
 
-    sourceSets.main.java.srcDirs = ['src']
-    
-    jar.manifest.attributes('Implementation-Version': version)
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from project.name == 'server-files' ? components.web : components.java
+            }
+        }
+    }
+
+    jar.manifest.attributes('Implementation-Version': project.version)
 }
 
 project(':apploader-client') {
     dependencies {
-        compile project(':apploader-common')
+        api project(':apploader-common')
     }
 }
 
 project(':apploader-lib') {
     dependencies {
-        compile project(':apploader-common')
+        api project(':apploader-common')
     }
 }
 
@@ -40,8 +48,9 @@ project(':apploader') {
     }
 
     jar {
+        dependsOn configurations.compileClasspath
         from {
-            configurations.compileOnly.collect { it.isDirectory() ? it : zipTree(it) }
+            configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
         }
         manifest.attributes('Main-Class': 'apploader.AppLoader')
     }
@@ -49,55 +58,55 @@ project(':apploader') {
 
 project(':server-core') {
     dependencies {
-        compile 'com.github.osobolev.sqlg2:sqlg2-remote-server:5.0'
+        api 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
     }
 }
 
 project(':server-install') {
     dependencies {
-        compile project(':apploader-common')
+        api project(':apploader-common')
     }
 }
 
 project(':server-http') {
     dependencies {
-        compile 'javax.servlet:javax.servlet-api:3.1.0'
-        compile 'com.github.osobolev.sqlg2:sqlg2-remote-server:5.0'
-        compile project(':server-install')
+        api 'javax.servlet:javax.servlet-api:3.1.0'
+        implementation 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
+        implementation project(':server-install')
     }
 }
 
 project(':server-jetty') {
     dependencies {
-        compile 'org.eclipse.jetty:jetty-servlet:9.4.26.v20200117'
-        compile project(':server-core')
-        compile project(':server-http')
+        implementation 'org.eclipse.jetty:jetty-servlet:9.4.26.v20200117'
+        api project(':apploader-common')
+        api project(':server-core')
+        implementation project(':server-http')
     }
 }
 
 project(':server-service') {
     dependencies {
-        compile project(':server-jetty')
+        implementation project(':server-jetty')
     }
 }
 
 project(':server-war') {
     dependencies {
-        compile project(':server-core')
-        compile project(':server-http')
+        api project(':apploader-common')
+        api project(':server-core')
+        implementation project(':server-http')
     }
 }
 
 project(':server-desktop') {
     dependencies {
-        compile project(':server-jetty')
+        implementation project(':server-jetty')
     }
 }
 
 project(':server-files') {
-    apply plugin: 'war'
-
-    jar.onlyIf { false }
+    war.manifest.attributes('Implementation-Version': project.version)
 
     webAppDirName = 'webapp'
 }

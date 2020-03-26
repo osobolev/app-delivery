@@ -4,8 +4,8 @@ import server.core.AppInit;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
-import sqlg2.db.SQLGLogger;
-import sqlg2.db.SqlTrace;
+import sqlg3.remote.common.SQLGLogger;
+import sqlg3.runtime.SqlTrace;
 
 import java.io.File;
 import java.util.List;

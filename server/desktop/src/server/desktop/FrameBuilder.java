@@ -2,7 +2,7 @@ package server.desktop;
 
 import server.core.AppInit;
 import server.jetty.*;
-import sqlg2.db.SQLGLogger;
+import sqlg3.remote.common.SQLGLogger;
 
 import javax.swing.*;
 import java.io.File;
@@ -46,9 +46,10 @@ final class FrameBuilder {
             ComponentPanel panel = new ComponentPanel(comp, lbl);
             boolean inited = false;
             AppInit appInit = comp.getInit();
-            SQLGLogger logger = panel.wrap(appInit.createLogger());
+            LoggerTrace lt = panel.wrap(appInit.createLogger());
+            SQLGLogger logger = lt.logger;
             try {
-                comp.init(login, logger, panel.getTrace());
+                comp.init(login, logger, lt.trace);
 
                 tab.addTab(name, panel);
                 tab.setTabComponentAt(index, lbl);

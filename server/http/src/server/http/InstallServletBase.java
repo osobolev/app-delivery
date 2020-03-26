@@ -5,7 +5,7 @@ import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;
 import server.install.SourceFiles;
-import sqlg2.db.SQLGLogger;
+import sqlg3.remote.common.SQLGLogger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

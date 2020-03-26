@@ -1,12 +1,11 @@
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven'
+    apply plugin: 'java-library'
 
     group = 'com.github.osobolev.app-delivery.sample'
-    version = '4.0'
+    version = '5.0'
 
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = '8'
+    targetCompatibility = '8'
                              
     compileJava.options.encoding = 'UTF-8'
 
@@ -18,43 +17,46 @@ subprojects {
     }
 }
 
-project(':sample_db') {
+project(':sample_dto') {
 
     configurations {
         sqlg
     }
 
     dependencies {
-        compileOnly 'com.github.osobolev.sqlg2:sqlg2-preprocess:5.0'
-        runtime 'com.github.osobolev.sqlg2:sqlg2-runtime:5.0'
+        implementation 'com.github.osobolev.sqlg3:sqlg3-core:1.0'
+
+        sqlg 'com.github.osobolev.sqlg3:sqlg3-preprocess:1.0'
         sqlg 'com.h2database:h2:1.4.191'
-        sqlg 'com.github.osobolev.sqlg2:sqlg2-preprocess:5.0'
     }
 
     task preprocess {
         doLast {
-            ant.taskdef(name: 'sqlg', classname: 'sqlg2.Preprocess', classpath: configurations.sqlg.asPath)
+            ant.taskdef(name: 'sqlg', classname: 'sqlg3.preprocess.ant.Preprocess', classpath: configurations.sqlg.asPath)
             ant.sqlg(classpath: configurations.sqlg.asPath,
-                     driverclass: 'org.h2.Driver', dbclass: 'sqlg2.db.specific.Generic',
+                     driverClass: 'org.h2.Driver',
                      url: 'jdbc:h2:mem:', user: '', password: '',
-                     implpack: 'wrapper', wrappack: 'wrapper',
-                     srcroot: 'src', encoding: compileJava.options.encoding) {
-                fileset(dir: 'src') {
-                    include(name: 'sample/dao/ClientDB.java')
-                }
+                     srcRoot: '../sample_db/src', destRoot: 'src',
+                     encoding: compileJava.options.encoding) {
             }
         }
     }
     compileJava.dependsOn(preprocess)
 }
 
+project(':sample_db') {
+
+    dependencies {
+        implementation 'com.github.osobolev.sqlg3:sqlg3-runtime:1.0'
+        implementation project(':sample_dto')
+    }
+}
+
 project(':sample_client') {
     dependencies {
-        compile 'com.github.osobolev.app-delivery:apploader-client:4.0'
-        compile 'com.github.osobolev.sqlg2:sqlg2-remote-client:5.0'
-        compile(project(':sample_db')) {
-            exclude module: 'sqlg2-runtime'
-        }
+        implementation 'com.github.osobolev.app-delivery:apploader-client:5.0'
+        implementation 'com.github.osobolev.sqlg3:sqlg3-remote-client:1.0'
+        implementation project(':sample_dto')
     }
 }
 
@@ -69,12 +71,13 @@ project(':sample_server') {
     }
 
     dependencies {
-        compile 'com.github.osobolev.sqlg2:sqlg2-remote-server:5.0'
-        compile 'com.github.osobolev.app-delivery:server-war:4.0'
-        runtime project(':sample_db')
+        implementation 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
+        implementation 'com.github.osobolev.app-delivery:server-war:5.0'
+        runtimeOnly project(':sample_db')
+        runtimeOnly project(':sample_dto')
 
-        webfiles 'com.github.osobolev.app-delivery:server-files:4.0@war'
-        webapploader 'com.github.osobolev.app-delivery:apploader:4.0'
+        webfiles 'com.github.osobolev.app-delivery:server-files:5.0@war'
+        webapploader 'com.github.osobolev.app-delivery:apploader:5.0'
         webdistr project(':sample_client')
     }
 
@@ -94,7 +97,7 @@ project(':sample_server') {
     war.dependsOn(createList)
 
     war {
-        archiveName 'sample_app.war'
+        archiveFileName = 'sample_app.war'
         webAppDirName = 'webapp'
 
         from(configurations.webdistr) {

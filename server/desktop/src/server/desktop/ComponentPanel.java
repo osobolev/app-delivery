@@ -1,8 +1,8 @@
 package server.desktop;
 
 import server.jetty.AppServerComponent;
-import sqlg2.db.SQLGLogger;
-import sqlg2.db.SqlTrace;
+import sqlg3.remote.common.SQLGLogger;
+import sqlg3.runtime.SqlTrace;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -74,16 +74,14 @@ final class ComponentPanel extends JPanel {
         lblControl.setForeground(running ? null : Color.red);
     }
 
-    SQLGLogger wrap(SQLGLogger realLogger) {
-        return new TextLogger(realLogger);
-    }
-
-    SqlTrace getTrace() {
-        return new SqlTrace() {
-            public String getTraceMessage(boolean ok, long time) {
-                return cbSqlTrace.isSelected() ? "\nSQL trace" : null;
+    LoggerTrace wrap(SQLGLogger realLogger) {
+        TextLogger textLogger = new TextLogger(realLogger);
+        SqlTrace trace = (ok, time, messageSupplier) -> {
+            if (cbSqlTrace.isSelected()) {
+                SqlTrace.doTrace(textLogger::error, "\nSQL trace", messageSupplier);
             }
         };
+        return new LoggerTrace(textLogger, trace);
     }
 
     private final class TextLogger implements SQLGLogger {

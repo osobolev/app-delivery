@@ -1,9 +1,9 @@
 package sample;
 
-import sqlg2.db.ConnectionManager;
-import sqlg2.db.SQLGLogger;
-import sqlg2.db.SessionFactory;
-import sqlg2.db.SingleConnectionManager;
+import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SessionFactory;
+import sqlg3.runtime.ConnectionManager;
+import sqlg3.runtime.SingleConnectionManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;

@@ -1,16 +1,18 @@
 package sample;
 
+import apploader.client.AppInfo;
+import apploader.client.SimpleApp;
 import sample.dao.IClientDB;
+import sqlg3.remote.client.HttpConnectionFactory;
+import sqlg3.remote.client.SafeDBInterface;
+import sqlg3.remote.common.IRemoteDBInterface;
+import sqlg3.remote.common.SQLGLogger;
 
-import apploader.client.*;
-import sqlg2.db.*;
-import sqlg2.db.client.*;
-
+import javax.swing.*;
 import java.net.Proxy;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import javax.swing.JOptionPane;
 
 public final class Client extends SimpleApp {
 

@@ -2,10 +2,10 @@ package sample;
 
 import server.core.AppInit;
 import server.core.LoginData;
-import sqlg2.db.IServerSerializer;
-import sqlg2.db.SQLGLogger;
-import sqlg2.db.ServerJavaSerializer;
-import sqlg2.db.SessionFactory;
+import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.IServerSerializer;
+import sqlg3.remote.server.ServerJavaSerializer;
+import sqlg3.remote.server.SessionFactory;
 
 public final class SampleInit implements AppInit {
 

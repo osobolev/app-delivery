@@ -1,7 +1,7 @@
 package server.http;
 
-import sqlg2.db.HttpDispatcher;
-import sqlg2.db.SessionInfo;
+import sqlg3.remote.common.SessionInfo;
+import sqlg3.remote.server.HttpDispatcher;
 
 import java.io.IOException;
 import java.io.OutputStream;
