@@ -74,7 +74,6 @@ project(':sample_server') {
         implementation 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
         implementation 'com.github.osobolev.app-delivery:server-war:5.0'
         runtimeOnly project(':sample_db')
-        runtimeOnly project(':sample_dto')
 
         webfiles 'com.github.osobolev.app-delivery:server-files:5.0@war'
         webapploader 'com.github.osobolev.app-delivery:apploader:5.0'

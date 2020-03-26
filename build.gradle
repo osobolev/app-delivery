@@ -29,6 +29,9 @@ subprojects {
     jar.manifest.attributes('Implementation-Version': project.version)
 }
 
+project(':apploader-common') {
+}
+
 project(':apploader-client') {
     dependencies {
         api project(':apploader-common')
@@ -64,7 +67,7 @@ project(':server-core') {
 
 project(':server-install') {
     dependencies {
-        api project(':apploader-common')
+        implementation project(':apploader-common')
     }
 }
 
@@ -72,6 +75,7 @@ project(':server-http') {
     dependencies {
         api 'javax.servlet:javax.servlet-api:3.1.0'
         implementation 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
+        implementation project(':apploader-common')
         implementation project(':server-install')
     }
 }
@@ -79,29 +83,29 @@ project(':server-http') {
 project(':server-jetty') {
     dependencies {
         implementation 'org.eclipse.jetty:jetty-servlet:9.4.26.v20200117'
-        api project(':apploader-common')
         api project(':server-core')
+        implementation project(':apploader-common')
         implementation project(':server-http')
     }
 }
 
 project(':server-service') {
     dependencies {
-        implementation project(':server-jetty')
+        api project(':server-jetty')
     }
 }
 
 project(':server-war') {
     dependencies {
-        api project(':apploader-common')
         api project(':server-core')
+        implementation project(':apploader-common')
         implementation project(':server-http')
     }
 }
 
 project(':server-desktop') {
     dependencies {
-        implementation project(':server-jetty')
+        api project(':server-jetty')
     }
 }
 
