@@ -1,6 +1,6 @@
 package server.desktop;
 
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
 final class LoggerTrace {

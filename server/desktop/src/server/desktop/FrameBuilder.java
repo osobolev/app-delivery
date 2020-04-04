@@ -2,7 +2,7 @@ package server.desktop;
 
 import server.core.AppInit;
 import server.jetty.*;
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 
 import javax.swing.*;
 import java.io.File;

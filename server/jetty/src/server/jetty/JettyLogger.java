@@ -1,7 +1,7 @@
 package server.jetty;
 
 import apploader.common.LogFormatUtil;
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 
 import java.io.PrintWriter;
 

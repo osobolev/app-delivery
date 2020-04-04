@@ -4,11 +4,12 @@ import server.core.AppInit;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.Function;
 
 public final class ServiceServer {
 
@@ -22,13 +23,13 @@ public final class ServiceServer {
         container.error(ex);
     }
 
-    public boolean runServer(Integer port, File rootDir, AppLogin login, SqlTrace trace, List<AppServerComponent> comps) throws Exception {
+    public boolean runServer(Integer port, File rootDir, AppLogin login, Function<SQLGLogger, SqlTrace> trace, List<AppServerComponent> comps) throws Exception {
         for (AppServerComponent component : comps) {
             boolean inited = false;
             try {
                 AppInit appInit = component.getInit();
                 SQLGLogger logger = appInit.createLogger();
-                component.init(login, logger, trace);
+                component.init(login, logger, trace.apply(logger));
                 container.addApplication(component);
                 inited = true;
             } finally {

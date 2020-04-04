@@ -2,7 +2,7 @@ package server.war;
 
 import apploader.common.Application;
 import server.http.InstallServletBase;
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 
 import javax.servlet.ServletConfig;
 import java.io.File;

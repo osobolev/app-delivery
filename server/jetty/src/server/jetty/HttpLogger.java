@@ -2,7 +2,7 @@ package server.jetty;
 
 import org.eclipse.jetty.util.log.AbstractLogger;
 import org.eclipse.jetty.util.log.Logger;
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 
 public final class HttpLogger extends AbstractLogger {
 
@@ -68,11 +68,11 @@ public final class HttpLogger extends AbstractLogger {
         for (Object arg : args) {
             int pos = msg.indexOf(braces, start);
             if (pos < 0) {
-                buf.append(msg.substring(start));
+                buf.append(msg, start, msg.length());
                 buf.append(' ').append(arg);
                 start = msg.length();
             } else {
-                buf.append(msg.substring(start, pos));
+                buf.append(msg, start, pos);
                 buf.append(arg);
                 start = pos + braces.length();
             }
