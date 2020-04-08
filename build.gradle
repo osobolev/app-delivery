@@ -18,6 +18,10 @@ subprojects {
         mavenCentral()
     }
 
+    java {
+        withSourcesJar()
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
