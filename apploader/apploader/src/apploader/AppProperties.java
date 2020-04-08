@@ -8,8 +8,12 @@ import apploader.lib.IFileLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 final class AppProperties {
 
@@ -45,7 +49,7 @@ final class AppProperties {
             if (jar) {
                 FileResult jarResult = fileLoader.receiveFile(right, corejar);
                 if (corejar && jarResult.isFailCopy) {
-                    gui.showWarning("Обновлен загрузчик приложения, перезапустите его");
+                    gui.showWarning("Обновлен загрузчик приложения, перезапустите приложение");
                     return false;
                 }
                 File file = jarResult.file;
@@ -72,6 +76,8 @@ final class AppProperties {
                 }
             } else if ("?file".equalsIgnoreCase(left)) {
                 fileLoader.receiveFile(right, true, true);
+            } else if ("jre".equalsIgnoreCase(left)) {
+                return updateJava(gui, fileLoader, right);
             }
             return true;
         });
@@ -100,5 +106,73 @@ final class AppProperties {
             file.delete();
         }
         return true;
+    }
+
+    private static boolean updateJava(LoaderGui gui, IFileLoader fileLoader, String right) {
+        File jreDir = fileLoader.getLocalFile("jre");
+        File javaHome = new File(System.getProperty("java.home")).getAbsoluteFile();
+        if (!jreDir.equals(javaHome)) {
+            // Our java is not in "jre" folder, cannot update it
+            return true;
+        }
+        if (!(right.startsWith("java") && right.endsWith(".zip"))) {
+            // Java should be zipped
+            return true;
+        }
+        String remoteVersion = right.substring(4, right.length() - 4).trim();
+        String javaVersion = System.getProperty("java.vm.version");
+        if (remoteVersion.equals(javaVersion)) {
+            // We already have this version, skip update
+            return true;
+        }
+        File javaZip = fileLoader.receiveFile(right, false).file;
+        if (javaZip == null)
+            return false;
+        try {
+            gui.showStatus("Установка новой Java...");
+            Path tmpDir = Files.createTempDirectory(Paths.get("."), "jre");
+            unzip(javaZip, tmpDir);
+
+            Path newJreDir = Paths.get("jre.new");
+            if (Files.exists(newJreDir)) {
+                deleteAll(newJreDir);
+            }
+            Files.move(tmpDir, newJreDir);
+            gui.showWarning("Обновлена Java, перезапустите приложение");
+            return false;
+        } catch (Exception ex) {
+            AppCommon.error(ex);
+            return false;
+        }
+    }
+
+    private static void unzip(File file, Path destDir) throws IOException {
+        try (ZipFile zipFile = new ZipFile(file)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                Path dest = destDir.resolve(entry.getName());
+                if (entry.isDirectory()) {
+                    Files.createDirectories(dest);
+                } else {
+                    Files.copy(zipFile.getInputStream(entry), dest);
+                }
+            }
+        }
+    }
+
+    private static void deleteAll(Path path) {
+        try {
+            if (Files.isDirectory(path)) {
+                try (DirectoryStream<Path> paths = Files.newDirectoryStream(path)) {
+                    for (Path child : paths) {
+                        deleteAll(child);
+                    }
+                }
+            }
+            Files.deleteIfExists(path);
+        } catch (IOException ex) {
+            // ignore
+        }
     }
 }

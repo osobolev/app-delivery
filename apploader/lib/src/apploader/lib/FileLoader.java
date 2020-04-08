@@ -161,8 +161,12 @@ public final class FileLoader extends IFileLoader {
         }
     }
 
+    public File getLocalFile(String file) {
+        return (root == null ? new File(file) : new File(root, file)).getAbsoluteFile();
+    }
+
     public FileResult receiveFile(String file, boolean silent, boolean noTrace) {
-        File local = (root == null ? new File(file) : new File(root, file)).getAbsoluteFile();
+        File local = getLocalFile(file);
         while (true) {
             String errorMessage;
             if (connectionProblem) {
