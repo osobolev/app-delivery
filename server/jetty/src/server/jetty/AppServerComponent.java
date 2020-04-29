@@ -5,8 +5,6 @@ import server.core.LoginData;
 import server.http.SessionUtil;
 import sqlg3.remote.server.HttpDispatcher;
 import sqlg3.remote.server.SQLGLogger;
-import sqlg3.remote.server.SessionFactory;
-import sqlg3.runtime.GlobalContext;
 import sqlg3.runtime.SqlTrace;
 
 import java.io.IOException;
@@ -40,10 +38,8 @@ public final class AppServerComponent {
     public void init(AppLogin login, SQLGLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
         this.logger = logger;
         LoginData loginData = login.login(application);
-        SessionFactory sf = init.init(application, loginData);
-
-        GlobalContext global = new GlobalContext(loginData.getSpecific(), loginData.getMappers(), trace);
-        this.http = new HttpDispatcher(application, sf, logger, global);
+        AppInit.InitData initData = init.init(application, loginData, trace);
+        this.http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
         http.setSerializer(init.getSerializer());
     }
 

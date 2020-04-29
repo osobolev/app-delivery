@@ -2,10 +2,10 @@ package server.war;
 
 import server.core.AppInit;
 import server.core.LoginData;
-import sqlg3.remote.server.*;
-import sqlg3.runtime.DBSpecific;
-import sqlg3.runtime.GlobalContext;
-import sqlg3.runtime.RuntimeMapper;
+import sqlg3.remote.server.HttpDispatcher;
+import sqlg3.remote.server.IServerSerializer;
+import sqlg3.remote.server.SQLGLogger;
+import sqlg3.remote.server.ServerJavaSerializer;
 import sqlg3.runtime.SqlTrace;
 
 import javax.servlet.ServletContext;
@@ -20,18 +20,15 @@ public class InitListener implements ServletContextListener {
     private static final String SERIALIZER_ATTR = "serializer";
     private static final String DISPATCH_ATTR = "httpDispatch";
 
-    private static LoginData getDbParameters(ServletContext ctx) throws Exception {
+    private static LoginData getDbParameters(ServletContext ctx) {
         String driver = LoginData.getDriver(ctx.getInitParameter("jdbcDriver"));
-        DBSpecific specific = LoginData.getSpecific(ctx.getInitParameter("dbSpec"));
-        RuntimeMapper mappers = LoginData.getMappers(ctx.getInitParameter("runtimeMapper"));
         return new LoginData(
             driver,
-            ctx.getInitParameter("jdbcUrl"), ctx.getInitParameter("username"), ctx.getInitParameter("password"),
-            specific, mappers
+            ctx.getInitParameter("jdbcUrl"), ctx.getInitParameter("username"), ctx.getInitParameter("password")
         );
     }
 
-    protected AppInit getInit(ServletContext ctx) {
+    protected static AppInit getInit(ServletContext ctx) {
         String initClassName = ctx.getInitParameter("appInit");
         if (initClassName == null) {
             initClassName = ctx.getInitParameter("authFactory");
@@ -75,9 +72,8 @@ public class InitListener implements ServletContextListener {
         }
 
         String application = SingleUtil.getApplication(ctx);
-        SessionFactory sf = init.init(application, data);
-        GlobalContext global = new GlobalContext(data.getSpecific(), data.getMappers(), SqlTrace.createDefault(logger::error));
-        HttpDispatcher http = new HttpDispatcher(application, sf, logger, global);
+        AppInit.InitData initData = init.init(application, data, SqlTrace.createDefault(logger::error));
+        HttpDispatcher http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
         ctx.setAttribute(DISPATCH_ATTR, http);
     }
 
