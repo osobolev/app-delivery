@@ -3,6 +3,14 @@ function downloadInstaller() {
 }
 
 function downloadInstallerFor(prof, percentId) {
+    var host = window.location.hostname;
+    if (host) {
+        var lhost = host.toLowerCase();
+        if (lhost == 'localhost' || lhost == '127.0.0.1' || lhost == '::1') {
+            if (!confirm('Вы используете адрес localhost для соединения с сервером. При этом вы не сможете подключиться к серверу с другого компьютера. Если вы хотите подключаться к серверу с других компьютеров, вместо localhost в адресе страницы введите сетевое имя сервера. Продолжить?'))
+                return;
+        }
+    }
     var waiting = true;
     var profile = "";
     var isInit = 1;
