@@ -1,8 +1,10 @@
+def dest = "$rootDir/distr"
+
 subprojects {
     apply plugin: 'java-library'
 
     group = 'com.github.osobolev.app-delivery.sample'
-    version = '5.0'
+    version = '5.1'
 
     sourceCompatibility = '8'
 
@@ -14,6 +16,30 @@ subprojects {
         mavenLocal()
         mavenCentral()
     }
+
+    configurations {
+        webapploader
+        webdistr
+        webfiles
+    }
+
+    dependencies {
+        webfiles 'com.github.osobolev.app-delivery:server-files:5.1@war'
+        webapploader 'com.github.osobolev.app-delivery:apploader:5.1'
+        webdistr project(':sample_client')
+    }
+
+    ext.doCreateList = { dir ->
+        def list = ['corejar=apploader.jar']
+        configurations.webdistr.each {
+            list.add("jar=distr/${it.name}")
+        }
+        list.add('mainClass=sample.Client')
+        def file = new File(dir, 'sample_jars.list')
+        file.parentFile.mkdirs()
+        def eoln = '\n'
+        file.setText(list.join(eoln) + eoln, 'UTF-8')
+    }
 }
 
 project(':sample_dto') {
@@ -23,7 +49,7 @@ project(':sample_dto') {
     }
 
     dependencies {
-        implementation 'com.github.osobolev.sqlg3:sqlg3-core:1.0'
+        api 'com.github.osobolev.sqlg3:sqlg3-core:1.0'
 
         sqlg 'com.github.osobolev.sqlg3:sqlg3-preprocess:1.0'
         sqlg 'com.h2database:h2:1.4.191'
@@ -44,18 +70,69 @@ project(':sample_dto') {
 }
 
 project(':sample_db') {
-
     dependencies {
-        implementation 'com.github.osobolev.sqlg3:sqlg3-runtime:1.0'
-        implementation project(':sample_dto')
+        api 'com.github.osobolev.sqlg3:sqlg3-runtime:1.0'
+        api project(':sample_dto')
+        runtimeOnly 'com.h2database:h2:1.4.191'
     }
 }
 
 project(':sample_client') {
     dependencies {
-        implementation 'com.github.osobolev.app-delivery:apploader-client:5.0'
+        compileOnly 'com.github.osobolev.app-delivery:apploader-client:5.1'
         implementation 'com.github.osobolev.sqlg3:sqlg3-remote-client:1.0'
         implementation project(':sample_dto')
+    }
+}
+
+project(':sample_server') {
+    dependencies {
+        api 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
+        api 'com.github.osobolev.app-delivery:server-core:5.1'
+        runtimeOnly project(':sample_db')
+    }
+}
+
+project(':sample_server_jar') {
+    
+    dependencies {
+        implementation project(':sample_server')
+        implementation 'com.github.osobolev.app-delivery:server-jetty:5.1'
+    }
+
+    jar.manifest.attributes(
+        'Class-Path': configurations.runtimeClasspath.collect { it.name }.sort().join(' '),
+        'Main-Class': 'sample.ConsoleServer'
+    )
+
+    task clientDistr(type: Copy) {
+        from configurations.webdistr
+        into "$dest/root/distr"
+    }
+
+    task clientFiles(type: Copy) {
+        from(zipTree(configurations.webfiles.find({true}))) {
+            exclude 'META-INF/**'
+        }
+        from(configurations.webapploader) {
+            rename('apploader-.*\\.jar', 'apploader.jar')
+        }
+        from("$rootDir/sample_war/webapp") {
+            exclude 'WEB-INF/**'
+        }
+        into "$dest/root"
+    }
+
+    task clientList {
+        doLast {
+            doCreateList(file("$dest/root"))
+        }
+    }
+
+    task distr(type: Copy, dependsOn: [build, clientDistr, clientFiles, clientList]) {
+        from configurations.runtimeClasspath
+        from jar
+        into "$dest"
     }
 }
 
@@ -63,36 +140,17 @@ project(':sample_war') {
     
     apply plugin: 'war'
 
-    configurations {
-        webapploader
-        webdistr
-        webfiles
-    }
-
     dependencies {
-        implementation 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
-        implementation 'com.github.osobolev.app-delivery:server-war:5.0'
-        runtimeOnly project(':sample_db')
-
-        webfiles 'com.github.osobolev.app-delivery:server-files:5.0@war'
-        webapploader 'com.github.osobolev.app-delivery:apploader:5.0'
-        webdistr project(':sample_client')
+        implementation project(':sample_server')
+        implementation 'com.github.osobolev.app-delivery:server-war:5.1'
     }
 
-    task createList {
+    task warList {
         doLast {
-            def list = ['corejar=apploader.jar']
-            configurations.webdistr.each {
-                list.add("jar=distr/${it.name}")
-            }
-            list.add('mainClass=sample.Client')
-            def file = file('build/list/sample_jars.list')
-            file.parentFile.mkdirs()
-            def eoln = '\n'
-            file.setText(list.join(eoln) + eoln, compileJava.options.encoding)
+            doCreateList(file('build/list'))
         }
     }
-    war.dependsOn(createList)
+    war.dependsOn(warList)
 
     war {
         archiveFileName = 'sample_app.war'

@@ -24,19 +24,19 @@
     </context-param>
     <context-param>
         <param-name>jdbcDriver</param-name>
-        <param-value>org.postgresql.Driver</param-value>
+        <param-value>org.h2.Driver</param-value>
     </context-param>
     <context-param>
         <param-name>jdbcUrl</param-name>
-        <param-value>jdbc:postgresql://localhost/</param-value>
+        <param-value>jdbc:h2:mem:</param-value>
     </context-param>
     <context-param>
         <param-name>username</param-name>
-        <param-value>postgres</param-value>
+        <param-value></param-value>
     </context-param>
     <context-param>
         <param-name>password</param-name>
-        <param-value>admin123</param-value>
+        <param-value></param-value>
     </context-param>
 
     <servlet>
