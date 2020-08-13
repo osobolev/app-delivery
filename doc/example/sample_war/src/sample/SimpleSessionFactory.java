@@ -1,8 +1,9 @@
 package sample;
 
-import sqlg3.remote.common.SQLGLogger;
+import sqlg3.remote.server.SQLGLogger;
 import sqlg3.remote.server.SessionFactory;
 import sqlg3.runtime.ConnectionManager;
+import sqlg3.runtime.SessionContext;
 import sqlg3.runtime.SingleConnectionManager;
 
 import java.sql.Connection;
@@ -18,9 +19,9 @@ public class SimpleSessionFactory implements SessionFactory {
         this.jdbcUrl = jdbcUrl;
     }
 
-    public SessionData login(SQLGLogger logger, String login, String password) throws SQLException {
+    public SessionContext login(SQLGLogger logger, String login, String password) throws SQLException {
         Connection connection = SingleConnectionManager.openConnection(jdbcDriver, jdbcUrl, login, password);
         ConnectionManager cman = new SingleConnectionManager(connection);
-        return new SessionData(cman, login);
+        return new SessionContext(cman, login);
     }
 }

@@ -6,7 +6,6 @@ import sample.dao.IClientDB;
 import sqlg3.remote.client.HttpConnectionFactory;
 import sqlg3.remote.client.SafeDBInterface;
 import sqlg3.remote.common.IRemoteDBInterface;
-import sqlg3.remote.common.SQLGLogger;
 
 import javax.swing.*;
 import java.net.Proxy;
