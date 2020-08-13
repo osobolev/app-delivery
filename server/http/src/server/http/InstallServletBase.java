@@ -51,7 +51,7 @@ public abstract class InstallServletBase extends AppServletBase {
                 url = req.getLocalName() + ":" + req.getLocalPort();
             }
             SourceFiles src = new SourceFiles(root, apps, profile, url);
-            state = new InstallState(new InstallBuilder(src));
+            state = new InstallState(new InstallBuilder(src, getLogger()::trace));
             map.put(profile, state);
         }
         return state;

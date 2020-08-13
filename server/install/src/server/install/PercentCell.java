@@ -1,17 +1,23 @@
 package server.install;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public final class PercentCell {
 
     private final AtomicInteger percentCell = new AtomicInteger();
+    private final Consumer<String> logger;
+
+    public PercentCell(Consumer<String> logger) {
+        this.logger = logger;
+    }
 
     public void setPercent(int newPercent) {
         int oldPercent = percentCell.get();
         if (newPercent > oldPercent) {
             int percent = Math.min(newPercent, 100);
             percentCell.set(percent);
-            System.out.println(percent + "%");
+            logger.accept(percent + "%");
         }
     }
 

@@ -4,11 +4,14 @@ import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import apploader.lib.FileResult;
 import apploader.lib.IFileLoader;
+import apploader.lib.ILoaderGui;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -28,7 +31,7 @@ final class AppProperties {
         return mainClass;
     }
 
-    static AppProperties updateAppFiles(LoaderGui gui, IFileLoader fileLoader, String application) throws IOException {
+    static AppProperties updateAppFiles(ILoaderGui gui, IFileLoader fileLoader, String application) throws IOException {
         File list = fileLoader.receiveFile(application + "_jars.list", false).file;
         if (list == null)
             return null;
@@ -108,7 +111,7 @@ final class AppProperties {
         return true;
     }
 
-    private static boolean updateJava(LoaderGui gui, IFileLoader fileLoader, String right) {
+    private static boolean updateJava(ILoaderGui gui, IFileLoader fileLoader, String right) {
         File jreDir = fileLoader.getLocalFile("jre");
         File javaHome = new File(System.getProperty("java.home")).getAbsoluteFile();
         if (!jreDir.equals(javaHome)) {

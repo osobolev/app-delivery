@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public final class BuildInfo {
 
+    private final Consumer<String> logger;
     /**
      * Папка с исходными файлами для инсталлятора (корневая папка веб-приложения)
      */
@@ -22,7 +25,8 @@ public final class BuildInfo {
     public final int countFiles;
     private final Properties installProps;
 
-    public BuildInfo(File root, File buildDir, int countFiles, Properties installProps) {
+    public BuildInfo(Consumer<String> logger, File root, File buildDir, int countFiles, Properties installProps) {
+        this.logger = logger;
         this.root = root;
         this.buildDir = buildDir;
         this.countFiles = countFiles;
@@ -41,7 +45,19 @@ public final class BuildInfo {
         IOUtils.copyFile(getTarget(source), source);
     }
 
-    public static File findExe(Properties installProps, String propName, String exeFolder, String exeName) {
+    private File findExe(List<File> tryFiles) {
+        for (File exe : tryFiles) {
+            if (exe.canExecute()) {
+                log("Trying '" + exe.getAbsolutePath() + "': SUCCESS");
+                return exe;
+            } else {
+                log("Trying '" + exe.getAbsolutePath() + "': NOT FOUND");
+            }
+        }
+        return null;
+    }
+
+    public File findWindowsExe(Properties installProps, String propName, String exeFolder, String exeName) {
         List<String> tryPaths = new ArrayList<>(3);
         String propValue = installProps.getProperty(propName);
         if (propValue != null) {
@@ -55,15 +71,31 @@ public final class BuildInfo {
         if (pf32 != null) {
             tryPaths.add(pf32 + File.separator + exeFolder);
         }
-        for (String tryPath : tryPaths) {
-            File exe = new File(tryPath, exeName);
-            if (exe.canExecute())
-                return exe;
-        }
-        return null;
+        List<File> tryFiles = tryPaths.stream().map(path -> new File(path, exeName)).collect(Collectors.toList());
+        return findExe(tryFiles);
     }
 
-    public File findExe(String propName, String exeFolder, String exeName) {
-        return findExe(installProps, propName, exeFolder, exeName);
+    public File findWindowsExe(String propName, String exeFolder, String exeName) {
+        return findWindowsExe(installProps, propName, exeFolder, exeName);
+    }
+
+    public File findAnyExe(Properties installProps, String propName, String... exeNames) {
+        List<File> tryFiles = new ArrayList<>();
+        String propValue = installProps.getProperty(propName);
+        if (propValue != null) {
+            tryFiles.add(new File(propValue));
+        }
+        for (String exeName : exeNames) {
+            tryFiles.add(new File(exeName));
+        }
+        return findExe(tryFiles);
+    }
+
+    public File findAnyExe(String propName, String... exeNames) {
+        return findAnyExe(installProps, propName, exeNames);
+    }
+
+    public void log(String message) {
+        logger.accept(message);
     }
 }

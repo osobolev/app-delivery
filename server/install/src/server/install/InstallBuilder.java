@@ -3,15 +3,16 @@ package server.install;
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import server.install.packers.InnoPacker;
+import server.install.packers.MakeselfPacker;
 import server.install.packers.RarPacker;
 import server.install.packers.ZipPacker;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 public final class InstallBuilder {
 
@@ -20,17 +21,28 @@ public final class InstallBuilder {
     private final File buildDir; // ./client/install или ./client/profile/install
     private final List<InstallerResource> depends;
 
-    private final PercentCell percentCell = new PercentCell();
+    private final Consumer<String> logger;
+    private final PercentCell percentCell;
 
-    private final List<Packer> packers = Arrays.asList(new InnoPacker(), new RarPacker(), new ZipPacker());
+    private final List<Packer> packers = new ArrayList<>();
 
     private final Properties installProperties = new Properties();
 
-    public InstallBuilder(SourceFiles src) {
+    public InstallBuilder(SourceFiles src, Consumer<String> logger) {
         this.root = src.root;
         this.baseDir = src.baseDir;
         this.buildDir = new File(baseDir, "install");
         this.depends = src.depends;
+        this.logger = logger;
+        this.percentCell = new PercentCell(logger);
+
+        if (AppCommon.isWindows()) {
+            packers.add(new InnoPacker());
+            packers.add(new RarPacker());
+        } else {
+            packers.add(new MakeselfPacker());
+        }
+        packers.add(new ZipPacker());
         ConfigReader.readProperties(installProperties, new File(root, "install.properties"));
     }
 
@@ -99,9 +111,8 @@ public final class InstallBuilder {
             depend.checkExists();
             depend.copyTo(destFile);
         }
-        try (PrintWriter pw = new PrintWriter(new File(buildDir, "setjava.bat"), AppCommon.BAT_CHARSET)) {
-            pw.println("set JAVABIN=start jre\\bin\\javaw.exe");
-        }
+        AppCommon.generateNativeFile(new File(buildDir, "setjava.bat"), true, pw -> pw.println("set JAVABIN=start jre\\bin\\javaw.exe"));
+        AppCommon.generateNativeFile(new File(buildDir, "setjava.sh"), false, pw -> pw.println("export JAVABIN=./jre/bin/java"));
         countFiles++;
         percentCell.setPercent(50);
         return countFiles;
@@ -137,10 +148,12 @@ public final class InstallBuilder {
         if (ready != null)
             return ready;
         int countFiles = buildInstaller();
-        BuildInfo info = new BuildInfo(root, buildDir, countFiles, installProperties);
+        BuildInfo info = new BuildInfo(logger, root, buildDir, countFiles, installProperties);
         for (Packer packer : packers) {
             File result = getResultFile(packer);
+            logger.accept("Trying packer " + packer.getClass().getSimpleName());
             if (packer.buildResultFile(info, percentCell, result)) {
+                logger.accept("Packer success");
                 percentCell.setPercent(100);
                 return result;
             }

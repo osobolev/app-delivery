@@ -4,6 +4,7 @@ import apploader.client.AppInfo;
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
+import apploader.lib.ILoaderGui;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ final class LoaderConfig {
         this.proxy = proxy;
     }
 
-    static LoaderConfig load(LoaderGui gui) {
+    static LoaderConfig load(ILoaderGui gui) {
         Properties apploaderProperties = new Properties();
         ConfigReader.readAppProperties(new File("."), apploaderProperties);
         String ignoreWarningsProp = "ignore.warnings";

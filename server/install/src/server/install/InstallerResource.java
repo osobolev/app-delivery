@@ -22,10 +22,10 @@ abstract class InstallerResource {
         return new InstallerFile(srcFile, srcFile.getName());
     }
 
-    static InstallerResource clientBat(File root, String name, String app) {
+    static InstallerResource clientScript(File root, String name, boolean windows, String app) {
         File srcFile = new File(root, name);
         if (!srcFile.exists())
-            return new ClientResource(name, app);
+            return new ClientResource(name, app, windows);
         return new InstallerFile(srcFile, srcFile.getName());
     }
 

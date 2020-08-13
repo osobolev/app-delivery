@@ -8,10 +8,12 @@ import java.io.IOException;
 final class ClientResource extends InstallerResource {
 
     private final String app;
+    private final boolean windows;
 
-    ClientResource(String destName, String app) {
+    ClientResource(String destName, String app, boolean windows) {
         super(destName);
         this.app = app;
+        this.windows = windows;
     }
 
     boolean isModifiedAfter(long ts) {
@@ -22,6 +24,10 @@ final class ClientResource extends InstallerResource {
     }
 
     void copyTo(File dest) throws IOException {
-        AppCommon.generateBatFile(dest, app);
+        if (windows) {
+            AppCommon.generateBatFile(dest, app);
+        } else {
+            AppCommon.generateShellFile(dest, app);
+        }
     }
 }

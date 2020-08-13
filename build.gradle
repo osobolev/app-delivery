@@ -4,10 +4,9 @@ subprojects {
     apply plugin: 'maven-publish'
 
     group = 'com.github.osobolev.app-delivery'
-    version = '5.0'
+    version = '5.1'
 
     sourceCompatibility = '8'
-    targetCompatibility = '8'
 
     compileJava.options.compilerArgs << '-Xlint:-options,deprecation,unchecked'
     compileJava.options.encoding = 'UTF-8'

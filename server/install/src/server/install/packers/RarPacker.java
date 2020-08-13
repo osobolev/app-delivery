@@ -14,14 +14,18 @@ public final class RarPacker implements Packer {
 
     @Override
     public boolean buildResultFile(BuildInfo info, PercentCell percentCell, File result) throws IOException {
-        File winRar = info.findExe("rar.dir", "WinRAR", "rar.exe");
-        if (winRar == null)
+        File winRar = info.findWindowsExe("rar.dir", "WinRAR", "rar.exe");
+        if (winRar == null) {
+            info.log("RAR executable not found");
             return false;
+        }
 
         String sfxConfig = "sfx.cfg";
         File sfx = info.getSource(sfxConfig);
-        if (!sfx.isFile())
+        if (!sfx.isFile()) {
+            info.log("SFX file not found: '" + sfx.getAbsolutePath() + "'");
             return false;
+        }
 
         String[] args = {
             winRar.getAbsolutePath(),

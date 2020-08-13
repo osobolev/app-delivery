@@ -3,13 +3,9 @@ package apploader;
 import apploader.client.AppFactory;
 import apploader.client.AppInfo;
 import apploader.client.AppRunner;
-import apploader.client.SplashStatus;
 import apploader.common.AppCommon;
 import apploader.common.Application;
-import apploader.lib.AppClassLoader;
-import apploader.lib.FileLoader;
-import apploader.lib.IFileLoader;
-import apploader.lib.OfflineFileLoader;
+import apploader.lib.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +17,12 @@ import java.util.List;
 @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
 public final class AppLoader implements AppInfo.AppClassLoader {
 
-    private final LoaderGui gui;
+    private final ILoaderGui gui;
     private final boolean offline;
     private final IFileLoader fileLoader;
     private final AppClassLoader classLoader;
 
-    AppLoader(LoaderGui gui, IFileLoader fileLoader, boolean offline) {
+    AppLoader(ILoaderGui gui, IFileLoader fileLoader, boolean offline) {
         this.gui = gui;
         this.offline = offline;
         this.fileLoader = fileLoader;
@@ -50,19 +46,30 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     private static void generateBatFile(String app) {
-        File file = new File(app + "-client.bat");
-        if (file.exists())
-            return;
-        try {
-            AppCommon.generateBatFile(file, app);
-        } catch (IOException ex) {
-            AppCommon.error(ex);
+        if (AppCommon.isWindows()) {
+            File batFile = new File(app + "-client.bat");
+            if (!batFile.exists()) {
+                try {
+                    AppCommon.generateBatFile(batFile, app);
+                } catch (IOException ex) {
+                    AppCommon.error(ex);
+                }
+            }
+        } else {
+            File shellFile = new File(app + "-client.sh");
+            if (!shellFile.exists()) {
+                try {
+                    AppCommon.generateShellFile(shellFile, app);
+                } catch (IOException ex) {
+                    AppCommon.error(ex);
+                }
+            }
         }
     }
 
     public AppRunner loadApplication(String application) throws Exception {
         AppProperties properties = AppProperties.updateAppFiles(gui, fileLoader, application);
-        SplashStatus.setStatus("");
+        gui.showStatus("");
         if (properties == null)
             return null;
         String mainClass = properties.getMainClass();
@@ -77,11 +84,17 @@ public final class AppLoader implements AppInfo.AppClassLoader {
             AppFactory factory = (AppFactory) cls.newInstance();
             return factory.newApplication(application);
         } else {
-            Method main = cls.getMethod("main", String[].class);
-            if (main == null || !Modifier.isStatic(main.getModifiers())) {
+            Method maybeMain;
+            try {
+                maybeMain = cls.getMethod("main", String[].class);
+            } catch (NoSuchMethodException ex) {
+                maybeMain = null;
+            }
+            if (maybeMain == null || !Modifier.isStatic(maybeMain.getModifiers())) {
                 gui.showError("Главный класс не является AppFactory и не содержит main");
                 return null;
             }
+            Method main = maybeMain;
             return args -> main.invoke(null, (Object) args);
         }
     }
@@ -132,7 +145,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
     }
 
     private static boolean doRun(String[] args) {
-        LoaderGui gui = new LoaderGui();
+        ILoaderGui gui = LoaderGui.create();
         boolean offline = System.getProperty("offline") != null;
         String app = System.getProperty(AppCommon.APPLICATION_PROPERTY);
         IFileLoader fileLoader;
@@ -143,7 +156,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
             if (config == null)
                 return false;
             if ("proxyConfig".equals(app)) {
-                gui.showProxyDialog(null, config.proxy, config.httpUrl, null);
+                gui.showProxyDialog(config.proxy, config.httpUrl, null);
                 System.exit(0);
                 return true;
             } else if (config.httpUrl == null) {

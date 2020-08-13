@@ -6,7 +6,7 @@ public final class SplashStatus {
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void setStatus(String status) {
-        if (status.length() > 0) {
+        if (!status.isEmpty()) {
             System.out.println(status);
         }
         SplashScreen splash = SplashScreen.getSplashScreen();

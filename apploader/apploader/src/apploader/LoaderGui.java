@@ -130,7 +130,7 @@ final class LoaderGui implements ILoaderGui {
         );
     }
 
-    void showSuccess(String message) {
+    public void showSuccess(String message) {
         showDialogInternal(
             null, message,
             "Успешное завершение", JOptionPane.INFORMATION_MESSAGE, new String[] {"OK"}, null,
@@ -172,5 +172,13 @@ final class LoaderGui implements ILoaderGui {
         if (newProxy != null && loader != null) {
             loader.setProxy(newProxy);
         }
+    }
+
+    public void showProxyDialog(ProxyConfig proxy, URL url, FileLoader loader) {
+        showProxyDialog(null, proxy, url, loader);
+    }
+
+    static ILoaderGui create() {
+        return GraphicsEnvironment.isHeadless() ? new HeadlessGui() : new LoaderGui();
     }
 }
