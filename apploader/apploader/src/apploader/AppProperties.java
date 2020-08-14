@@ -123,7 +123,7 @@ final class AppProperties {
             File javaBin = new File(new File(javaHome, "bin"), AppCommon.isWindows() ? "java.exe" : "java");
             ProcessBuilder pb = new ProcessBuilder(javaBin.getAbsolutePath(), "-jar", "tzupdater.jar", "-u", "-v");
             pb.redirectErrorStream(true);
-            pb.redirectOutput(new File("tzupdater.log"));
+            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File("tzupdater.log")));
             Process process = pb.start();
             int exitCode = process.waitFor();
             boolean ok = exitCode == 0;
