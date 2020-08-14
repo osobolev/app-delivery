@@ -46,6 +46,7 @@ Name: "{group}\Удаление {#apName}"; Filename: "{app}\unins000.exe"; WorkingDir: 
 
 
 [UninstallDelete]
+Type: filesandordirs; Name: "{app}\jre";
 Type: filesandordirs; Name: "{app}\distr";
 Type: filesandordirs; Name: "{app}\lib";
 Type: filesandordirs; Name: "{app}\help";
@@ -55,4 +56,5 @@ Type: files; Name: "{app}\*.list";
 Type: files; Name: "{app}\*.log";
 Type: files; Name: "{app}\*.properties";
 Type: files; Name: "{app}\*.zip";
+Type: files; Name: "{app}\tzupdater.*";
 Type: dirifempty; Name: "{app}";
