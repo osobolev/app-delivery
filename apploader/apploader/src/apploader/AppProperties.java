@@ -114,23 +114,28 @@ final class AppProperties {
     }
 
     private static boolean updateTimeZones(boolean freshUpdater) {
-        File file = new File("tzupdater.bat");
-        if (file.exists() && !freshUpdater)
+        File successFile = new File("tzupdater.done");
+        if (successFile.exists() && !freshUpdater)
             return false;
-        try (PrintWriter pw = new PrintWriter(file, AppCommon.BAT_CHARSET)) {
-            pw.println("@echo off");
-            pw.println("call setjava.bat");
-            pw.println("%JAVABIN% -jar tzupdater.jar -u -v");
-        } catch (IOException ex) {
-            AppCommon.error(ex);
-        }
+        boolean success = false;
         try {
-            ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "tzupdater.bat");
+            String javaHome = System.getProperty("java.home");
+            File javaBin = new File(new File(javaHome, "bin"), AppCommon.isWindows() ? "java.exe" : "java");
+            ProcessBuilder pb = new ProcessBuilder(javaBin.getAbsolutePath(), "-jar", "tzupdater.jar", "-u", "-v");
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(new File("tzupdater.log"));
             Process process = pb.start();
-            process.waitFor();
+            int exitCode = process.waitFor();
+            boolean ok = exitCode == 0;
+            if (ok) {
+                successFile.createNewFile();
+            }
+            success = ok;
         } catch (Exception ex) {
             AppCommon.error(ex);
-            file.delete();
+        }
+        if (!success) {
+            successFile.delete();
         }
         return true;
     }
