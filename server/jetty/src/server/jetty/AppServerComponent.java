@@ -63,7 +63,7 @@ public final class AppServerComponent {
 
     public void dispatch(String hostName, InputStream is, OutputStream os) throws IOException {
         if (!running) {
-            HttpDispatcher.writeResponse(init.getSerializer(), os, null, new IOException("Server not running"));
+            HttpDispatcher.writeError(init.getSerializer(), os, new IOException("Server not running"));
         } else {
             http.dispatch(hostName, is, os);
         }

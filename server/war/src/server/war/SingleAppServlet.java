@@ -21,7 +21,7 @@ public class SingleAppServlet extends HttpServlet {
             String error = "Ошибка при инициализации сервера";
             InitListener.getLogger(ctx).error(error);
             IServerSerializer serializer = InitListener.getSerializer(ctx);
-            HttpDispatcher.writeResponse(serializer, resp.getOutputStream(), null, new SQLException(error));
+            HttpDispatcher.writeError(serializer, resp.getOutputStream(), new SQLException(error));
             return;
         }
         http.dispatch(req.getRemoteHost(), req.getInputStream(), resp.getOutputStream());
