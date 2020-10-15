@@ -46,6 +46,8 @@ final class AppProperties {
             return null;
         fileLoader.receiveFile(AppCommon.getSplashName(application), true, true);
         AppProperties properties = new AppProperties();
+        FileResult[] newTZUpdater = new FileResult[1];
+        FileResult[] newTimeZones = new FileResult[1];
         boolean ok = ConfigReader.readConfig(list, (left, right) -> {
             boolean jar;
             boolean corejar;
@@ -94,10 +96,9 @@ final class AppProperties {
                 if (file == null)
                     return false;
                 if ("tzupdater.jar".equals(right)) {
-                    if (updateTimeZones(fileResult.updated)) {
-                        gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
-                        return false;
-                    }
+                    newTZUpdater[0] = fileResult;
+                } else if ("tzdata.tar.gz".equals(right)) {
+                    newTimeZones[0] = fileResult;
                 }
             } else if ("?file".equalsIgnoreCase(left)) {
                 fileLoader.receiveFile(right, true, true);
@@ -110,18 +111,27 @@ final class AppProperties {
         });
         if (!ok)
             return null;
+        if (newTZUpdater[0] != null && newTimeZones[0] != null) {
+            boolean anyUpdated = newTZUpdater[0].updated || newTimeZones[0].updated;
+            if (updateTimeZones(anyUpdated, newTimeZones[0].file)) {
+                gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
+                return null;
+            }
+        }
         return properties;
     }
 
-    private static boolean updateTimeZones(boolean freshUpdater) {
+    private static boolean updateTimeZones(boolean newFiles, File dataFile) {
         File successFile = new File("tzupdater.done");
-        if (successFile.exists() && !freshUpdater)
+        if (successFile.exists() && !newFiles)
             return false;
         boolean success = false;
         try {
             String javaHome = System.getProperty("java.home");
             File javaBin = new File(new File(javaHome, "bin"), AppCommon.isWindows() ? "java.exe" : "java");
-            ProcessBuilder pb = new ProcessBuilder(javaBin.getAbsolutePath(), "-jar", "tzupdater.jar", "-u", "-v");
+            ProcessBuilder pb = new ProcessBuilder(
+                javaBin.getAbsolutePath(), "-jar", "tzupdater.jar", "-v", "-l", dataFile.toURI().toString()
+            );
             pb.redirectErrorStream(true);
             pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File("tzupdater.log")));
             Process process = pb.start();
