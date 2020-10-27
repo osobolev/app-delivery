@@ -2,9 +2,7 @@ package apploader;
 
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
-import apploader.lib.FileResult;
-import apploader.lib.IFileLoader;
-import apploader.lib.ILoaderGui;
+import apploader.lib.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,30 +111,54 @@ final class AppProperties {
             return null;
         if (newTZUpdater[0] != null && newTimeZones[0] != null) {
             boolean anyUpdated = newTZUpdater[0].updated || newTimeZones[0].updated;
-            if (updateTimeZones(anyUpdated, newTimeZones[0].file)) {
-                gui.showWarning("Обновлены данные временных зон, перезапустите приложение");
+            Boolean updateResult = updateTimeZones(gui, fileLoader, anyUpdated, newTimeZones[0].file);
+            if (updateResult == null)
+                return null;
+            if (updateResult.booleanValue()) {
+                gui.showWarning("Обновлены данные часовых поясов, перезапустите приложение");
                 return null;
             }
         }
         return properties;
     }
 
-    private static boolean updateTimeZones(boolean newFiles, File dataFile) {
-        File successFile = new File("tzupdater.done");
+    private static File getJavaHome() {
+        return new File(System.getProperty("java.home")).getAbsoluteFile();
+    }
+
+    private static boolean isLocalJRE(IFileLoader fileLoader, File javaHome) {
+        File jreDir = fileLoader.getLocalFile("jre");
+        return jreDir.equals(javaHome);
+    }
+
+    private static Boolean updateTimeZones(ILoaderGui gui, IFileLoader fileLoader, boolean newFiles, File dataFile) {
+        File successFile = fileLoader.getLocalFile("tzupdater.done");
         if (successFile.exists() && !newFiles)
             return false;
+        File javaHome = getJavaHome();
+        if (!isLocalJRE(fileLoader, javaHome)) {
+            // Our java is not in "jre" folder, cannot update it
+            return false;
+        }
         boolean success = false;
         try {
-            String javaHome = System.getProperty("java.home");
             File javaBin = new File(new File(javaHome, "bin"), AppCommon.isWindows() ? "java.exe" : "java");
             ProcessBuilder pb = new ProcessBuilder(
-                javaBin.getAbsolutePath(), "-jar", "tzupdater.jar", "-v", "-l", dataFile.toURI().toString()
+                javaBin.getAbsolutePath(), "-jar", "tzupdater.jar", "-v", "-f", "-l", dataFile.toURI().toString()
             );
             pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(new File("tzupdater.log")));
+            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(fileLoader.getLocalFile("tzupdater.log")));
             Process process = pb.start();
             int exitCode = process.waitFor();
-            boolean ok = exitCode == 0;
+            boolean ok;
+            if (exitCode == 0) {
+                ok = true;
+            } else {
+                Result ans = gui.showWarning3("Ошибка обновления часовых поясов", null);
+                if (ans == Result.ABORT)
+                    return null;
+                ok = ans == Result.IGNORE;
+            }
             if (ok) {
                 successFile.createNewFile();
             }
@@ -151,9 +173,8 @@ final class AppProperties {
     }
 
     private static boolean updateJava(ILoaderGui gui, IFileLoader fileLoader, String right) {
-        File jreDir = fileLoader.getLocalFile("jre");
-        File javaHome = new File(System.getProperty("java.home")).getAbsoluteFile();
-        if (!jreDir.equals(javaHome)) {
+        File javaHome = getJavaHome();
+        if (!isLocalJRE(fileLoader, javaHome)) {
             // Our java is not in "jre" folder, cannot update it
             return true;
         }
