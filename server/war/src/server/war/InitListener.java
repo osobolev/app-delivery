@@ -83,13 +83,13 @@ public class InitListener implements ServletContextListener {
         if (init != null) {
             init.destroy();
         }
-        AppLogger logger = getLogger(ctx);
-        if (logger != null) {
-           logger.close();
-        }
         HttpDispatcher http = getHttpDispatcher(ctx);
         if (http != null) {
             http.shutdown();
+        }
+        AppLogger logger = getLogger(ctx);
+        if (logger != null) {
+            logger.close();
         }
     }
 
