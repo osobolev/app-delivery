@@ -1,8 +1,10 @@
 package server.desktop;
 
+import server.core.AppLogger;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
+import server.jetty.JettyLogger;
 
 import javax.swing.*;
 import java.io.File;
@@ -10,7 +12,15 @@ import java.util.List;
 
 public final class DesktopServer {
 
-    private final JettyHttpContainer container = new JettyHttpContainer();
+    private final JettyHttpContainer container;
+
+    public DesktopServer(AppLogger mainLogger) {
+        this.container = new JettyHttpContainer(mainLogger);
+    }
+
+    public DesktopServer() {
+        this(new JettyLogger());
+    }
 
     public void showError(String message) {
         container.error(message);

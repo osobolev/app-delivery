@@ -4,7 +4,7 @@ subprojects {
     apply plugin: 'maven-publish'
 
     group = 'com.github.osobolev.app-delivery'
-    version = '5.1'
+    version = '5.2'
 
     sourceCompatibility = '8'
 
@@ -30,6 +30,10 @@ subprojects {
     }
 
     jar.manifest.attributes('Implementation-Version': project.version)
+
+    clean.doLast {
+        project.delete "$projectDir/out"
+    }
 }
 
 project(':apploader-common') {

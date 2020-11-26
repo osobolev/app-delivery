@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.resource.Resource;
+import server.core.AppLogger;
 import server.http.InstallServletBase;
 import server.http.ListServletBase;
 
@@ -21,20 +22,24 @@ import java.util.Properties;
 
 public final class JettyHttpContainer {
 
-    private final List<AppServerComponent> components = new ArrayList<>();
+    private final AppLogger mainLogger;
 
-    private final JettyLogger logger = new JettyLogger("appserver.log");
+    private final List<AppServerComponent> components = new ArrayList<>();
 
     private Server jetty;
     private int port;
     private File rootDir;
+
+    public JettyHttpContainer(AppLogger mainLogger) {
+        this.mainLogger = mainLogger;
+    }
 
     public void addApplication(AppServerComponent component) {
         components.add(component);
     }
 
     public void init(int port, File rootDir) throws ServerInitException {
-        Log.setLog(new HttpLogger(logger));
+        Log.setLog(new HttpLogger(mainLogger));
         this.jetty = new Server(port);
         this.port = port;
         this.rootDir = rootDir;
@@ -56,7 +61,7 @@ public final class JettyHttpContainer {
             ctx.addServlet(appHolder, "/" + application + "/remoting");
         }
 
-        InstallServletBase installServlet = new InstallServlet(logger, rootDir, applications);
+        InstallServletBase installServlet = new InstallServlet(mainLogger, rootDir, applications);
         ServletHolder installHolder = new ServletHolder(installServlet);
         installHolder.setName("install");
         ctx.addServlet(installHolder, "/install/*");
@@ -71,16 +76,16 @@ public final class JettyHttpContainer {
 
     public void start() throws Exception {
         jetty.start();
-        logger.info("Сервер запущен на порту " + port + " в папке " + rootDir.getAbsolutePath());
+        mainLogger.info("Сервер запущен на порту " + port + " в папке " + rootDir.getAbsolutePath());
     }
 
     public void stop() throws Exception {
-        logger.info("Остановка сервера");
+        mainLogger.info("Остановка сервера");
         for (AppServerComponent comp : components) {
             comp.shutdown();
         }
         jetty.stop();
-        logger.close();
+        mainLogger.close();
     }
 
     public int getComponents() {
@@ -88,11 +93,11 @@ public final class JettyHttpContainer {
     }
 
     public void error(String message) {
-        logger.error(message);
+        mainLogger.error(message);
     }
 
     public void error(Throwable ex) {
-        logger.error(ex);
+        mainLogger.error(ex);
     }
 
     public int getDefaultPort(File dir) {

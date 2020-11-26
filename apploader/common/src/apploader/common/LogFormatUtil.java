@@ -7,11 +7,7 @@ import java.util.Date;
 
 public final class LogFormatUtil {
 
-    private static final ThreadLocal<DateFormat> TIMESTAMP_FORMAT = new ThreadLocal<DateFormat>() {
-        protected DateFormat initialValue() {
-            return DateFormat.getDateTimeInstance();
-        }
-    };
+    private static final ThreadLocal<DateFormat> TIMESTAMP_FORMAT = ThreadLocal.withInitial(DateFormat::getDateTimeInstance);
     private static final Charset LOG_CHARSET = Charset.defaultCharset();
 
     public static String getTimestamp() {
@@ -61,9 +57,5 @@ public final class LogFormatUtil {
         printMessage(pw, "ERROR", error.toString());
         error.printStackTrace(pw);
         pw.println("-------------------------------");
-    }
-
-    public static void shutdown() {
-        TIMESTAMP_FORMAT.remove();
     }
 }

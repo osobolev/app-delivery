@@ -1,14 +1,13 @@
 package server.core;
 
 import sqlg3.remote.server.IServerSerializer;
-import sqlg3.remote.server.SQLGLogger;
 import sqlg3.remote.server.SessionFactory;
 import sqlg3.runtime.GlobalContext;
 import sqlg3.runtime.SqlTrace;
 
 public interface AppInit {
 
-    SQLGLogger createLogger();
+    AppLogger createLogger();
 
     IServerSerializer getSerializer();
 

@@ -1,9 +1,11 @@
 package server.service;
 
 import server.core.AppInit;
+import server.core.AppLogger;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
+import server.jetty.JettyLogger;
 import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
@@ -13,7 +15,15 @@ import java.util.function.Function;
 
 public final class ServiceServer {
 
-    private final JettyHttpContainer container = new JettyHttpContainer();
+    private final JettyHttpContainer container;
+
+    public ServiceServer(AppLogger mainLogger) {
+        this.container = new JettyHttpContainer(mainLogger);
+    }
+
+    public ServiceServer() {
+        this(new JettyLogger());
+    }
 
     public void showError(String message) {
         container.error(message);

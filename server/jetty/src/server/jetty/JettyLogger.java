@@ -1,19 +1,23 @@
 package server.jetty;
 
 import apploader.common.LogFormatUtil;
-import sqlg3.remote.server.SQLGLogger;
+import server.core.AppLogger;
 
 import java.io.PrintWriter;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-final class JettyLogger implements SQLGLogger {
+public final class JettyLogger implements AppLogger {
 
     private final PrintWriter pw;
     private final PrintWriter fileOutput;
 
-    JettyLogger(String fileName) {
+    public JettyLogger(String fileName) {
         this.fileOutput = LogFormatUtil.open(fileName);
         this.pw = LogFormatUtil.getWriter(fileOutput);
+    }
+
+    public JettyLogger() {
+        this("appserver.log");
     }
 
     public void trace(String message) {
@@ -36,6 +40,5 @@ final class JettyLogger implements SQLGLogger {
         if (fileOutput != null) {
             fileOutput.close();
         }
-        LogFormatUtil.shutdown();
     }
 }
