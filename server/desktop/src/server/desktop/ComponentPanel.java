@@ -1,7 +1,7 @@
 package server.desktop;
 
+import server.core.AppLogger;
 import server.jetty.AppServerComponent;
-import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
 import javax.swing.*;
@@ -74,7 +74,7 @@ final class ComponentPanel extends JPanel {
         lblControl.setForeground(running ? null : Color.red);
     }
 
-    LoggerTrace wrap(SQLGLogger realLogger) {
+    LoggerTrace wrap(AppLogger realLogger) {
         TextLogger textLogger = new TextLogger(realLogger);
         SqlTrace trace = (ok, time, messageSupplier) -> {
             if (cbSqlTrace.isSelected()) {
@@ -84,11 +84,11 @@ final class ComponentPanel extends JPanel {
         return new LoggerTrace(textLogger, trace);
     }
 
-    private final class TextLogger implements SQLGLogger {
+    private final class TextLogger implements AppLogger {
 
-        private final SQLGLogger logger;
+        private final AppLogger logger;
 
-        TextLogger(SQLGLogger logger) {
+        TextLogger(AppLogger logger) {
             this.logger = logger;
         }
 
@@ -122,6 +122,10 @@ final class ComponentPanel extends JPanel {
                 error.printStackTrace(pw);
             }
             append(sw.toString());
+        }
+
+        public void close() {
+            logger.close();
         }
     }
 }

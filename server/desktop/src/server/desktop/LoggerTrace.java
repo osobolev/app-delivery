@@ -1,14 +1,14 @@
 package server.desktop;
 
-import sqlg3.remote.server.SQLGLogger;
+import server.core.AppLogger;
 import sqlg3.runtime.SqlTrace;
 
 final class LoggerTrace {
 
-    final SQLGLogger logger;
+    final AppLogger logger;
     final SqlTrace trace;
 
-    LoggerTrace(SQLGLogger logger, SqlTrace trace) {
+    LoggerTrace(AppLogger logger, SqlTrace trace) {
         this.logger = logger;
         this.trace = trace;
     }

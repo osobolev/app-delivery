@@ -1,10 +1,10 @@
 package server.war;
 
 import server.core.AppInit;
+import server.core.AppLogger;
 import server.core.LoginData;
 import sqlg3.remote.server.HttpDispatcher;
 import sqlg3.remote.server.IServerSerializer;
-import sqlg3.remote.server.SQLGLogger;
 import sqlg3.remote.server.ServerJavaSerializer;
 import sqlg3.runtime.SqlTrace;
 
@@ -48,7 +48,7 @@ public class InitListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         ServletContext ctx = event.getServletContext();
         AppInit init = getInit(ctx);
-        SQLGLogger logger = init == null ? new SQLGLogger.Simple() : init.createLogger();
+        AppLogger logger = init == null ? new ServletAppLogger(ctx) : init.createLogger();
         ctx.setAttribute(LOGGER_ATTR, logger);
         IServerSerializer serializer = init == null ? new ServerJavaSerializer() : init.getSerializer();
         ctx.setAttribute(SERIALIZER_ATTR, serializer);
@@ -83,14 +83,18 @@ public class InitListener implements ServletContextListener {
         if (init != null) {
             init.destroy();
         }
+        AppLogger logger = getLogger(ctx);
+        if (logger != null) {
+           logger.close();
+        }
         HttpDispatcher http = getHttpDispatcher(ctx);
         if (http != null) {
             http.shutdown();
         }
     }
 
-    static SQLGLogger getLogger(ServletContext ctx) {
-        return (SQLGLogger) ctx.getAttribute(LOGGER_ATTR);
+    static AppLogger getLogger(ServletContext ctx) {
+        return (AppLogger) ctx.getAttribute(LOGGER_ATTR);
     }
 
     static IServerSerializer getSerializer(ServletContext ctx) {

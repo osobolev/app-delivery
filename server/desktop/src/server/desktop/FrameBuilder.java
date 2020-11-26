@@ -1,8 +1,8 @@
 package server.desktop;
 
 import server.core.AppInit;
+import server.core.AppLogger;
 import server.jetty.*;
-import sqlg3.remote.server.SQLGLogger;
 
 import javax.swing.*;
 import java.io.File;
@@ -47,7 +47,7 @@ final class FrameBuilder {
             boolean inited = false;
             AppInit appInit = comp.getInit();
             LoggerTrace lt = panel.wrap(appInit.createLogger());
-            SQLGLogger logger = lt.logger;
+            AppLogger logger = lt.logger;
             try {
                 comp.init(login, logger, lt.trace);
 

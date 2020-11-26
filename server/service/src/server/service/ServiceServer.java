@@ -38,7 +38,7 @@ public final class ServiceServer {
             boolean inited = false;
             try {
                 AppInit appInit = component.getInit();
-                SQLGLogger logger = appInit.createLogger();
+                AppLogger logger = appInit.createLogger();
                 component.init(login, logger, trace.apply(logger));
                 container.addApplication(component);
                 inited = true;

@@ -2,7 +2,10 @@ package apploader;
 
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
-import apploader.lib.*;
+import apploader.lib.FileResult;
+import apploader.lib.IFileLoader;
+import apploader.lib.ILoaderGui;
+import apploader.lib.Result;
 
 import java.io.File;
 import java.io.IOException;

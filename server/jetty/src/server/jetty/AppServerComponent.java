@@ -1,10 +1,10 @@
 package server.jetty;
 
 import server.core.AppInit;
+import server.core.AppLogger;
 import server.core.LoginData;
 import server.http.SessionUtil;
 import sqlg3.remote.server.HttpDispatcher;
-import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ public final class AppServerComponent {
     private final String appName;
     private final AppInit init;
 
-    private SQLGLogger logger;
+    private AppLogger logger;
     private volatile boolean running = false;
     private HttpDispatcher http = null;
 
@@ -35,7 +35,7 @@ public final class AppServerComponent {
         return init;
     }
 
-    public void init(AppLogin login, SQLGLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
+    public void init(AppLogin login, AppLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
         this.logger = logger;
         LoginData loginData = login.login(application);
         AppInit.InitData initData = init.init(application, loginData, trace);
@@ -79,5 +79,8 @@ public final class AppServerComponent {
             http.shutdown();
         }
         init.destroy();
+        if (logger != null) {
+            logger.close();
+        }
     }
 }
