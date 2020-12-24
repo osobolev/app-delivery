@@ -1,9 +1,9 @@
 package sample;
 
 import server.core.AppInit;
+import server.core.AppLogger;
 import server.core.LoginData;
 import sqlg3.remote.server.IServerSerializer;
-import sqlg3.remote.server.SQLGLogger;
 import sqlg3.remote.server.ServerJavaSerializer;
 import sqlg3.runtime.GlobalContext;
 import sqlg3.runtime.RuntimeMapperImpl;
@@ -14,8 +14,14 @@ public final class SampleInit implements AppInit {
 
     private final ServerJavaSerializer serializer = new ServerJavaSerializer();
 
-    public SQLGLogger createLogger() {
-        return new SQLGLogger.Simple();
+    private final AppLogger logger;
+
+    public SampleInit(AppLogger logger) {
+        this.logger = logger;
+    }
+
+    public AppLogger createLogger() {
+        return logger;
     }
 
     public IServerSerializer getSerializer() {

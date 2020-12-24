@@ -4,7 +4,6 @@ import server.core.LoginData;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
-import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
 import java.io.File;
@@ -12,10 +11,10 @@ import java.io.File;
 public final class ConsoleServer {
 
     public static void main(String[] args) throws Exception {
-        JettyHttpContainer container = new JettyHttpContainer();
-        SampleInit init = new SampleInit();
+        SampleLogger logger = new SampleLogger();
+        JettyHttpContainer container = new JettyHttpContainer(logger);
+        SampleInit init = new SampleInit(logger);
         AppServerComponent component = new AppServerComponent("sample", "Sample application", init);
-        SQLGLogger logger = init.createLogger();
         AppLogin login = application -> new LoginData("org.h2.Driver", "jdbc:h2:mem:", null, null);
         component.init(login, logger, SqlTrace.createDefault(logger::error));
         container.addApplication(component);

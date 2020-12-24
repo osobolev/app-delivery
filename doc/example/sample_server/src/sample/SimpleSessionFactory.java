@@ -22,6 +22,6 @@ public class SimpleSessionFactory implements SessionFactory {
     public SessionContext login(SQLGLogger logger, String login, String password) throws SQLException {
         Connection connection = SingleConnectionManager.openConnection(jdbcDriver, jdbcUrl, login, password);
         ConnectionManager cman = new SingleConnectionManager(connection);
-        return new SessionContext(cman, login);
+        return new SessionContext(cman, login, null);
     }
 }
