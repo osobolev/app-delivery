@@ -1,6 +1,6 @@
 subprojects {
 
-    apply plugin: project.name == 'server-files' ? 'war' : 'java-library'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
 
     group = 'com.github.osobolev.app-delivery'
@@ -24,7 +24,7 @@ subprojects {
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                from project.name == 'server-files' ? components.web : components.java
+                from components.java
             }
         }
     }
@@ -117,7 +117,5 @@ project(':server-desktop') {
 }
 
 project(':server-files') {
-    war.manifest.attributes('Implementation-Version': project.version)
-
-    webAppDirName = 'webapp'
+    sourceSets.main.resources.srcDirs = ['webapp']
 }
