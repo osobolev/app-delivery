@@ -1,5 +1,7 @@
 package server.jetty;
 
+import sqlg3.remote.common.UnrecoverableRemoteException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,8 +16,18 @@ final class AppComponentServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        component.dispatch(request.getRemoteHost(), request.getInputStream(), response.getOutputStream());
+        String addr = request.getRemoteAddr();
+        if (!component.accept(addr)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        try {
+            response.setStatus(HttpServletResponse.SC_OK);
+            component.dispatch(request.getRemoteHost(), request.getInputStream(), response.getOutputStream());
+        } catch (UnrecoverableRemoteException ex) {
+            component.error("BAD REQUEST: " + addr);
+            throw ex;
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

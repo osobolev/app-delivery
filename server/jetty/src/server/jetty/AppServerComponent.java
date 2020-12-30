@@ -10,6 +10,7 @@ import sqlg3.runtime.SqlTrace;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Set;
 
 public final class AppServerComponent {
 
@@ -20,6 +21,8 @@ public final class AppServerComponent {
     private AppLogger logger;
     private volatile boolean running = false;
     private HttpDispatcher http = null;
+    private Set<String> blacklist = null;
+    private Set<String> whitelist = null;
 
     public AppServerComponent(String application, String appName, AppInit init) {
         this.application = application;
@@ -35,12 +38,32 @@ public final class AppServerComponent {
         return init;
     }
 
+    public boolean accept(String addr) {
+        if (blacklist != null) {
+            if (blacklist.contains(addr))
+                return false;
+        }
+        if (whitelist != null) {
+            if (!whitelist.contains(addr))
+                return false;
+        }
+        return true;
+    }
+
+    public void error(String str) {
+        if (logger != null) {
+            logger.error(str);
+        }
+    }
+
     public void init(AppLogin login, AppLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
         this.logger = logger;
         LoginData loginData = login.login(application);
         AppInit.InitData initData = init.init(application, loginData, trace);
         this.http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
         http.setSerializer(init.getSerializer());
+        this.blacklist = initData.blacklist;
+        this.whitelist = initData.whitelist;
     }
 
     public void start() {
