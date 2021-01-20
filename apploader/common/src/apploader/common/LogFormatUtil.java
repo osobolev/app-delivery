@@ -2,16 +2,17 @@ package apploader.common;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public final class LogFormatUtil {
 
-    private static final ThreadLocal<DateFormat> TIMESTAMP_FORMAT = ThreadLocal.withInitial(DateFormat::getDateTimeInstance);
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
     private static final Charset LOG_CHARSET = Charset.defaultCharset();
 
     public static String getTimestamp() {
-        return TIMESTAMP_FORMAT.get().format(new Date());
+        return TIMESTAMP_FORMAT.format(LocalDateTime.now());
     }
 
     private static PrintWriter pw(OutputStream os) {
