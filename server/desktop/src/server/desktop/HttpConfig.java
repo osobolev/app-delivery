@@ -9,37 +9,44 @@ import java.util.Map;
 final class HttpConfig {
 
     private static final String OP_PORT = "-p";
+    private static final String OP_CTX  = "-c";
     private static final String OP_ROOT = "-d";
     private static final String OP_HELP = "-?";
 
     final File rootDir;
     final Integer port;
+    final String context;
 
-    private HttpConfig(File rootDir, Integer port) {
+    private HttpConfig(File rootDir, Integer port, String context) {
         this.rootDir = rootDir;
         this.port = port;
+        this.context = context;
     }
 
     static HttpConfig parse(String[] args) throws ServerInitException {
         Map<String, Object> map = parseArgs(
             args,
-            new String[] {OP_PORT, OP_ROOT, OP_HELP},
-            new Class<?>[] {Integer.class, String.class, Boolean.class}
+            new String[] {OP_PORT, OP_CTX, OP_ROOT, OP_HELP},
+            new Class<?>[] {Integer.class, String.class, String.class, Boolean.class}
         );
         if (map.get(OP_HELP) != null) {
             System.out.println("Запуск HTTP-сервера:");
             System.out.println("http-server.bat <опции>");
-            System.out.println("  " + OP_PORT + ":<порт>    - запустить сервер на этом порту");
-            System.out.println("  " + OP_ROOT + ":<каталог> - корневой каталог сервера");
-            System.out.println("  " + OP_HELP + "           - эта справка");
+            System.out.println("  " + OP_PORT + ":<порт>     - запустить сервер на этом порту");
+            System.out.println("  " + OP_CTX  + ":<контекст> - контекст сервера");
+            System.out.println("  " + OP_ROOT + ":<каталог>  - корневой каталог сервера");
+            System.out.println("  " + OP_HELP + "            - эта справка");
         }
         Integer port = (Integer) map.get(OP_PORT);
-        String sRoot = (String) map.get(OP_ROOT);
-        File rootDir = new File(".");
-        if (sRoot != null) {
-            rootDir = new File(sRoot);
+        String context = (String) map.get(OP_CTX);
+        String root = (String) map.get(OP_ROOT);
+        File rootDir;
+        if (root != null) {
+            rootDir = new File(root);
+        } else {
+            rootDir = new File(".");
         }
-        return new HttpConfig(rootDir, port);
+        return new HttpConfig(rootDir, port, context);
     }
 
     public static Map<String, Object> parseArgs(String[] args, String[] options, Class<?>[] types) throws ServerInitException {

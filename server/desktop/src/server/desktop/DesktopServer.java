@@ -38,9 +38,9 @@ public final class DesktopServer {
         showFrame(builder);
     }
 
-    public void runServer(Integer port, File rootDir, AppLogin login, List<AppServerComponent> comps) {
+    public void runServer(Integer port, String context, File rootDir, AppLogin login, List<AppServerComponent> comps) {
         FrameBuilder builder = new FrameBuilder(container);
-        builder.build(port, rootDir, login, comps);
+        builder.build(port, context, rootDir, login, comps);
         showFrame(builder);
     }
 

@@ -38,13 +38,15 @@ public final class JettyHttpContainer {
         components.add(component);
     }
 
-    public void init(int port, File rootDir) throws ServerInitException {
+    public void init(Integer maybePort, String maybeContext, File rootDir) throws ServerInitException {
         Log.setLog(new HttpLogger(mainLogger));
-        this.jetty = new Server(port);
-        this.port = port;
         this.rootDir = rootDir;
 
-        ServletContextHandler ctx = new ServletContextHandler(jetty, "/", ServletContextHandler.NO_SESSIONS);
+        PortAndContext pc = getPortAndContext(maybePort, maybeContext);
+        this.port = pc.port;
+        this.jetty = new Server(port);
+
+        ServletContextHandler ctx = new ServletContextHandler(jetty, pc.context, ServletContextHandler.NO_SESSIONS);
         try {
             ctx.setBaseResource(Resource.newResource(rootDir.getCanonicalFile().toURI()));
         } catch (IOException ex) {
@@ -100,18 +102,53 @@ public final class JettyHttpContainer {
         mainLogger.error(ex);
     }
 
-    public int getDefaultPort(File dir) {
+    private static final class PortAndContext {
+
+        final int port;
+        final String context;
+
+        PortAndContext(int port, String context) {
+            this.port = port;
+            this.context = context;
+        }
+    }
+
+    private static int getPort(URL serverUrl, Integer maybePort) {
+        if (maybePort != null)
+            return maybePort.intValue();
+        if (serverUrl != null) {
+            int port = serverUrl.getPort();
+            if (port > 0) {
+                return port;
+            }
+        }
+        return 80;
+    }
+
+    private static String getContext(URL serverUrl, String maybeContext) {
+        if (maybeContext != null)
+            return maybeContext;
+        if (serverUrl != null) {
+            String path = serverUrl.getPath();
+            if (path != null && !path.isEmpty())
+                return path;
+        }
+        return "/";
+    }
+
+    private PortAndContext getPortAndContext(Integer maybePort, String maybeContext) {
+        if (maybePort != null && maybeContext != null)
+            return new PortAndContext(maybePort.intValue(), maybeContext);
         Properties props = new Properties();
-        ConfigReader.readAppProperties(dir, props);
+        ConfigReader.readAppProperties(rootDir, props);
         URL serverUrl = null;
         try {
             serverUrl = ConfigReader.getServerUrl(props);
         } catch (IOException ex) {
             error(ex);
         }
-        if (serverUrl != null && serverUrl.getPort() > 0) {
-            return serverUrl.getPort();
-        }
-        return 80;
+        int port = getPort(serverUrl, maybePort);
+        String context = getContext(serverUrl, maybeContext);
+        return new PortAndContext(port, context);
     }
 }

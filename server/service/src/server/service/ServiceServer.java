@@ -33,7 +33,7 @@ public final class ServiceServer {
         container.error(ex);
     }
 
-    public boolean runServer(Integer port, File rootDir, AppLogin login, Function<SQLGLogger, SqlTrace> trace, List<AppServerComponent> comps) throws Exception {
+    public boolean runServer(Integer port, String context, File rootDir, AppLogin login, Function<SQLGLogger, SqlTrace> trace, List<AppServerComponent> comps) throws Exception {
         for (AppServerComponent component : comps) {
             boolean inited = false;
             try {
@@ -52,8 +52,7 @@ public final class ServiceServer {
             container.error("Нет ни одного серверного компонента");
             return false;
         } else {
-            int realPort = port == null ? container.getDefaultPort(rootDir) : port.intValue();
-            container.init(realPort, rootDir);
+            container.init(port, context, rootDir);
             container.start();
             for (AppServerComponent component : comps) {
                 component.start();
