@@ -68,8 +68,7 @@ public final class ConfigReader {
         readProperties(props, new File(dir, APPLOADER_PROPERTIES));
     }
 
-    public static URL getServerUrl(Properties properties) throws IOException {
-        String serverUrl = properties.getProperty(HTTP_SERVER_PROPERTY);
+    public static URL toServerUrl(String serverUrl) throws IOException {
         if (serverUrl == null)
             return null;
         if (!serverUrl.endsWith("/")) {
@@ -85,5 +84,10 @@ public final class ConfigReader {
         } catch (MalformedURLException ex) {
             throw new IOException("Неправильно задан адрес " + serverUrl, ex);
         }
+    }
+
+    public static URL getServerUrl(Properties properties) throws IOException {
+        String serverUrl = properties.getProperty(HTTP_SERVER_PROPERTY);
+        return toServerUrl(serverUrl);
     }
 }
