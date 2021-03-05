@@ -65,17 +65,23 @@ public final class HttpLogger extends AbstractLogger {
         StringBuilder buf = new StringBuilder();
         String braces = "{}";
         int start = 0;
-        for (Object arg : args) {
+        int i = 0;
+        while (start < msg.length()) {
             int pos = msg.indexOf(braces, start);
             if (pos < 0) {
                 buf.append(msg, start, msg.length());
-                buf.append(' ').append(arg);
-                start = msg.length();
+                while (i < args.length) {
+                    buf.append(' ').append(args[i]);
+                    i++;
+                }
+                break;
             } else {
+                Object arg = i < args.length ? args[i] : braces;
                 buf.append(msg, start, pos);
                 buf.append(arg);
                 start = pos + braces.length();
             }
+            i++;
         }
         return buf.toString();
     }
