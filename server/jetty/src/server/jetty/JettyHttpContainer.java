@@ -130,8 +130,13 @@ public final class JettyHttpContainer {
             return maybeContext;
         if (serverUrl != null) {
             String path = serverUrl.getPath();
-            if (path != null && !path.isEmpty())
-                return path;
+            if (path != null && !path.isEmpty()) {
+                if (path.length() > 1 && path.endsWith("/")) {
+                    return path.substring(0, path.length() - 1);
+                } else {
+                    return path;
+                }
+            }
         }
         return "/";
     }
