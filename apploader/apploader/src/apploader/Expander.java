@@ -40,17 +40,35 @@ final class Expander {
         return str.length();
     }
 
-    private void expand(int start, int identStart, int identEnd) {
-        String id = str.substring(identStart, identEnd);
-        String expandTo = expander.apply(id.trim());
+    private static final class ExpandException extends Exception {
+
+        public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
+    }
+
+    private void expand(int start, int identStart, int identEnd) throws ExpandException {
+        String id0 = str.substring(identStart, identEnd).trim();
+        boolean skipIfAbsent;
+        String id;
+        if (id0.endsWith("?")) {
+            id = id0.substring(0, id0.length() - 1).trim();
+            skipIfAbsent = true;
+        } else {
+            id = id0;
+            skipIfAbsent = false;
+        }
+        String expandTo = expander.apply(id);
         if (expandTo == null) {
+            if (skipIfAbsent)
+                throw new ExpandException();
             buf.append(str, start, i);
         } else {
             buf.append(expandTo);
         }
     }
 
-    private String parse() {
+    private String parse() throws ExpandException {
         while (i < str.length()) {
             int start = i;
             char ch = str.charAt(i++);
@@ -78,6 +96,10 @@ final class Expander {
     }
 
     static String expand(String str, Function<String, String> expander) {
-        return new Expander(str, expander).parse();
+        try {
+            return new Expander(str, expander).parse();
+        } catch (ExpandException ex) {
+            return null;
+        }
     }
 }

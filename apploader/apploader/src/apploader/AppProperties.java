@@ -81,7 +81,10 @@ final class AppProperties {
                     return false;
                 properties.dllList.add(file);
             } else if (localjar || "localdll".equalsIgnoreCase(left)) {
-                File file = new File(expand(right));
+                String expanded = expand(right);
+                if (expanded == null)
+                    return true;
+                File file = new File(expanded);
                 if (!file.isFile()) {
                     gui.showError("Не найден файл " + file.getAbsolutePath());
                     return false;
