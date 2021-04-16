@@ -1,4 +1,4 @@
-rootProject.name = 'app-delivery'
+rootProject.name = "app-delivery"
 
 def add(name, path) {
     def dir = file(path)
@@ -6,16 +6,16 @@ def add(name, path) {
     project(":${name}").projectDir = dir
 }
 
-add('apploader-common', 'apploader/common')
-add('apploader-lib', 'apploader/lib')
-add('apploader-client', 'apploader/client')
-add('apploader', 'apploader/apploader')
+add("apploader-common", "apploader/common")
+add("apploader-lib", "apploader/lib")
+add("apploader-client", "apploader/client")
+add("apploader", "apploader/apploader")
 
-add('server-core', 'server/core')
-add('server-install', 'server/install')
-add('server-http', 'server/http')
-add('server-jetty', 'server/jetty')
-add('server-service', 'server/service')
-add('server-war', 'server/war')
-add('server-desktop', 'server/desktop')
-add('server-files', 'server/files')
+add("server-core", "server/core")
+add("server-install", "server/install")
+add("server-http", "server/http")
+add("server-jetty", "server/jetty")
+add("server-service", "server/service")
+add("server-war", "server/war")
+add("server-desktop", "server/desktop")
+add("server-files", "server/files")
