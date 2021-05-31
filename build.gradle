@@ -89,7 +89,7 @@ project(":server-http") {
 
 project(":server-jetty") {
     dependencies {
-        implementation("org.eclipse.jetty:jetty-servlet:9.4.26.v20200117")
+        implementation("org.eclipse.jetty:jetty-servlet:9.4.39.v20210325")
         api(project(":server-core"))
         implementation(project(":apploader-common"))
         implementation(project(":server-http"))
