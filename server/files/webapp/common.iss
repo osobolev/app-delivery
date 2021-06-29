@@ -1,3 +1,4 @@
+
 [Setup]
 OutputDir=..
 SourceDir=.
@@ -9,7 +10,11 @@ DefaultGroupName={#apName}
 ShowLanguageDialog=no
 
 AppName={#apName}
+#ifdef appId
+AppId={#appId}
+#else
 AppId={#apId}
+#endif
 AppVerName={#apName} {#apVersion}
 
 UsePreviousSetupType=no
