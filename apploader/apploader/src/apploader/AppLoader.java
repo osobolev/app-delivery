@@ -9,6 +9,7 @@ import apploader.lib.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -95,7 +96,16 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 return null;
             }
             Method main = maybeMain;
-            return args -> main.invoke(null, (Object) args);
+            return args -> {
+                try {
+                    main.invoke(null, (Object) args);
+                } catch (InvocationTargetException ex) {
+                    Throwable target = ex.getTargetException();
+                    if (target instanceof Exception)
+                        throw (Exception) target;
+                    throw ex;
+                }
+            };
         }
     }
 
