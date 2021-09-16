@@ -44,7 +44,7 @@ final class AppProperties {
         });
     }
 
-    private static boolean supports64bits() {
+    private static boolean canRun64Bits() {
         String arch = System.getenv("PROCESSOR_ARCHITECTURE");
         String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
         if (wow64Arch != null) {
@@ -134,11 +134,11 @@ final class AppProperties {
         });
         if (!ok)
             return null;
-        if (jre[0] != null || jre64[0] != null) {
+        {
             String[] javaZip;
             int javaBits;
-            if (jre[0] != null && jre64[0] != null) {
-                if (supports64bits()) {
+            if (jre64[0] != null) {
+                if (canRun64Bits()) {
                     javaZip = jre64;
                     javaBits = 64;
                 } else {
@@ -146,7 +146,7 @@ final class AppProperties {
                     javaBits = 32;
                 }
             } else {
-                javaZip = jre[0] != null ? jre : jre64;
+                javaZip = jre;
                 javaBits = 0;
             }
             if (!updateJava(gui, fileLoader, javaZip[0], javaBits))
@@ -242,6 +242,8 @@ final class AppProperties {
     }
 
     private static boolean updateJava(ILoaderGui gui, IFileLoader fileLoader, String newJavaZip, int remoteJavaBits) {
+        if (newJavaZip == null)
+            return true;
         File javaHome = getJavaHome();
         if (!isLocalJRE(fileLoader, javaHome)) {
             // Our java is not in "jre" folder, cannot update it
