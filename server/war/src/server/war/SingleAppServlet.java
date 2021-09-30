@@ -30,6 +30,6 @@ public class SingleAppServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setStatus(HttpServletResponse.SC_OK);
         HttpDispatcher http = InitListener.getHttpDispatcher(getServletContext());
-        SessionUtil.writeSessionInfo(resp.getOutputStream(), http, http == null ? "" : http.getApplication());
+        SessionUtil.writeSessionInfo(resp.getOutputStream(), http);
     }
 }

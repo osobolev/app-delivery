@@ -4,7 +4,7 @@ subprojects {
     apply(plugin: "maven-publish")
 
     group = "com.github.osobolev.app-delivery"
-    version = "5.2"
+    version = "5.3"
 
     sourceCompatibility = "8"
 
@@ -68,7 +68,7 @@ project(":apploader") {
 
 project(":server-core") {
     dependencies {
-        api("com.github.osobolev.sqlg3:sqlg3-remote-server:1.0")
+        api("com.github.osobolev.sqlg3:sqlg3-remote-server:2.0")
     }
 }
 
@@ -81,7 +81,7 @@ project(":server-install") {
 project(":server-http") {
     dependencies {
         api("javax.servlet:javax.servlet-api:3.1.0")
-        implementation("com.github.osobolev.sqlg3:sqlg3-remote-server:1.0")
+        implementation("com.github.osobolev.sqlg3:sqlg3-remote-server:2.0")
         implementation(project(":apploader-common"))
         implementation(project(":server-install"))
     }

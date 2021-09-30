@@ -93,7 +93,7 @@ public final class AppServerComponent {
     }
 
     public void showSessions(OutputStream os) throws IOException {
-        SessionUtil.writeSessionInfo(os, http, appName);
+        SessionUtil.writeSessionInfo(os, http);
     }
 
     public void shutdown() {
