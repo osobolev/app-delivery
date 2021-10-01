@@ -23,7 +23,7 @@ final class AppComponentServlet extends HttpServlet {
         }
         try {
             response.setStatus(HttpServletResponse.SC_OK);
-            component.dispatch(request.getRemoteHost(), request.getInputStream(), response.getOutputStream());
+            component.dispatch(request, response);
         } catch (UnrecoverableRemoteException ex) {
             component.error("BAD REQUEST: " + addr);
             throw ex;

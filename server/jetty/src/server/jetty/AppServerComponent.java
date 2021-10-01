@@ -3,12 +3,15 @@ package server.jetty;
 import server.core.AppInit;
 import server.core.AppLogger;
 import server.core.LoginData;
+import server.http.ServletRequestFactory;
 import server.http.SessionUtil;
 import sqlg3.remote.server.HttpDispatcher;
+import sqlg3.remote.server.IHttpRequest;
 import sqlg3.runtime.SqlTrace;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
 
@@ -16,6 +19,7 @@ public final class AppServerComponent {
 
     public final String application;
     private final String appName;
+    private final ServletRequestFactory requestFactory;
     private final AppInit init;
 
     private AppLogger logger;
@@ -24,9 +28,10 @@ public final class AppServerComponent {
     private Set<String> blacklist = null;
     private Set<String> whitelist = null;
 
-    public AppServerComponent(String application, String appName, AppInit init) {
+    public AppServerComponent(String application, String appName, ServletRequestFactory requestFactory, AppInit init) {
         this.application = application;
         this.appName = appName;
+        this.requestFactory = requestFactory;
         this.init = init;
     }
 
@@ -61,7 +66,6 @@ public final class AppServerComponent {
         LoginData loginData = login.login(application);
         AppInit.InitData initData = init.init(application, loginData, trace);
         this.http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
-        http.setSerializer(init.getSerializer());
         this.blacklist = initData.blacklist;
         this.whitelist = initData.whitelist;
     }
@@ -84,11 +88,12 @@ public final class AppServerComponent {
         }
     }
 
-    public void dispatch(String hostName, InputStream is, OutputStream os) throws IOException {
+    public void dispatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        IHttpRequest request = requestFactory.newRequest(req, resp);
         if (!running) {
-            HttpDispatcher.writeError(init.getSerializer(), os, new IOException("Server not running"));
+            request.writeError(new IOException("Server not running"));
         } else {
-            http.dispatch(hostName, is, os);
+            http.dispatch(req.getRemoteHost(), request);
         }
     }
 

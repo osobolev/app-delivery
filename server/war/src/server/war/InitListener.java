@@ -3,9 +3,9 @@ package server.war;
 import server.core.AppInit;
 import server.core.AppLogger;
 import server.core.LoginData;
+import server.http.DefaultRequestFactory;
+import server.http.ServletRequestFactory;
 import sqlg3.remote.server.HttpDispatcher;
-import sqlg3.remote.server.IServerSerializer;
-import sqlg3.remote.server.ServerJavaSerializer;
 import sqlg3.runtime.SqlTrace;
 
 import javax.servlet.ServletContext;
@@ -17,7 +17,7 @@ public class InitListener implements ServletContextListener {
 
     private static final String APP_INIT_ATTR = "appInit";
     private static final String LOGGER_ATTR = "logger";
-    private static final String SERIALIZER_ATTR = "serializer";
+    private static final String FACTORY_ATTR = "requestFactory";
     private static final String DISPATCH_ATTR = "httpDispatch";
 
     private static LoginData getDbParameters(ServletContext ctx) {
@@ -31,13 +31,10 @@ public class InitListener implements ServletContextListener {
     protected static AppInit getInit(ServletContext ctx) {
         String initClassName = ctx.getInitParameter("appInit");
         if (initClassName == null) {
-            initClassName = ctx.getInitParameter("authFactory");
-        }
-        if (initClassName == null) {
             ctx.log("Не задан параметр appInit");
         } else {
             try {
-                return (AppInit) Class.forName(initClassName).newInstance();
+                return (AppInit) Class.forName(initClassName).getDeclaredConstructor().newInstance();
             } catch (Exception ex) {
                 ctx.log("Невозможно создать объект " + initClassName, ex);
             }
@@ -45,13 +42,25 @@ public class InitListener implements ServletContextListener {
         return null;
     }
 
+    protected static ServletRequestFactory createRequestFactory(ServletContext ctx) {
+        String rfClassName = ctx.getInitParameter("requestFactory");
+        if (rfClassName != null) {
+            try {
+                return (ServletRequestFactory) Class.forName(rfClassName).getDeclaredConstructor().newInstance();
+            } catch (Exception ex) {
+                ctx.log("Невозможно создать объект " + rfClassName, ex);
+            }
+        }
+        return new DefaultRequestFactory();
+    }
+
     public void contextInitialized(ServletContextEvent event) {
         ServletContext ctx = event.getServletContext();
         AppInit init = getInit(ctx);
         AppLogger logger = init == null ? new ServletAppLogger(ctx) : init.createLogger();
         ctx.setAttribute(LOGGER_ATTR, logger);
-        IServerSerializer serializer = init == null ? new ServerJavaSerializer() : init.getSerializer();
-        ctx.setAttribute(SERIALIZER_ATTR, serializer);
+        ServletRequestFactory requestFactory = createRequestFactory(ctx);
+        ctx.setAttribute(FACTORY_ATTR, requestFactory);
         if (init == null)
             return;
         ctx.setAttribute(APP_INIT_ATTR, init);
@@ -97,8 +106,8 @@ public class InitListener implements ServletContextListener {
         return (AppLogger) ctx.getAttribute(LOGGER_ATTR);
     }
 
-    static IServerSerializer getSerializer(ServletContext ctx) {
-        return (IServerSerializer) ctx.getAttribute(SERIALIZER_ATTR);
+    static ServletRequestFactory getRequestFactory(ServletContext ctx) {
+        return (ServletRequestFactory) ctx.getAttribute(FACTORY_ATTR);
     }
 
     static HttpDispatcher getHttpDispatcher(ServletContext ctx) {

@@ -1,6 +1,5 @@
 package server.core;
 
-import sqlg3.remote.server.IServerSerializer;
 import sqlg3.remote.server.SessionFactory;
 import sqlg3.runtime.GlobalContext;
 import sqlg3.runtime.SqlTrace;
@@ -10,8 +9,6 @@ import java.util.Set;
 public interface AppInit {
 
     AppLogger createLogger();
-
-    IServerSerializer getSerializer();
 
     final class InitData {
 
