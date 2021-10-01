@@ -82,7 +82,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         AppInfo.loader = this;
         Class<?> cls = Class.forName(mainClass, true, classLoader);
         if (AppFactory.class.isAssignableFrom(cls)) {
-            AppFactory factory = (AppFactory) cls.newInstance();
+            AppFactory factory = (AppFactory) cls.getDeclaredConstructor().newInstance();
             return factory.newApplication(application);
         } else {
             Method maybeMain;
