@@ -19,6 +19,10 @@
         <param-value>sample.SampleInit</param-value>
     </context-param>
     <context-param>
+        <param-name>requestFactory</param-name>
+        <param-value>server.http.DefaultRequestFactory</param-value>
+    </context-param>
+    <context-param>
         <param-name>dbSpec</param-name>
         <param-value>sqlg2.db.specific.Generic</param-value>
     </context-param>

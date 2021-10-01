@@ -20,7 +20,7 @@ public final class ConsoleServer {
         container.addApplication(component);
         int port = 8080;
         File root = new File("root");
-        container.init(port, root);
+        container.init(port, "/", root);
         container.start();
         component.start();
         System.out.printf("Started server on port %d, root %s\n", port, root);
