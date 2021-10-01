@@ -24,8 +24,8 @@ subprojects {
     }
 
     dependencies {
-        webfiles 'com.github.osobolev.app-delivery:server-files:5.2'
-        webapploader 'com.github.osobolev.app-delivery:apploader:5.2'
+        webfiles 'com.github.osobolev.app-delivery:server-files:5.3'
+        webapploader 'com.github.osobolev.app-delivery:apploader:5.3'
         webdistr project(':sample_client')
     }
 
@@ -49,9 +49,9 @@ project(':sample_dto') {
     }
 
     dependencies {
-        api 'com.github.osobolev.sqlg3:sqlg3-core:1.0'
+        api 'com.github.osobolev.sqlg3:sqlg3-core:2.0'
 
-        sqlg 'com.github.osobolev.sqlg3:sqlg3-preprocess:1.0'
+        sqlg 'com.github.osobolev.sqlg3:sqlg3-preprocess:2.0'
         sqlg 'com.h2database:h2:1.4.191'
     }
 
@@ -71,7 +71,7 @@ project(':sample_dto') {
 
 project(':sample_db') {
     dependencies {
-        api 'com.github.osobolev.sqlg3:sqlg3-runtime:1.0'
+        api 'com.github.osobolev.sqlg3:sqlg3-runtime:2.0'
         api project(':sample_dto')
         runtimeOnly 'com.h2database:h2:1.4.191'
     }
@@ -79,16 +79,16 @@ project(':sample_db') {
 
 project(':sample_client') {
     dependencies {
-        compileOnly 'com.github.osobolev.app-delivery:apploader-client:5.2'
-        implementation 'com.github.osobolev.sqlg3:sqlg3-remote-client:1.0'
+        compileOnly 'com.github.osobolev.app-delivery:apploader-client:5.3'
+        implementation 'com.github.osobolev.sqlg3:sqlg3-remote-client:2.0'
         implementation project(':sample_dto')
     }
 }
 
 project(':sample_server') {
     dependencies {
-        api 'com.github.osobolev.sqlg3:sqlg3-remote-server:1.0'
-        api 'com.github.osobolev.app-delivery:server-core:5.2'
+        api 'com.github.osobolev.sqlg3:sqlg3-remote-server:2.0'
+        api 'com.github.osobolev.app-delivery:server-core:5.3'
         runtimeOnly project(':sample_db')
     }
 }
@@ -97,7 +97,7 @@ project(':sample_server_jar') {
     
     dependencies {
         implementation project(':sample_server')
-        implementation 'com.github.osobolev.app-delivery:server-jetty:5.2'
+        implementation 'com.github.osobolev.app-delivery:server-jetty:5.3'
     }
 
     jar.manifest.attributes(
@@ -142,7 +142,7 @@ project(':sample_war') {
 
     dependencies {
         implementation project(':sample_server')
-        implementation 'com.github.osobolev.app-delivery:server-war:5.2'
+        implementation 'com.github.osobolev.app-delivery:server-war:5.3'
     }
 
     task warList {

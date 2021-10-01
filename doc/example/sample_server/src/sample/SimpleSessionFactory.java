@@ -19,7 +19,8 @@ public class SimpleSessionFactory implements SessionFactory {
         this.jdbcUrl = jdbcUrl;
     }
 
-    public SessionContext login(SQLGLogger logger, String login, String password) throws SQLException {
+    @Override
+    public SessionContext login(SQLGLogger logger, long sessionId, String login, String password) throws SQLException {
         Connection connection = SingleConnectionManager.openConnection(jdbcDriver, jdbcUrl, login, password);
         ConnectionManager cman = new SingleConnectionManager(connection);
         return new SessionContext(cman, login, null);

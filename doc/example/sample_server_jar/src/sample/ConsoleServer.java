@@ -1,6 +1,7 @@
 package sample;
 
 import server.core.LoginData;
+import server.http.DefaultRequestFactory;
 import server.jetty.AppLogin;
 import server.jetty.AppServerComponent;
 import server.jetty.JettyHttpContainer;
@@ -14,7 +15,7 @@ public final class ConsoleServer {
         SampleLogger logger = new SampleLogger();
         JettyHttpContainer container = new JettyHttpContainer(logger);
         SampleInit init = new SampleInit(logger);
-        AppServerComponent component = new AppServerComponent("sample", "Sample application", init);
+        AppServerComponent component = new AppServerComponent("sample", "Sample application", new DefaultRequestFactory(), init);
         AppLogin login = application -> new LoginData("org.h2.Driver", "jdbc:h2:mem:", null, null);
         component.init(login, logger, SqlTrace.createDefault(logger::error));
         container.addApplication(component);
