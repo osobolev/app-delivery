@@ -34,7 +34,15 @@ public class InitListener implements ServletContextListener {
             ctx.log("Не задан параметр appInit");
         } else {
             try {
-                return (AppInit) Class.forName(initClassName).getDeclaredConstructor().newInstance();
+                Object obj = Class.forName(initClassName).getDeclaredConstructor().newInstance();
+                if (obj instanceof AppInit) {
+                    return (AppInit) obj;
+                } else if (obj instanceof AppInitFactory) {
+                    AppInitFactory factory = (AppInitFactory) obj;
+                    return factory.createInit(ctx);
+                } else {
+                    ctx.log("Объект " + initClassName + " должен быть либо AppInit, либо AppInitFactory");
+                }
             } catch (Exception ex) {
                 ctx.log("Невозможно создать объект " + initClassName, ex);
             }
