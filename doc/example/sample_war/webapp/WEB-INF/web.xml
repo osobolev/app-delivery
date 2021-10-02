@@ -16,7 +16,7 @@
     </context-param>
     <context-param>
         <param-name>appInit</param-name>
-        <param-value>sample.SampleInit</param-value>
+        <param-value>sample.SampleInitFactory</param-value>
     </context-param>
     <context-param>
         <param-name>requestFactory</param-name>
