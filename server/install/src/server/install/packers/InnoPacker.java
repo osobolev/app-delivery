@@ -4,6 +4,7 @@ import server.install.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 public final class InnoPacker implements Packer {
 
@@ -39,7 +40,8 @@ public final class InnoPacker implements Packer {
             issScript
         };
         Process process = Runtime.getRuntime().exec(args, null, info.buildDir);
-        new Thread(new CountOutputEater(process.getInputStream(), info.countFiles * 2 + 70, percentCell)).start();
+        Charset windows = Charset.forName("Cp1251");
+        new Thread(new CountOutputEater(process.getInputStream(), info.countFiles * 2 + 70, percentCell, windows)).start();
         new Thread(new OutputEater(process.getErrorStream())).start();
         try {
             int exitCode = process.waitFor();

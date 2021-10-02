@@ -12,8 +12,8 @@ public final class CountOutputEater implements Runnable {
     private final int total;
     private final PercentCell percentCell;
 
-    public CountOutputEater(InputStream in, int total, PercentCell percentCell) {
-        this.in = new BufferedReader(new InputStreamReader(in, Charset.defaultCharset()));
+    public CountOutputEater(InputStream in, int total, PercentCell percentCell, Charset charset) {
+        this.in = new BufferedReader(new InputStreamReader(in, charset));
         this.total = total;
         this.percentCell = percentCell;
     }

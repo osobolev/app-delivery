@@ -4,6 +4,7 @@ import server.install.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 public final class RarPacker implements Packer {
 
@@ -40,7 +41,8 @@ public final class RarPacker implements Packer {
             info.buildDir.getAbsolutePath() + "\\*"
         };
         Process process = Runtime.getRuntime().exec(args, null, info.root);
-        new Thread(new CountOutputEater(process.getInputStream(), info.countFiles + 5, percentCell)).start();
+        Charset windows = Charset.forName("Cp866");
+        new Thread(new CountOutputEater(process.getInputStream(), info.countFiles + 5, percentCell, windows)).start();
         new Thread(new OutputEater(process.getErrorStream())).start();
         try {
             process.waitFor();

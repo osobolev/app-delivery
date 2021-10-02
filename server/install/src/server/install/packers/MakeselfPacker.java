@@ -4,6 +4,8 @@ import server.install.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public final class MakeselfPacker implements Packer {
 
@@ -28,7 +30,8 @@ public final class MakeselfPacker implements Packer {
             "./init-install.sh"
         };
         Process process = Runtime.getRuntime().exec(args, null, info.root);
-        new Thread(new CountOutputEater(process.getErrorStream(), info.countFiles + 2, percentCell)).start();
+        Charset charset = StandardCharsets.UTF_8;
+        new Thread(new CountOutputEater(process.getErrorStream(), info.countFiles + 2, percentCell, charset)).start();
         new Thread(new OutputEater(process.getInputStream())).start();
         try {
             process.waitFor();
