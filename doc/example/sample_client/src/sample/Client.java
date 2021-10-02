@@ -19,7 +19,7 @@ public final class Client extends SimpleApp {
 
     @Override
     protected void run(String application, String[] args) throws Exception {
-        IHttpClient client = DefaultHttpClient.builder(new URL(AppInfo.httpServerUrl, application + "/remoting")).build();
+        IHttpClient client = DefaultHttpClient.builder(new URL(AppInfo.httpServerUrl, "remoting")).build();
         HttpConnectionFactory factory = new HttpConnectionFactory(application, client);
         try (IRemoteDBInterface conn = new SafeDBInterface(Throwable::printStackTrace, factory.openConnection("", ""))) {
             IClientDB db = conn.getSimpleTransaction().getInterface(IClientDB.class);
