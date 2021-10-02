@@ -1,7 +1,7 @@
 package apploader.common;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -9,14 +9,13 @@ import java.time.format.FormatStyle;
 public final class LogFormatUtil {
 
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
-    private static final Charset LOG_CHARSET = Charset.defaultCharset();
 
     public static String getTimestamp() {
         return TIMESTAMP_FORMAT.format(LocalDateTime.now());
     }
 
     private static PrintWriter pw(OutputStream os) {
-        return new PrintWriter(new OutputStreamWriter(os, LOG_CHARSET), true);
+        return new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
