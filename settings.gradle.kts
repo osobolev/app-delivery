@@ -1,8 +1,8 @@
 rootProject.name = "app-delivery"
 
-def add(name, path) {
-    def dir = file(path)
-    include name
+fun add(name: String, path: String) {
+    val dir = file(path)
+    include(name)
     project(":${name}").projectDir = dir
 }
 
