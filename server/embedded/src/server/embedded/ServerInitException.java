@@ -1,4 +1,4 @@
-package server.jetty;
+package server.embedded;
 
 public final class ServerInitException extends Exception {
 

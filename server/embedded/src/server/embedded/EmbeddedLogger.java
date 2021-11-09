@@ -1,4 +1,4 @@
-package server.jetty;
+package server.embedded;
 
 import apploader.common.LogFormatUtil;
 import server.core.AppLogger;
@@ -6,17 +6,17 @@ import server.core.AppLogger;
 import java.io.PrintWriter;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public final class JettyLogger implements AppLogger {
+public final class EmbeddedLogger implements AppLogger {
 
     private final PrintWriter pw;
     private final PrintWriter fileOutput;
 
-    public JettyLogger(String fileName) {
+    public EmbeddedLogger(String fileName) {
         this.fileOutput = LogFormatUtil.open(fileName);
         this.pw = LogFormatUtil.getWriter(fileOutput);
     }
 
-    public JettyLogger() {
+    public EmbeddedLogger() {
         this("appserver.log");
     }
 

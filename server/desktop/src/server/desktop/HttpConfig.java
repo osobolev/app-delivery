@@ -1,6 +1,6 @@
 package server.desktop;
 
-import server.jetty.ServerInitException;
+import server.embedded.ServerInitException;
 
 import java.io.File;
 import java.util.HashMap;

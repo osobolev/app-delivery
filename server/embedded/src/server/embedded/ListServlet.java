@@ -1,4 +1,4 @@
-package server.jetty;
+package server.embedded;
 
 import apploader.common.Application;
 import server.http.ListServletBase;

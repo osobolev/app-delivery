@@ -1,6 +1,6 @@
 package server.desktop;
 
-import server.jetty.JettyHttpContainer;
+import server.embedded.EmbeddedHttpContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +10,9 @@ import java.awt.event.WindowEvent;
 
 final class ServerFrame extends JFrame {
 
-    private final JettyHttpContainer container;
+    private final EmbeddedHttpContainer container;
 
-    ServerFrame(JettyHttpContainer container, JTabbedPane tab) {
+    ServerFrame(EmbeddedHttpContainer container, JTabbedPane tab) {
         super("Сервер");
         this.container = container;
 

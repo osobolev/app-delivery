@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":server-jetty"))
+    api(project(":server-embedded"))
 }

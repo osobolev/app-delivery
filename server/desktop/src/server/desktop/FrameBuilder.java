@@ -2,7 +2,7 @@ package server.desktop;
 
 import server.core.AppInit;
 import server.core.AppLogger;
-import server.jetty.*;
+import server.embedded.*;
 
 import javax.swing.*;
 import java.io.File;
@@ -11,10 +11,10 @@ import java.util.List;
 
 final class FrameBuilder {
 
-    private final JettyHttpContainer container;
+    private final EmbeddedHttpContainer container;
     final JTabbedPane tab = new JTabbedPane();
 
-    FrameBuilder(JettyHttpContainer container) {
+    FrameBuilder(EmbeddedHttpContainer container) {
         this.container = container;
     }
 

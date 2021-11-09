@@ -1,14 +1,8 @@
-package server.jetty;
+package server.embedded;
 
 import apploader.common.AppCommon;
 import apploader.common.Application;
 import apploader.common.ConfigReader;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.resource.Resource;
 import server.core.AppLogger;
 import server.http.InstallServletBase;
 import server.http.ListServletBase;
@@ -20,18 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public final class JettyHttpContainer {
+public final class EmbeddedHttpContainer {
 
     private final AppLogger mainLogger;
-
+    private final EmbeddedServer server;
     private final List<AppServerComponent> components = new ArrayList<>();
 
-    private Server jetty;
     private int port;
     private File rootDir;
 
-    public JettyHttpContainer(AppLogger mainLogger) {
+    public EmbeddedHttpContainer(AppLogger mainLogger, EmbeddedServer server) {
         this.mainLogger = mainLogger;
+        this.server = server;
     }
 
     public void addApplication(AppServerComponent component) {
@@ -39,45 +33,40 @@ public final class JettyHttpContainer {
     }
 
     public void init(Integer maybePort, String maybeContext, File rootDir) throws ServerInitException {
-        Log.setLog(new HttpLogger(mainLogger));
+        server.setLogger(mainLogger);
         this.rootDir = rootDir;
 
         PortAndContext pc = getPortAndContext(maybePort, maybeContext);
         this.port = pc.port;
-        this.jetty = new Server(port);
+        this.server.setPort(port);
 
-        ServletContextHandler ctx = new ServletContextHandler(jetty, pc.context, ServletContextHandler.NO_SESSIONS);
+        EmbeddedServer.EmbeddedContext ctx;
         try {
-            ctx.setBaseResource(Resource.newResource(rootDir.getCanonicalFile().toURI()));
-        } catch (IOException ex) {
+            ctx = server.initContext(pc.context, rootDir);
+        } catch (Exception ex) {
             throw new ServerInitException(ex);
         }
+
         List<Application> applications = new ArrayList<>();
         for (AppServerComponent comp : components) {
             String application = comp.application;
             applications.add(new Application(application, comp.getName()));
 
             AppComponentServlet appServlet = new AppComponentServlet(comp);
-            ServletHolder appHolder = new ServletHolder(appServlet);
-            appHolder.setName(application);
-            ctx.addServlet(appHolder, "/" + application + "/remoting");
+            ctx.addServlet(application, "/" + application + "/remoting", appServlet);
         }
 
         InstallServletBase installServlet = new InstallServlet(mainLogger, rootDir, applications);
-        ServletHolder installHolder = new ServletHolder(installServlet);
-        installHolder.setName("install");
-        ctx.addServlet(installHolder, "/install/*");
+        ctx.addServlet("install", "/install/*", installServlet);
 
         ListServletBase listServlet = new ListServlet(applications);
-        ServletHolder listHolder = new ServletHolder(listServlet);
-        listHolder.setName("list");
-        ctx.addServlet(listHolder, "/" + AppCommon.GLOBAL_APP_LIST);
+        ctx.addServlet("list", "/" + AppCommon.GLOBAL_APP_LIST, listServlet);
 
-        ctx.addServlet(new ServletHolder(new DefaultServlet()), "/");
+        ctx.addStaticServlet("/");
     }
 
     public void start() throws Exception {
-        jetty.start();
+        server.start();
         mainLogger.info("Сервер запущен на порту " + port + " в папке " + rootDir.getAbsolutePath());
     }
 
@@ -86,7 +75,7 @@ public final class JettyHttpContainer {
         for (AppServerComponent comp : components) {
             comp.shutdown();
         }
-        jetty.stop();
+        server.stop();
         mainLogger.close();
     }
 

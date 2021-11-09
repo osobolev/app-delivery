@@ -2,10 +2,7 @@ package server.service;
 
 import server.core.AppInit;
 import server.core.AppLogger;
-import server.jetty.AppLogin;
-import server.jetty.AppServerComponent;
-import server.jetty.JettyHttpContainer;
-import server.jetty.JettyLogger;
+import server.embedded.*;
 import sqlg3.remote.server.SQLGLogger;
 import sqlg3.runtime.SqlTrace;
 
@@ -15,14 +12,14 @@ import java.util.function.Function;
 
 public final class ServiceServer {
 
-    private final JettyHttpContainer container;
+    private final EmbeddedHttpContainer container;
 
-    public ServiceServer(AppLogger mainLogger) {
-        this.container = new JettyHttpContainer(mainLogger);
+    public ServiceServer(AppLogger mainLogger, EmbeddedServer server) {
+        this.container = new EmbeddedHttpContainer(mainLogger, server);
     }
 
-    public ServiceServer() {
-        this(new JettyLogger());
+    public ServiceServer(EmbeddedServer server) {
+        this(new EmbeddedLogger(), server);
     }
 
     public void showError(String message) {

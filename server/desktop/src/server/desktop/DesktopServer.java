@@ -1,10 +1,7 @@
 package server.desktop;
 
 import server.core.AppLogger;
-import server.jetty.AppLogin;
-import server.jetty.AppServerComponent;
-import server.jetty.JettyHttpContainer;
-import server.jetty.JettyLogger;
+import server.embedded.*;
 
 import javax.swing.*;
 import java.io.File;
@@ -12,14 +9,14 @@ import java.util.List;
 
 public final class DesktopServer {
 
-    private final JettyHttpContainer container;
+    private final EmbeddedHttpContainer container;
 
-    public DesktopServer(AppLogger mainLogger) {
-        this.container = new JettyHttpContainer(mainLogger);
+    public DesktopServer(AppLogger mainLogger, EmbeddedServer server) {
+        this.container = new EmbeddedHttpContainer(mainLogger, server);
     }
 
-    public DesktopServer() {
-        this(new JettyLogger());
+    public DesktopServer(EmbeddedServer server) {
+        this(new EmbeddedLogger(), server);
     }
 
     public void showError(String message) {

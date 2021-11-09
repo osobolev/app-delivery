@@ -1,7 +1,7 @@
 package server.desktop;
 
 import server.core.AppLogger;
-import server.jetty.AppServerComponent;
+import server.embedded.AppServerComponent;
 import sqlg3.runtime.SqlTrace;
 
 import javax.swing.*;
