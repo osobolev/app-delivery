@@ -4,7 +4,7 @@ subprojects {
     apply(plugin: "java-library")
 
     group = "io.github.osobolev.app-delivery.sample"
-    version = "5.4"
+    version = "5.5"
 
     sourceCompatibility = "8"
 
@@ -24,8 +24,8 @@ subprojects {
     }
 
     dependencies {
-        webfiles("io.github.osobolev.app-delivery:server-files:5.4")
-        webapploader("io.github.osobolev.app-delivery:apploader:5.4")
+        webfiles("io.github.osobolev.app-delivery:server-files:5.5")
+        webapploader("io.github.osobolev.app-delivery:apploader:5.5")
         webdistr(project(":sample_client"))
     }
 
@@ -79,7 +79,7 @@ project(":sample_db") {
 
 project(":sample_client") {
     dependencies {
-        compileOnly("io.github.osobolev.app-delivery:apploader-client:5.4")
+        compileOnly("io.github.osobolev.app-delivery:apploader-client:5.5")
         implementation("io.github.osobolev.sqlg3:sqlg3-remote-client:2.1")
         implementation(project(":sample_dto"))
     }
@@ -88,7 +88,7 @@ project(":sample_client") {
 project(":sample_server") {
     dependencies {
         api("io.github.osobolev.sqlg3:sqlg3-remote-server:2.1")
-        api("io.github.osobolev.app-delivery:server-core:5.4")
+        api("io.github.osobolev.app-delivery:server-core:5.5")
         runtimeOnly(project(":sample_db"))
     }
 }
@@ -97,7 +97,7 @@ project(":sample_server_jar") {
     
     dependencies {
         implementation(project(":sample_server"))
-        implementation("io.github.osobolev.app-delivery:server-jetty:5.4")
+        implementation("io.github.osobolev.app-delivery:server-jetty:5.5")
     }
 
     jar.manifest.attributes(
@@ -142,7 +142,7 @@ project(":sample_war") {
 
     dependencies {
         implementation(project(":sample_server"))
-        implementation("io.github.osobolev.app-delivery:server-war:5.4")
+        implementation("io.github.osobolev.app-delivery:server-war:5.5")
     }
 
     task warList {

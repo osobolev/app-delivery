@@ -1,10 +1,11 @@
 package sample;
 
 import server.core.LoginData;
+import server.embedded.AppLogin;
+import server.embedded.AppServerComponent;
+import server.embedded.EmbeddedHttpContainer;
 import server.http.DefaultRequestFactory;
-import server.jetty.AppLogin;
-import server.jetty.AppServerComponent;
-import server.jetty.JettyHttpContainer;
+import server.jetty.JettyEmbeddedServer;
 import sqlg3.runtime.SqlTrace;
 
 import java.io.File;
@@ -13,7 +14,7 @@ public final class ConsoleServer {
 
     public static void main(String[] args) throws Exception {
         SampleLogger logger = new SampleLogger();
-        JettyHttpContainer container = new JettyHttpContainer(logger);
+        EmbeddedHttpContainer container = new EmbeddedHttpContainer(logger, new JettyEmbeddedServer());
         SampleInit init = new SampleInit(logger);
         AppServerComponent component = new AppServerComponent("sample", "Sample application", new DefaultRequestFactory(), init);
         AppLogin login = application -> new LoginData("org.h2.Driver", "jdbc:h2:mem:", null, null);
