@@ -87,6 +87,7 @@ final class LoaderGui implements ILoaderGui {
         });
         dlg.pack();
         dlg.setLocationRelativeTo(null);
+        dlg.setAlwaysOnTop(true);
         dlg.setVisible(true);
         if (check != null) {
             check.setDoNotShow(cbShow.isSelected());
