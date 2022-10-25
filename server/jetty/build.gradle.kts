@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation("org.eclipse.jetty:jetty-servlet:9.4.48.v20220622")
+    implementation("org.eclipse.jetty:jetty-servlet:9.4.49.v20220914")
     api(project(":server-embedded"))
 }
