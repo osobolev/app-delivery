@@ -3,6 +3,7 @@ package apploader.common;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Properties;
 
 public final class ConfigReader {
@@ -26,7 +27,7 @@ public final class ConfigReader {
     }
 
     public static boolean readConfig(File file, LineWorker worker) throws IOException {
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             return readConfig(is, worker);
         }
     }
