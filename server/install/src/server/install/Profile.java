@@ -4,14 +4,11 @@ import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 final class Profile {
 
-    static final Profile NONE = new Profile(null);
+    private static final Profile NONE = new Profile(null);
 
     private final String name;
 
@@ -39,7 +36,7 @@ final class Profile {
         return null;
     }
 
-    Properties loadProps(File root) {
+    private Properties loadProps(File root) {
         Properties props = new Properties();
         File propFile = getPropFile(root, "install");
         if (propFile != null) {
@@ -48,11 +45,14 @@ final class Profile {
         return props;
     }
 
-    Properties loadProfileProps(File root, Properties installProps) {
+    Properties loadProfileProps(File root) {
+        // Loading install.properties:
+        Properties installProps = NONE.loadProps(root);
         if (name != null) {
+            // Override install.properties only if there is a  profile
             Properties profileProps = new Properties();
             profileProps.putAll(installProps);
-            // Override install.properties only if there is a  profile:
+            // Loading install_<profile>.properties:
             Properties props = loadProps(root);
             for (String name : props.stringPropertyNames()) {
                 String value = props.getProperty(name);
@@ -84,20 +84,15 @@ final class Profile {
         return name == null ? clientRoot : new File(clientRoot, name);
     }
 
-    private List<Profile> priority() {
-        if (name == null) {
-            return Collections.singletonList(NONE);
-        } else {
-            return Arrays.asList(this, NONE);
-        }
-    }
-
     File findPropFile(File root, String baseName) {
-        for (Profile p : priority()) {
-            File file = p.getPropFile(root, baseName);
-            if (file != null)
-                return file;
+        File myFile = getPropFile(root, baseName);
+        if (myFile != null)
+            return myFile;
+        if (name != null) {
+            // Try to find file without "_<profile>" suffix:
+            return NONE.getPropFile(root, baseName);
+        } else {
+            return null;
         }
-        return null;
     }
 }
