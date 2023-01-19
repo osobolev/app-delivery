@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.70")
+    implementation("org.apache.tomcat.embed:tomcat-embed-core:9.0.71")
     api(project(":server-embedded"))
 }
