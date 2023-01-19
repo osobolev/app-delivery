@@ -1,6 +1,7 @@
 package apploader;
 
 import apploader.common.AppCommon;
+import apploader.common.AppZip;
 import apploader.common.ConfigReader;
 import apploader.lib.FileResult;
 import apploader.lib.IFileLoader;
@@ -14,13 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 final class AppProperties {
 
@@ -283,18 +281,7 @@ final class AppProperties {
     }
 
     private static void unzip(File file, Path destDir) throws IOException {
-        try (ZipFile zipFile = new ZipFile(file)) {
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                Path dest = destDir.resolve(entry.getName());
-                if (entry.isDirectory()) {
-                    Files.createDirectories(dest);
-                } else {
-                    Files.copy(zipFile.getInputStream(entry), dest);
-                }
-            }
-        }
+        AppZip.create(file).unpackWithExtra(destDir);
     }
 
     private static void deleteAll(Path path) {
