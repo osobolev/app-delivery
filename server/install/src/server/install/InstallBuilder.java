@@ -13,7 +13,6 @@ public final class InstallBuilder {
     private final File buildDir; // ./client/install или ./client/profile/install
     private final List<InstallerResource> depends;
     private final JavaSource javaSource;
-    private final String installerBaseName;
     private final List<Packer> packers;
 
     private final Properties profileProps;
@@ -26,7 +25,6 @@ public final class InstallBuilder {
         this.buildDir = new File(baseDir, "install");
         this.depends = src.depends;
         this.javaSource = src.javaSource;
-        this.installerBaseName = src.installerBaseName;
         this.packers = src.packers;
 
         this.profileProps = profileProps;
@@ -72,6 +70,7 @@ public final class InstallBuilder {
     }
 
     private File getResultFile(Packer packer) {
+        String installerBaseName = profileProps.getProperty("base.name", "install");
         return new File(baseDir, packer.getResultFileName(installerBaseName));
     }
 

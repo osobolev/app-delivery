@@ -14,7 +14,6 @@ final class SourceFiles {
     final File baseDir;
     final List<InstallerResource> depends = new ArrayList<>();
     final JavaSource javaSource;
-    final String installerBaseName;
     final List<Packer> packers = new ArrayList<>();
 
     SourceFiles(File root, List<String> apps, Profile profile, String url, Properties profileProps) {
@@ -54,8 +53,6 @@ final class SourceFiles {
         }
 
         this.javaSource = JavaSource.create(root, profileProps);
-
-        this.installerBaseName = profileProps.getProperty("base.name", "install");
 
         String packerStr = profileProps.getProperty("packers");
         if (packerStr != null) {
