@@ -1,12 +1,13 @@
 package apploader.lib;
 
-import apploader.common.AppCommon;
-import apploader.common.Application;
-import apploader.common.ConfigReader;
-import apploader.common.ProxyConfig;
+import apploader.common.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,8 +113,8 @@ public final class FileLoader extends IFileLoader {
             conn.connect();
             to.delete();
             try (InputStream in = conn.getInputStream();
-                 OutputStream out = new FileOutputStream(to)) {
-                head.copyStream(in, out);
+                 OutputStream out = Files.newOutputStream(to.toPath())) {
+                AppStreamUtils.copyStream(in, out, head.length);
             }
             to.setLastModified(head.lastModified);
         } finally {
