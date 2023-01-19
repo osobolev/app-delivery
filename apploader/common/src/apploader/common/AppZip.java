@@ -77,7 +77,7 @@ public final class AppZip {
         return perms;
     }
 
-    public void unpackWithExtra(Path destDir) throws IOException {
+    public void unpackWithExtra(Path destDir, Runnable onEntry) throws IOException {
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -101,6 +101,9 @@ public final class AppZip {
                 if (extra != null) {
                     Set<PosixFilePermission> perms = fromMask(extra.permissions);
                     Files.setPosixFilePermissions(dest, perms);
+                }
+                if (onEntry != null) {
+                    onEntry.run();
                 }
             }
         }

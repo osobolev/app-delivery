@@ -14,14 +14,14 @@ public final class InnoPacker implements Packer {
     }
 
     @Override
-    public boolean buildResultFile(BuildInfo info, PercentCell percentCell, File result) throws IOException {
+    public boolean buildResultFile(BuildInfo info, PercentCell percentCell, int countFiles, File result) throws IOException {
         File iscc = info.findWindowsExe("inno.dir", "Inno Setup 5", "ISCC.exe");
         if (iscc == null) {
             info.log("ISS executable not found");
             return false;
         }
 
-        String issScript = "client.iss";
+        String issScript = info.getProperty("inno.script", "client.iss");
         File iss = info.getSource(issScript);
         File issCommon = info.getSource("common.iss");
         if (!iss.isFile()) {
@@ -41,7 +41,7 @@ public final class InnoPacker implements Packer {
         };
         Process process = Runtime.getRuntime().exec(args, null, info.buildDir);
         Charset windows = Charset.forName("Cp1251");
-        new Thread(new CountOutputEater(process.getInputStream(), info.countFiles * 2 + 70, percentCell, windows)).start();
+        new Thread(new CountOutputEater(process.getInputStream(), countFiles * 2 + 70, percentCell, windows)).start();
         new Thread(new OutputEater(process.getErrorStream())).start();
         try {
             int exitCode = process.waitFor();

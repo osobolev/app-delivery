@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class BuildInfo {
 
@@ -19,18 +20,13 @@ public final class BuildInfo {
      * Папка, в которую копируются файлы для создания инсталлятора (client/install или client/profile/install)
      */
     public final File buildDir;
-    /**
-     * Количество файлов в папке buildDir
-     */
-    public final int countFiles;
-    private final Properties installProps;
+    private final Properties profileProps;
 
-    public BuildInfo(Consumer<String> logger, File root, File buildDir, int countFiles, Properties installProps) {
+    public BuildInfo(Consumer<String> logger, File root, File buildDir, Properties profileProps) {
         this.logger = logger;
         this.root = root;
         this.buildDir = buildDir;
-        this.countFiles = countFiles;
-        this.installProps = installProps;
+        this.profileProps = profileProps;
     }
 
     public File getSource(String fileName) {
@@ -57,42 +53,50 @@ public final class BuildInfo {
         return null;
     }
 
-    public File findWindowsExe(Properties installProps, String propName, String exeFolder, String exeName) {
-        List<String> tryPaths = new ArrayList<>(3);
-        String propValue = installProps.getProperty(propName);
-        if (propValue != null) {
-            tryPaths.add(propValue);
+    private static List<File> dirsToFiles(List<String> tryDirs, String... exeNames) {
+        return tryDirs
+            .stream()
+            .flatMap(path -> Stream.of(exeNames).map(exeName -> new File(path, exeName)))
+            .collect(Collectors.toList());
+    }
+
+    public File findWindowsExe(String dirProp, String exeFolder, String... exeNames) {
+        List<String> tryDirs = new ArrayList<>(3);
+        String dirValue = profileProps.getProperty(dirProp);
+        if (dirValue != null) {
+            tryDirs.add(dirValue);
         }
         String pf = System.getenv("ProgramFiles");
         if (pf != null) {
-            tryPaths.add(pf + File.separator + exeFolder);
+            tryDirs.add(pf + File.separator + exeFolder);
         }
         String pf32 = System.getenv("ProgramFiles(x86)");
         if (pf32 != null) {
-            tryPaths.add(pf32 + File.separator + exeFolder);
+            tryDirs.add(pf32 + File.separator + exeFolder);
         }
-        List<File> tryFiles = tryPaths.stream().map(path -> new File(path, exeName)).collect(Collectors.toList());
+        List<File> tryFiles = dirsToFiles(tryDirs, exeNames);
         return findExe(tryFiles);
     }
 
-    public File findWindowsExe(String propName, String exeFolder, String exeName) {
-        return findWindowsExe(installProps, propName, exeFolder, exeName);
-    }
-
-    public File findAnyExe(Properties installProps, String propName, String... exeNames) {
-        List<File> tryFiles = new ArrayList<>();
-        String propValue = installProps.getProperty(propName);
-        if (propValue != null) {
-            tryFiles.add(new File(propValue));
+    public File findLinuxExe(String dirProp, String fileProp, String... exeNames) {
+        List<String> tryDirs = new ArrayList<>(4);
+        String dirValue = dirProp == null ? null : profileProps.getProperty(dirProp);
+        if (dirValue != null) {
+            tryDirs.add(dirValue);
         }
-        for (String exeName : exeNames) {
-            tryFiles.add(new File(exeName));
+        tryDirs.add("/bin");
+        tryDirs.add("/usr/bin");
+        tryDirs.add("/usr/local/bin");
+        List<File> tryFiles = new ArrayList<>(dirsToFiles(tryDirs, exeNames));
+        String fileValue = fileProp == null ? null : profileProps.getProperty(fileProp);
+        if (fileValue != null) {
+            tryFiles.add(new File(fileValue));
         }
         return findExe(tryFiles);
     }
 
-    public File findAnyExe(String propName, String... exeNames) {
-        return findAnyExe(installProps, propName, exeNames);
+    public String getProperty(String name, String defValue) {
+        return profileProps.getProperty(name, defValue);
     }
 
     public void log(String message) {

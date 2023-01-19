@@ -281,7 +281,7 @@ final class AppProperties {
     }
 
     private static void unzip(File file, Path destDir) throws IOException {
-        AppZip.create(file).unpackWithExtra(destDir);
+        AppZip.create(file).unpackWithExtra(destDir, null);
     }
 
     private static void deleteAll(Path path) {

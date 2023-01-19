@@ -5,12 +5,15 @@ import apploader.common.AppCommon;
 import java.io.File;
 import java.io.IOException;
 
-final class ClientResource extends InstallerResource {
+/**
+ * Генерация client.bat/client.sh
+ */
+final class ClientLauncherResource extends InstallerResource {
 
     private final String app;
     private final boolean windows;
 
-    ClientResource(String destName, String app, boolean windows) {
+    ClientLauncherResource(String destName, String app, boolean windows) {
         super(destName);
         this.app = app;
         this.windows = windows;

@@ -9,9 +9,17 @@ import java.util.Properties;
 public final class ConfigReader {
 
     /**
+     * Base name of the client config file
+     */
+    public static final String APPLOADER = "apploader";
+    /**
+     * Extension of the client config file
+     */
+    public static final String PROPERTIES = ".properties";
+    /**
      * Name of the client config file
      */
-    public static final String APPLOADER_PROPERTIES = "apploader.properties";
+    public static final String APPLOADER_PROPERTIES = APPLOADER + PROPERTIES;
     /**
      * Name of the URL property in apploader.properties
      */

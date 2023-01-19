@@ -15,11 +15,20 @@ public final class MakeselfPacker implements Packer {
     }
 
     @Override
-    public boolean buildResultFile(BuildInfo info, PercentCell percentCell, File result) throws IOException {
-        File makeself = info.findAnyExe("makeself", "/usr/bin/makeself", "/usr/bin/makeself.sh");
+    public boolean buildResultFile(BuildInfo info, PercentCell percentCell, int countFiles, File result) throws IOException {
+        File makeself = info.findLinuxExe(null, "makeself", "makeself", "makeself.sh");
         if (makeself == null) {
             info.log("Makeself executable not found");
             return false;
+        }
+
+        String startupScript = info.getProperty("makeself.script", "init-install.sh");
+        File scriptFile = info.getSource(startupScript);
+        if (!scriptFile.isFile()) {
+            info.log("Makeself startup script not found: '" + scriptFile.getAbsolutePath() + "'");
+            return false;
+        } else {
+            info.copyToTarget(scriptFile);
         }
 
         String[] args = {
@@ -27,11 +36,11 @@ public final class MakeselfPacker implements Packer {
             info.buildDir.getAbsolutePath(),
             result.getAbsolutePath(),
             "atis",
-            "./init-install.sh"
+            "./" + startupScript
         };
         Process process = Runtime.getRuntime().exec(args, null, info.root);
         Charset charset = StandardCharsets.UTF_8;
-        new Thread(new CountOutputEater(process.getErrorStream(), info.countFiles + 2, percentCell, charset)).start();
+        new Thread(new CountOutputEater(process.getErrorStream(), countFiles + 2, percentCell, charset)).start();
         new Thread(new OutputEater(process.getInputStream())).start();
         try {
             process.waitFor();

@@ -4,7 +4,6 @@ import apploader.common.Application;
 import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;
-import server.install.SourceFiles;
 import sqlg3.remote.server.SQLGLogger;
 
 import javax.servlet.ServletConfig;
@@ -50,8 +49,10 @@ public abstract class InstallServletBase extends AppServletBase {
             } else {
                 url = req.getLocalName() + ":" + req.getLocalPort();
             }
-            SourceFiles src = new SourceFiles(root, apps, profile, url);
-            state = new InstallState(new InstallBuilder(src, getLogger()::trace));
+            InstallBuilder builder = InstallBuilder.create(
+                root, apps, profile, url, getLogger()::trace
+            );
+            state = new InstallState(builder);
             map.put(profile, state);
         }
         return state;

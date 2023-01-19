@@ -1,7 +1,11 @@
 package server.install;
 
+import apploader.common.ConfigReader;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
+import java.util.function.Function;
 
 abstract class InstallerResource {
 
@@ -22,17 +26,25 @@ abstract class InstallerResource {
         return new InstallerFile(srcFile, srcFile.getName());
     }
 
-    static InstallerResource clientScript(File root, String name, boolean windows, String app) {
+    static InstallerResource osScript(File root, String baseName, boolean windows,
+                                      Function<String, InstallerResource> generate) {
+        String name = baseName + (windows ? ".bat" : ".sh");
         File srcFile = new File(root, name);
-        if (!srcFile.exists())
-            return new ClientResource(name, app, windows);
-        return new InstallerFile(srcFile, srcFile.getName());
+        if (srcFile.exists()) {
+            return new InstallerFile(srcFile, name);
+        } else {
+            return generate.apply(name);
+        }
     }
 
-    static InstallerResource apploader(File root, String srcName, String destName, String url) {
-        File srcFile = new File(root, srcName);
-        if (srcFile.exists()) {
+    static InstallerResource apploaderProperties(File root, Profile profile, String url, Properties profileProps) {
+        String destName = ConfigReader.APPLOADER_PROPERTIES;
+        File srcFile = profile.findPropFile(root, ConfigReader.APPLOADER);
+        if (srcFile != null)
             return new InstallerFile(srcFile, destName);
+        String propUrl = profileProps.getProperty(ConfigReader.HTTP_SERVER_PROPERTY);
+        if (propUrl != null) {
+            return new InstallerURL(destName, propUrl);
         } else {
             return new InstallerURL(destName, url);
         }
