@@ -82,6 +82,9 @@ public final class AppZip {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
+                if (onEntry != null) {
+                    onEntry.run();
+                }
                 String name = entry.getName();
                 UnixZipExtra extra = extras.get(name);
                 Path dest = destDir.resolve(name);
@@ -101,9 +104,6 @@ public final class AppZip {
                 if (extra != null) {
                     Set<PosixFilePermission> perms = fromMask(extra.permissions);
                     Files.setPosixFilePermissions(dest, perms);
-                }
-                if (onEntry != null) {
-                    onEntry.run();
                 }
             }
         }

@@ -42,13 +42,13 @@ final class JavaCopier extends JavaSource {
             if (files == null)
                 return;
             for (File file : files) {
+                percentCell.workPercent(0, 2, counter[0]++, total);
                 File copy = new File(to, file.getName());
                 if (file.isDirectory()) {
                     copy(copy, file);
                 } else if (file.isFile()) {
                     IOUtils.copyFile(copy, file);
                 }
-                percentCell.workPercent(0, 2, counter[0]++, total);
             }
         }
     }

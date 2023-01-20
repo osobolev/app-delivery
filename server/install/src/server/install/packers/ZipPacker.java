@@ -32,6 +32,7 @@ public final class ZipPacker implements Packer {
             if (files == null)
                 return;
             for (File file : files) {
+                percentCell.workPercent(1, 2, count[0]++, countFiles);
                 String nextPath;
                 if (path == null) {
                     nextPath = file.getName();
@@ -45,7 +46,6 @@ public final class ZipPacker implements Packer {
                     IOUtils.copyFile(zip, file);
                     zip.closeEntry();
                 }
-                percentCell.workPercent(1, 2, count[0]++, countFiles);
             }
         }
     }
