@@ -56,7 +56,7 @@ final class SourceFiles {
 
         String packerStr = profileProps.getProperty("packers");
         if (packerStr != null) {
-            Packer.parsePackers(packers, packerStr);
+            Packer.parsePackers(packers, packerStr, windowsClient);
         } else {
             Packer.addPackers(packers, windowsClient);
         }

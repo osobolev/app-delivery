@@ -10,9 +10,15 @@ import java.nio.charset.StandardCharsets;
 
 public final class RarPacker implements Packer {
 
+    private final boolean windowsClient;
+
+    public RarPacker(boolean windowsClient) {
+        this.windowsClient = windowsClient;
+    }
+
     @Override
     public String getResultFileName(String baseName) {
-        if (AppCommon.isWindows()) {
+        if (windowsClient) {
             return baseName + ".exe";
         } else {
             return baseName + ".sfx";

@@ -1,10 +1,7 @@
 package server.install;
 
 import apploader.common.AppCommon;
-import server.install.packers.InnoPacker;
-import server.install.packers.MakeselfPacker;
-import server.install.packers.RarPacker;
-import server.install.packers.ZipPacker;
+import server.install.packers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,20 +24,27 @@ public interface Packer {
         if (AppCommon.isWindows() == windowsClient) {
             if (windowsClient) {
                 packers.add(new InnoPacker());
-                packers.add(new RarPacker());
+                packers.add(new RarPacker(windowsClient));
+                packers.add(new P7zPacker(true, windowsClient));
             } else {
-                packers.add(new RarPacker());
+                packers.add(new RarPacker(windowsClient));
+                packers.add(new P7zPacker(true, windowsClient));
                 packers.add(new MakeselfPacker());
             }
+        } else {
+            packers.add(new P7zPacker(true, windowsClient));
         }
+        packers.add(new P7zPacker(false, windowsClient));
         packers.add(new ZipPacker());
     }
 
-    static void parsePackers(List<Packer> packers, String packerStr) {
+    static void parsePackers(List<Packer> packers, String packerStr, boolean windowsClient) {
         Map<String, Supplier<Packer>> byName = new HashMap<>();
         byName.put("inno", InnoPacker::new);
-        byName.put("rar", RarPacker::new);
+        byName.put("rar", () -> new RarPacker(windowsClient));
         byName.put("makeself", MakeselfPacker::new);
+        byName.put("7z", () -> new P7zPacker(false, windowsClient));
+        byName.put("7zsfx", () -> new P7zPacker(true, windowsClient));
         byName.put("zip", ZipPacker::new);
 
         StringTokenizer tok = new StringTokenizer(packerStr, ",");
