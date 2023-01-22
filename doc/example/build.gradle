@@ -1,10 +1,13 @@
 def dest = "$rootDir/distr"
+def myVersion = "6.0"
+def sqlgVersion = "2.3"
+def h2 = "com.h2database:h2:2.1.214"
 
 subprojects {
     apply(plugin: "java-library")
 
     group = "io.github.osobolev.app-delivery.sample"
-    version = "5.5"
+    version = myVersion
 
     sourceCompatibility = "8"
 
@@ -24,8 +27,8 @@ subprojects {
     }
 
     dependencies {
-        webfiles("io.github.osobolev.app-delivery:server-files:5.5")
-        webapploader("io.github.osobolev.app-delivery:apploader:5.5")
+        webfiles("io.github.osobolev.app-delivery:server-files:$myVersion")
+        webapploader("io.github.osobolev.app-delivery:apploader:$myVersion")
         webdistr(project(":sample_client"))
     }
 
@@ -49,10 +52,10 @@ project(":sample_dto") {
     }
 
     dependencies {
-        api("io.github.osobolev.sqlg3:sqlg3-core:2.1")
+        api("io.github.osobolev.sqlg3:sqlg3-core:$sqlgVersion")
 
-        sqlg("io.github.osobolev.sqlg3:sqlg3-preprocess-ant:2.1")
-        sqlg("com.h2database:h2:1.4.200")
+        sqlg("io.github.osobolev.sqlg3:sqlg3-preprocess-ant:$sqlgVersion")
+        sqlg(h2)
     }
 
     task preprocess {
@@ -71,24 +74,24 @@ project(":sample_dto") {
 
 project(":sample_db") {
     dependencies {
-        api("io.github.osobolev.sqlg3:sqlg3-runtime:2.1")
+        api("io.github.osobolev.sqlg3:sqlg3-runtime:$sqlgVersion")
         api(project(":sample_dto"))
-        runtimeOnly("com.h2database:h2:1.4.200")
+        runtimeOnly(h2)
     }
 }
 
 project(":sample_client") {
     dependencies {
-        compileOnly("io.github.osobolev.app-delivery:apploader-client:5.5")
-        implementation("io.github.osobolev.sqlg3:sqlg3-remote-client:2.1")
+        compileOnly("io.github.osobolev.app-delivery:apploader-client:$myVersion")
+        implementation("io.github.osobolev.sqlg3:sqlg3-remote-client:$sqlgVersion")
         implementation(project(":sample_dto"))
     }
 }
 
 project(":sample_server") {
     dependencies {
-        api("io.github.osobolev.sqlg3:sqlg3-remote-server:2.1")
-        api("io.github.osobolev.app-delivery:server-core:5.5")
+        api("io.github.osobolev.sqlg3:sqlg3-remote-server:$sqlgVersion")
+        api("io.github.osobolev.app-delivery:server-core:$myVersion")
         runtimeOnly(project(":sample_db"))
     }
 }
@@ -97,7 +100,7 @@ project(":sample_server_jar") {
     
     dependencies {
         implementation(project(":sample_server"))
-        implementation("io.github.osobolev.app-delivery:server-jetty:5.5")
+        implementation("io.github.osobolev.app-delivery:server-jetty:$myVersion")
     }
 
     jar.manifest.attributes(
@@ -142,7 +145,7 @@ project(":sample_war") {
 
     dependencies {
         implementation(project(":sample_server"))
-        implementation("io.github.osobolev.app-delivery:server-war:5.5")
+        implementation("io.github.osobolev.app-delivery:server-war:$myVersion")
     }
 
     task warList {
