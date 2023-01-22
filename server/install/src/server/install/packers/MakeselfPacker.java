@@ -38,8 +38,7 @@ public final class MakeselfPacker implements Packer {
                 "--target", dir,
                 info.buildDir.getAbsolutePath(),
                 result.getAbsolutePath(),
-                label,
-                "echo OK"
+                label
             };
         } else {
             info.copyToTarget(scriptFile);
