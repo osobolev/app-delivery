@@ -32,7 +32,6 @@ final class SourceFiles {
             addRequired("checknew.sh");
             addRequired("proxy-config.sh");
             addIfExists("install.sh");
-            addIfExists("init-install.sh");
         }
         depends.add(InstallerResource.apploaderProperties(root, profile, url, profileProps));
         depends.add(InstallerResource.osScript(

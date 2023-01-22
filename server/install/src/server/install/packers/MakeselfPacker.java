@@ -22,26 +22,38 @@ public final class MakeselfPacker implements Packer {
             return false;
         }
 
-        String startupScript = info.getProperty("makeself.script", "init-install.sh");
+        String startupScript = info.getProperty("makeself.script", "makeself-setup.sh");
+        String label = info.getProperty("base.name", "client");
         File scriptFile = info.getSource(startupScript);
+        String[] args;
         if (!scriptFile.isFile()) {
-            info.log("Makeself startup script not found: '" + scriptFile.getAbsolutePath() + "'");
-            return false;
+            String dir = info.getProperty("makeself.dir", null);
+            if (dir == null)
+                return false;
+            args = new String[] {
+                makeself.getAbsolutePath(),
+                "--notemp",
+                "--target", dir,
+                info.buildDir.getAbsolutePath(),
+                result.getAbsolutePath(),
+                label,
+                "echo OK"
+            };
         } else {
             info.copyToTarget(scriptFile);
+            args = new String[] {
+                makeself.getAbsolutePath(),
+                info.buildDir.getAbsolutePath(),
+                result.getAbsolutePath(),
+                label,
+                "./" + startupScript
+            };
         }
 
-        String[] args = {
-            makeself.getAbsolutePath(),
-            info.buildDir.getAbsolutePath(),
-            result.getAbsolutePath(),
-            "atis",
-            "./" + startupScript
-        };
         Process process = Runtime.getRuntime().exec(args, null, info.root);
         Charset charset = StandardCharsets.UTF_8;
-        new Thread(new CountOutputEater(process.getErrorStream(), countFiles + 2, percentCell, charset)).start();
-        new Thread(new OutputEater(process.getInputStream())).start();
+        new Thread(new CountOutputEater(process.getInputStream(), countFiles + 2, percentCell, charset)).start();
+        new Thread(new OutputEater(process.getErrorStream())).start();
         try {
             process.waitFor();
         } catch (InterruptedException ex) {
