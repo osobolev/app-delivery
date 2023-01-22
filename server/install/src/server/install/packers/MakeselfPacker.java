@@ -28,8 +28,10 @@ public final class MakeselfPacker implements Packer {
         String[] args;
         if (!scriptFile.isFile()) {
             String dir = info.getProperty("makeself.dir", null);
-            if (dir == null)
+            if (dir == null) {
+                info.log("Nor makeself script " + scriptFile.getAbsolutePath() + " found nor makeself.dir property specified");
                 return false;
+            }
             args = new String[] {
                 makeself.getAbsolutePath(),
                 "--notemp",
