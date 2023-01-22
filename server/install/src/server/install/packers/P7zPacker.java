@@ -80,22 +80,36 @@ public final class P7zPacker implements Packer {
             return permissions;
         }
 
-        private static void copyPermissions(Path path, SevenZArchiveEntry entry, boolean symlink) {
-            try {
-                int permissions = 0;
-                PosixFileAttributes posix = Files.readAttributes(path, PosixFileAttributes.class);
-                if (posix != null) {
-                    permissions = toMask(posix.permissions());
-                }
-                if (symlink) {
-                    permissions |= 0x2000;
-                }
-                if (permissions == 0)
-                    return;
-                entry.setWindowsAttributes(0x8000 | (permissions << 16));
-            } catch (Exception ex) {
-                // ignore
+        @SuppressWarnings("OctalInteger")
+        private static int getWindowsAttributes(Path path, BasicFileAttributes attrs) {
+            int windows = 0;
+            if (attrs.isDirectory()) {
+                windows |= 0x10; // directory flag for Windows
+            } else if (attrs.isRegularFile()) {
+                windows |= 0x20; // archive flag for Windows
+            } else if (attrs.isSymbolicLink()) {
+                windows |= 0x400; // link flag for Windows
             }
+
+            if (!AppCommon.isWindows()) {
+                try {
+                    PosixFileAttributes posix = Files.readAttributes(path, PosixFileAttributes.class);
+                    int unix = toMask(posix.permissions());
+                    if ((unix & 0222) == 0) {
+                        windows |= 0x1; // readonly flag for Windows
+                    }
+                    if (attrs.isSymbolicLink()) {
+                        unix |= 0x2000; // symlink flag for UNIX
+                    }
+                    // Unix extension flags:
+                    windows |= 0x8000;
+                    unix |= 0x8000;
+                    return (unix << 16) | windows;
+                } catch (IOException ex) {
+                    // ignore
+                }
+            }
+            return windows;
         }
 
         void compress(File dir, String archivePath) throws IOException {
@@ -113,8 +127,10 @@ public final class P7zPacker implements Packer {
                 Path path = file.toPath();
                 BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
                 SevenZArchiveEntry entry = output.createArchiveEntry(file, nextPath);
-                if (!AppCommon.isWindows()) {
-                    copyPermissions(path, entry, attrs.isSymbolicLink());
+                int windowsAttributes = getWindowsAttributes(path, attrs);
+                if (windowsAttributes != 0) {
+                    entry.setHasWindowsAttributes(true);
+                    entry.setWindowsAttributes(windowsAttributes);
                 }
                 output.putArchiveEntry(entry);
                 if (attrs.isRegularFile()) {
