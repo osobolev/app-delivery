@@ -1,7 +1,6 @@
 package apploader;
 
 import apploader.common.AppCommon;
-import apploader.common.AppZip;
 import apploader.common.ConfigReader;
 import apploader.lib.FileResult;
 import apploader.lib.IFileLoader;
@@ -10,15 +9,8 @@ import apploader.lib.Result;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 final class AppProperties {
 
@@ -42,18 +34,6 @@ final class AppProperties {
         });
     }
 
-    private static boolean canRun64Bits() {
-        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
-        if (wow64Arch != null) {
-            return wow64Arch.endsWith("64");
-        } else if (arch != null) {
-            return arch.endsWith("64");
-        } else {
-            return false;
-        }
-    }
-
     static AppProperties updateAppFiles(ILoaderGui gui, IFileLoader fileLoader, String application) throws IOException {
         File list = fileLoader.receiveFile(application + "_jars.list", false).file;
         if (list == null)
@@ -62,8 +42,7 @@ final class AppProperties {
         AppProperties properties = new AppProperties();
         FileResult[] newTZUpdater = new FileResult[1];
         FileResult[] newTimeZones = new FileResult[1];
-        String[] jre = new String[1];
-        String[] jre64 = new String[1];
+        JavaUpdater javaUpdater = new JavaUpdater();
         boolean ok = ConfigReader.readConfig(list, (left, right) -> {
             boolean jar;
             boolean corejar;
@@ -123,33 +102,15 @@ final class AppProperties {
                 fileLoader.receiveFile(right, true, true);
             } else if ("mainClass".equalsIgnoreCase(left)) {
                 properties.mainClass = right;
-            } else if ("jre".equalsIgnoreCase(left)) {
-                jre[0] = right;
-            } else if ("jre64".equalsIgnoreCase(left)) {
-                jre64[0] = right;
+            } else {
+                javaUpdater.add(left, right);
             }
             return true;
         });
         if (!ok)
             return null;
-        {
-            String[] javaZip;
-            int javaBits;
-            if (jre64[0] != null) {
-                if (canRun64Bits()) {
-                    javaZip = jre64;
-                    javaBits = 64;
-                } else {
-                    javaZip = jre;
-                    javaBits = 32;
-                }
-            } else {
-                javaZip = jre;
-                javaBits = 0;
-            }
-            if (!updateJava(gui, fileLoader, javaZip[0], javaBits))
-                return null;
-        }
+        if (!javaUpdater.update(gui, fileLoader))
+            return null;
         if (newTZUpdater[0] != null && newTimeZones[0] != null) {
             boolean anyUpdated = newTZUpdater[0].updated || newTimeZones[0].updated;
             Boolean updateResult = updateTimeZones(gui, fileLoader, anyUpdated, newTimeZones[0].file);
@@ -163,21 +124,12 @@ final class AppProperties {
         return properties;
     }
 
-    private static File getJavaHome() {
-        return new File(System.getProperty("java.home")).getAbsoluteFile();
-    }
-
-    private static boolean isLocalJRE(IFileLoader fileLoader, File javaHome) {
-        File jreDir = fileLoader.getLocalFile("jre");
-        return jreDir.equals(javaHome);
-    }
-
     private static Boolean updateTimeZones(ILoaderGui gui, IFileLoader fileLoader, boolean newFiles, File dataFile) {
         File successFile = fileLoader.getLocalFile("tzupdater.done");
         if (successFile.exists() && !newFiles)
             return false;
-        File javaHome = getJavaHome();
-        if (!isLocalJRE(fileLoader, javaHome)) {
+        File javaHome = JavaUpdater.getLocalJRE(fileLoader);
+        if (javaHome == null) {
             // Our java is not in "jre" folder, cannot update it
             return false;
         }
@@ -211,91 +163,5 @@ final class AppProperties {
             successFile.delete();
         }
         return true;
-    }
-
-    private static int currentJavaBits() {
-        String model = System.getProperty("sun.arch.data.model");
-        if (model != null) {
-            if ("64".equals(model)) {
-                return 64;
-            } else if ("32".equals(model)) {
-                return 32;
-            }
-        }
-        String arch = System.getProperty("os.arch");
-        if (arch != null) {
-            if ("amd64".equals(arch) || "x86_64".equals(arch)) {
-                return 64;
-            } else if ("x86".equals(arch) || arch.matches("i\\d86")) {
-                return 32;
-            }
-        }
-        return 0;
-    }
-
-    private static boolean sameBitness(int bits1, int bits2) {
-        if (bits1 == 0 || bits2 == 0)
-            return true;
-        return bits1 == bits2;
-    }
-
-    private static boolean updateJava(ILoaderGui gui, IFileLoader fileLoader, String newJavaZip, int remoteJavaBits) {
-        if (newJavaZip == null)
-            return true;
-        File javaHome = getJavaHome();
-        if (!isLocalJRE(fileLoader, javaHome)) {
-            // Our java is not in "jre" folder, cannot update it
-            return true;
-        }
-        Pattern pattern = Pattern.compile("java[^-]*-(.*)\\.zip");
-        Matcher matcher = pattern.matcher(newJavaZip);
-        if (!matcher.matches()) {
-            // Java should be zipped
-            return true;
-        }
-        String remoteVersion = matcher.group(1).trim();
-        String javaVersion = System.getProperty("java.vm.version");
-        if (Objects.equals(remoteVersion, javaVersion) && sameBitness(remoteJavaBits, currentJavaBits())) {
-            // We already have this version, skip update
-            return true;
-        }
-        File javaZip = fileLoader.receiveFile(newJavaZip, false).file;
-        if (javaZip == null)
-            return false;
-        try {
-            gui.showStatus("Установка новой Java " + remoteVersion + (remoteJavaBits == 0 ? "" : " " + remoteJavaBits + " бита") + "...");
-            Path tmpDir = Files.createTempDirectory(Paths.get("."), "jre");
-            unzip(javaZip, tmpDir);
-
-            Path newJreDir = Paths.get("jre.new");
-            if (Files.exists(newJreDir)) {
-                deleteAll(newJreDir);
-            }
-            Files.move(tmpDir, newJreDir);
-            gui.showWarning("Обновлена Java, перезапустите приложение");
-            return false;
-        } catch (Exception ex) {
-            AppCommon.error(ex);
-            return false;
-        }
-    }
-
-    private static void unzip(File file, Path destDir) throws IOException {
-        AppZip.create(file).unpackWithExtra(destDir, null);
-    }
-
-    private static void deleteAll(Path path) {
-        try {
-            if (Files.isDirectory(path)) {
-                try (DirectoryStream<Path> paths = Files.newDirectoryStream(path)) {
-                    for (Path child : paths) {
-                        deleteAll(child);
-                    }
-                }
-            }
-            Files.deleteIfExists(path);
-        } catch (IOException ex) {
-            // ignore
-        }
     }
 }
