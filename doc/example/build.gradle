@@ -1,5 +1,5 @@
 def dest = "$rootDir/distr"
-def myVersion = "6.0"
+def myVersion = "6.1"
 def sqlgVersion = "2.3"
 def h2 = "com.h2database:h2:2.1.214"
 
