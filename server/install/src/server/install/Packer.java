@@ -34,8 +34,13 @@ public interface Packer {
         } else {
             packers.add(new P7zPacker(true, windowsClient));
         }
-        packers.add(new P7zPacker(false, windowsClient));
-        packers.add(new ZipPacker());
+        if (windowsClient) {
+            packers.add(new ZipPacker());
+            packers.add(new P7zPacker(false, windowsClient));
+        } else {
+            packers.add(new P7zPacker(false, windowsClient));
+            packers.add(new ZipPacker());
+        }
     }
 
     static void parsePackers(List<Packer> packers, String packerStr, boolean windowsClient) {
