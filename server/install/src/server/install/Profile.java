@@ -66,7 +66,11 @@ final class Profile {
         }
     }
 
-    boolean isWindows() {
+    boolean isWindows(Properties profileProps) {
+        String os = profileProps.getProperty("client.os");
+        if (os != null) {
+            return os.toLowerCase().startsWith("windows");
+        }
         if (name != null) {
             String lname = name.toLowerCase();
             if (lname.contains(".win")) {

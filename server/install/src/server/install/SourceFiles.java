@@ -21,7 +21,7 @@ final class SourceFiles {
         File clientRoot = new File(root, "client");
         this.baseDir = profile.getBaseDir(clientRoot);
 
-        boolean windowsClient = profile.isWindows();
+        boolean windowsClient = profile.isWindows(profileProps);
 
         addRequired("apploader.jar");
         if (windowsClient) {
