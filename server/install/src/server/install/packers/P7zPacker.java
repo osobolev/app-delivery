@@ -32,14 +32,16 @@ public final class P7zPacker implements Packer {
 
     private static final class Compressor {
 
-        final PercentCell percentCell;
-        final int countFiles;
-        final SevenZOutputFile output;
-        final int[] count = new int[1];
+        private final PercentCell percentCell;
+        private final int countFiles;
+        private final boolean windowsClient;
+        private final SevenZOutputFile output;
+        private final int[] count = new int[1];
 
-        Compressor(PercentCell percentCell, int countFiles, SevenZOutputFile output) {
+        Compressor(PercentCell percentCell, int countFiles, boolean windowsClient, SevenZOutputFile output) {
             this.percentCell = percentCell;
             this.countFiles = countFiles;
+            this.windowsClient = windowsClient;
             this.output = output;
         }
 
@@ -80,8 +82,32 @@ public final class P7zPacker implements Packer {
             return permissions;
         }
 
+        private static final byte[] SHEBANG = {'#', '!'};
+        private static final byte[] ELF_MAGIC = {0x7F, 'E', 'L', 'F'};
+
+        private static boolean match(byte[] buf, int read, byte[] magic) {
+            if (read < magic.length)
+                return false;
+            for (int i = 0; i < magic.length; i++) {
+                if (buf[i] != magic[i])
+                    return false;
+            }
+            return true;
+        }
+
+        private static boolean isExecutableFile(Path path) throws IOException {
+            if (path.getFileName().toString().toLowerCase().endsWith(".sh"))
+                return true;
+            byte[] buf = new byte[4];
+            int read;
+            try (InputStream is = Files.newInputStream(path)) {
+                read = is.read(buf);
+            }
+            return match(buf, read, ELF_MAGIC) || match(buf, read, SHEBANG);
+        }
+
         @SuppressWarnings("OctalInteger")
-        private static int getWindowsAttributes(Path path, BasicFileAttributes attrs) {
+        private int getWindowsAttributes(Path path, BasicFileAttributes attrs) {
             int windows = 0;
             if (attrs.isDirectory()) {
                 windows |= 0x10; // directory flag for Windows
@@ -90,24 +116,39 @@ public final class P7zPacker implements Packer {
             } else if (attrs.isSymbolicLink()) {
                 windows |= 0x400; // link flag for Windows
             }
+            if (windowsClient)
+                return windows;
 
-            if (!AppCommon.isWindows()) {
-                try {
+            try {
+                int unix;
+                if (!AppCommon.isWindows()) {
                     PosixFileAttributes posix = Files.readAttributes(path, PosixFileAttributes.class);
-                    int unix = toMask(posix.permissions());
-                    if ((unix & 0222) == 0) {
-                        windows |= 0x1; // readonly flag for Windows
+                    unix = toMask(posix.permissions());
+                } else {
+                    if (attrs.isRegularFile()) {
+                        if (isExecutableFile(path)) {
+                            unix = 0755; // rwxr-xr-x
+                        } else {
+                            unix = 0644; // rw-r--r--
+                        }
+                    } else if (attrs.isDirectory()) {
+                        unix = 0755; // rwxr-xr-x
+                    } else {
+                        unix = 0644; // rw-r--r--
                     }
-                    if (attrs.isSymbolicLink()) {
-                        unix |= 0x2000; // symlink flag for UNIX
-                    }
-                    // Unix extension flags:
-                    windows |= 0x8000;
-                    unix |= 0x8000;
-                    return (unix << 16) | windows;
-                } catch (IOException ex) {
-                    // ignore
                 }
+                if ((unix & 0222) == 0) {
+                    windows |= 0x1; // readonly flag for Windows
+                }
+                if (attrs.isSymbolicLink()) {
+                    unix |= 0x2000; // symlink flag for UNIX
+                }
+                // Unix extension flags:
+                windows |= 0x8000;
+                unix |= 0x8000;
+                return (unix << 16) | windows;
+            } catch (IOException ex) {
+                // ignore
             }
             return windows;
         }
@@ -264,7 +305,7 @@ public final class P7zPacker implements Packer {
             target = new File(result.getParentFile(), result.getName() + ".tmp");
         }
         try (SevenZOutputFile file = new SevenZOutputFile(target)) {
-            new Compressor(percentCell, countFiles, file).compress(info.buildDir, null);
+            new Compressor(percentCell, countFiles, windowsClient, file).compress(info.buildDir, null);
         }
         if (!prepend.isEmpty()) {
             try (OutputStream out = Files.newOutputStream(result.toPath())) {
