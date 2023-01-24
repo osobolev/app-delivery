@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "io.github.osobolev.app-delivery"
-version = "6.1"
+version = "6.2"
 
 (publishing.publications["mavenJava"] as MavenPublication).pom {
     name.set("app-delivery")
