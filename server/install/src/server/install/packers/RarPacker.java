@@ -47,6 +47,9 @@ public final class RarPacker implements Packer {
             info.log("RAR SFX config file not found: '" + sfx.getAbsolutePath() + "'");
             return false;
         }
+        for (String app : info.apps) {
+            info.copyToTargetIfExists(app + ".ico");
+        }
 
         String[] args = {
             rar.getAbsolutePath(),

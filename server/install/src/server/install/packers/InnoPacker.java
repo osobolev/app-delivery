@@ -34,6 +34,10 @@ public final class InnoPacker implements Packer {
             info.copyToTarget(iss);
             info.copyToTarget(issCommon);
         }
+        for (String app : info.apps) {
+            info.copyToTargetIfExists(app + ".ico");
+            info.copyToTargetIfExists("uninst_" + app + ".ico");
+        }
 
         String[] args = {
             iscc.getAbsolutePath(),

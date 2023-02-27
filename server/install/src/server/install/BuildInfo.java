@@ -20,12 +20,14 @@ public final class BuildInfo {
      * Папка, в которую копируются файлы для создания инсталлятора (client/install или client/profile/install)
      */
     public final File buildDir;
+    public final List<String> apps;
     private final Properties profileProps;
 
-    public BuildInfo(Consumer<String> logger, File root, File buildDir, Properties profileProps) {
+    public BuildInfo(Consumer<String> logger, File root, File buildDir, List<String> apps, Properties profileProps) {
         this.logger = logger;
         this.root = root;
         this.buildDir = buildDir;
+        this.apps = apps;
         this.profileProps = profileProps;
     }
 
@@ -39,6 +41,13 @@ public final class BuildInfo {
 
     public void copyToTarget(File source) throws IOException {
         IOUtils.copyFile(getTarget(source), source);
+    }
+
+    public void copyToTargetIfExists(String source) throws IOException {
+        File file = getSource(source);
+        if (file.isFile()) {
+            copyToTarget(file);
+        }
     }
 
     private File findExe(List<File> tryFiles) {

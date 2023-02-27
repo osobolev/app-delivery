@@ -50,6 +50,9 @@ public final class MakeselfPacker implements Packer {
                 "./" + startupScript
             };
         }
+        for (String app : info.apps) {
+            info.copyToTargetIfExists(app + ".png");
+        }
 
         Process process = Runtime.getRuntime().exec(args, null, info.root);
         Charset charset = StandardCharsets.UTF_8;

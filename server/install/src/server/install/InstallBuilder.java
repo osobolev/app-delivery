@@ -15,11 +15,12 @@ public final class InstallBuilder {
     private final JavaSource javaSource;
     private final List<Packer> packers;
 
+    private final List<String> apps;
     private final Properties profileProps;
     private final Consumer<String> logger;
     private final PercentCell percentCell;
 
-    private InstallBuilder(SourceFiles src, Properties profileProps, Consumer<String> logger) {
+    private InstallBuilder(SourceFiles src, List<String> apps, Properties profileProps, Consumer<String> logger) {
         this.root = src.root;
         this.baseDir = src.baseDir;
         this.buildDir = new File(baseDir, "install");
@@ -27,6 +28,7 @@ public final class InstallBuilder {
         this.javaSource = src.javaSource;
         this.packers = src.packers;
 
+        this.apps = apps;
         this.profileProps = profileProps;
         this.logger = logger;
         this.percentCell = new PercentCell(logger);
@@ -36,7 +38,7 @@ public final class InstallBuilder {
         Profile profile = Profile.create(profileStr);
         Properties profileProps = profile.loadProfileProps(root);
         SourceFiles src = new SourceFiles(root, apps, profile, url, profileProps);
-        return new InstallBuilder(src, profileProps, logger);
+        return new InstallBuilder(src, apps, profileProps, logger);
     }
 
     private static void clean(File dir) {
@@ -95,7 +97,7 @@ public final class InstallBuilder {
         if (ready != null)
             return ready;
         int countFiles = buildInstaller();
-        BuildInfo info = new BuildInfo(logger, root, buildDir, profileProps);
+        BuildInfo info = new BuildInfo(logger, root, buildDir, apps, profileProps);
         for (Packer packer : packers) {
             File result = getResultFile(packer);
             logger.accept("Trying packer " + packer.getClass().getSimpleName());

@@ -44,10 +44,6 @@ final class SourceFiles {
                 root, app + "-client", windowsClient,
                 name -> new ClientLauncherResource(name, app, windowsClient)
             ));
-            if (windowsClient) {
-                addIfExists(app + ".ico");
-                addIfExists("uninst_" + app + ".ico");
-            }
             addIfExists(app + "_splash.jpg");
         }
 
