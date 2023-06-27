@@ -93,7 +93,7 @@ public final class AppServerComponent {
         if (!running) {
             request.writeError(new IOException("Server not running"));
         } else {
-            http.dispatch(req.getRemoteHost(), request);
+            http.dispatch(request);
         }
     }
 

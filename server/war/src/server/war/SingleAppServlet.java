@@ -25,7 +25,7 @@ public class SingleAppServlet extends HttpServlet {
             InitListener.getLogger(ctx).error(error);
             request.writeError(new SQLException(error));
         } else {
-            http.dispatch(req.getRemoteHost(), request);
+            http.dispatch(request);
         }
     }
 

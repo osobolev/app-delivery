@@ -23,6 +23,6 @@ public final class DefaultRequestFactory implements ServletRequestFactory {
 
     @Override
     public IHttpRequest newRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        return new BodyHttpRequest(serializer, req.getInputStream(), resp.getOutputStream());
+        return new BodyHttpRequest(serializer, req.getRemoteHost(), req.getInputStream(), resp.getOutputStream());
     }
 }
