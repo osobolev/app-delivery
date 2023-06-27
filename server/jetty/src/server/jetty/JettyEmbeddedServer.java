@@ -14,7 +14,16 @@ import java.io.File;
 
 public final class JettyEmbeddedServer implements EmbeddedServer {
 
+    private final boolean sessions;
     private Server jetty;
+
+    public JettyEmbeddedServer(boolean sessions) {
+        this.sessions = sessions;
+    }
+
+    public JettyEmbeddedServer() {
+        this(false);
+    }
 
     @Override
     public void setLogger(AppLogger logger) {
@@ -28,7 +37,8 @@ public final class JettyEmbeddedServer implements EmbeddedServer {
 
     @Override
     public EmbeddedContext initContext(String contextPath, File rootDir) throws Exception {
-        ServletContextHandler ctx = new ServletContextHandler(jetty, contextPath, ServletContextHandler.NO_SESSIONS);
+        int options = sessions ? ServletContextHandler.SESSIONS : ServletContextHandler.NO_SESSIONS;
+        ServletContextHandler ctx = new ServletContextHandler(jetty, contextPath, options);
         ctx.setBaseResource(Resource.newResource(rootDir.getCanonicalFile().toURI()));
         return new EmbeddedContext() {
 
