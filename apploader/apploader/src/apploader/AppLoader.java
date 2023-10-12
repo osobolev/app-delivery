@@ -73,7 +73,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         gui.showStatus("");
         if (properties == null)
             return null;
-        String mainClass = properties.getMainClass();
+        String mainClass = properties.mainClass;
         if (mainClass == null) {
             gui.showError("Не указан атрибут mainClass");
             return null;

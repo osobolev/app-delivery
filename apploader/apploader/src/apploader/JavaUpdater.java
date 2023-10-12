@@ -17,35 +17,54 @@ import java.util.regex.Pattern;
 
 final class JavaUpdater {
 
-    private String jre = null;
-    private String jre64 = null;
+    private static final class JavaZip {
+
+        final String file;
+        final boolean optional;
+
+        JavaZip(String file, boolean optional) {
+            this.file = file;
+            this.optional = optional;
+        }
+    }
+
+    private JavaZip jre = null;
+    private JavaZip jre64 = null;
+
+    private static JavaZip jre(String left, String right) {
+        return new JavaZip(right, left.startsWith("?"));
+    }
+
+    static boolean match(String left, String mask) {
+        return mask.equalsIgnoreCase(left) || ("?" + mask).equalsIgnoreCase(left);
+    }
 
     void add(String left, String right) {
-        if ("jre".equalsIgnoreCase(left)) {
-            jre = right;
-        } else if ("jre64".equalsIgnoreCase(left)) {
-            jre64 = right;
-        } else if ("jre.win".equalsIgnoreCase(left)) {
+        if (match(left, "jre")) {
+            jre = jre(left, right);
+        } else if (match(left, "jre64")) {
+            jre64 = jre(left, right);
+        } else if (match(left, "jre.win")) {
             if (AppCommon.isWindows()) {
-                jre = right;
+                jre = jre(left, right);
             }
-        } else if ("jre64.win".equalsIgnoreCase(left)) {
+        } else if (match(left, "jre64.win")) {
             if (AppCommon.isWindows()) {
-                jre64 = right;
+                jre64 = jre(left, right);
             }
-        } else if ("jre.lin".equalsIgnoreCase(left)) {
+        } else if (match(left, "jre.lin")) {
             if (!AppCommon.isWindows()) {
-                jre = right;
+                jre = jre(left, right);
             }
-        } else if ("jre64.lin".equalsIgnoreCase(left)) {
+        } else if (match(left, "jre64.lin")) {
             if (!AppCommon.isWindows()) {
-                jre64 = right;
+                jre64 = jre(left, right);
             }
         }
     }
 
     boolean update(ILoaderGui gui, IFileLoader fileLoader) {
-        String javaZip;
+        JavaZip javaZip;
         int javaBits;
         if (jre64 != null) {
             if (canRun64Bits()) {
@@ -106,7 +125,7 @@ final class JavaUpdater {
         return bits1 == bits2;
     }
 
-    private static boolean updateJava(ILoaderGui gui, IFileLoader fileLoader, String newJavaZip, int remoteJavaBits) {
+    private static boolean updateJava(ILoaderGui gui, IFileLoader fileLoader, JavaZip newJavaZip, int remoteJavaBits) {
         if (newJavaZip == null)
             return true;
         File javaHome = getLocalJRE(fileLoader);
@@ -115,7 +134,7 @@ final class JavaUpdater {
             return true;
         }
         Pattern pattern = Pattern.compile("java[^-]*-(.*)\\.zip");
-        Matcher matcher = pattern.matcher(newJavaZip);
+        Matcher matcher = pattern.matcher(newJavaZip.file);
         if (!matcher.matches()) {
             // Java should be zipped
             return true;
@@ -126,9 +145,9 @@ final class JavaUpdater {
             // We already have this version, skip update
             return true;
         }
-        File javaZip = fileLoader.receiveFile(newJavaZip, false).file;
+        File javaZip = fileLoader.receiveFile(newJavaZip.file, newJavaZip.optional).file;
         if (javaZip == null)
-            return false;
+            return newJavaZip.optional;
         try {
             gui.showStatus("Установка новой Java " + remoteVersion + (remoteJavaBits == 0 ? "" : " " + remoteJavaBits + " бита") + "...");
             Path tmpDir = Files.createTempDirectory(Paths.get("."), "jre");
