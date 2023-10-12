@@ -53,7 +53,7 @@ public final class EmbeddedHttpContainer {
             applications.add(new Application(application, comp.getName()));
 
             AppComponentServlet appServlet = new AppComponentServlet(comp);
-            ctx.addServlet(application, "/" + application + "/remoting", appServlet);
+            ctx.addServlet(application, "/" + AppCommon.getRemotingContext(application), appServlet);
         }
 
         InstallServletBase installServlet = new InstallServlet(mainLogger, rootDir, applications);

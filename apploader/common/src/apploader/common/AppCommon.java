@@ -65,6 +65,10 @@ public final class AppCommon {
         ex.printStackTrace(System.err);
     }
 
+    public static String getRemotingContext(String application) {
+        return application + "/remoting";
+    }
+
     private static boolean detectWindows() {
         try {
             String os = System.getProperty("os.name");
