@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api("io.github.osobolev.sqlg3:sqlg3-remote-server:2.4")
+    api("io.github.osobolev.sqlg3:sqlg3-remote-server:2.5")
 }
