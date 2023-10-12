@@ -124,8 +124,18 @@ public final class FileLoader extends IFileLoader {
         }
     }
 
+    private URL url(String file) throws MalformedURLException {
+        try {
+            return base.toURI().resolve(file).toURL();
+        } catch (URISyntaxException ex) {
+            MalformedURLException mex = new MalformedURLException(ex.getMessage());
+            mex.initCause(ex);
+            throw mex;
+        }
+    }
+
     private ReceiveResult receiveFileAttempt(File local, String file) throws IOException {
-        URL url = new URL(base, file);
+        URL url = url(file);
         HeadResult head = isNeedUpdate(url);
         if (head.isNeedUpdate(HeadResult.fromFile(local))) {
             gui.showStatus("Обновление " + file + "...");
@@ -244,7 +254,7 @@ public final class FileLoader extends IFileLoader {
     }
 
     private List<Application> loadApplicationsAttempt(String file) throws IOException {
-        URL url = new URL(base, file);
+        URL url = url(file);
         IOException lastError = null;
         for (int i = 0; i < 3; i++) {
             try {

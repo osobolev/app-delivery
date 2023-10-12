@@ -1,7 +1,7 @@
 package apploader.common;
 
 import java.io.*;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
@@ -77,22 +77,28 @@ public final class ConfigReader {
         readProperties(props, new File(dir, APPLOADER_PROPERTIES));
     }
 
+    private static URL url(String url) {
+        try {
+            return new URI(url).parseServerAuthority().toURL();
+        } catch (Exception ex) {
+            // ignore
+        }
+        return null;
+    }
+
     public static URL toServerUrl(String serverUrl) throws IOException {
         if (serverUrl == null)
             return null;
         if (!serverUrl.endsWith("/")) {
             serverUrl += "/";
         }
-        try {
-            return new URL(serverUrl);
-        } catch (MalformedURLException ex1) {
-            // ignore
+        String[] urls = {serverUrl, "http://" + serverUrl};
+        for (String urlStr : urls) {
+            URL url = url(urlStr);
+            if (url != null)
+                return url;
         }
-        try {
-            return new URL("http://" + serverUrl);
-        } catch (MalformedURLException ex) {
-            throw new IOException("Неправильно задан адрес " + serverUrl, ex);
-        }
+        throw new IOException("Неправильно задан адрес " + serverUrl);
     }
 
     public static URL getServerUrl(Properties properties) throws IOException {
