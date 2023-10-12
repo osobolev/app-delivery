@@ -3,6 +3,9 @@ package apploader.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.function.Consumer;
 
 public final class AppCommon {
@@ -65,8 +68,22 @@ public final class AppCommon {
         ex.printStackTrace(System.err);
     }
 
+    public static URL resolve(URL base, String file) throws MalformedURLException {
+        try {
+            return base.toURI().resolve(file).toURL();
+        } catch (URISyntaxException ex) {
+            MalformedURLException mex = new MalformedURLException(ex.getMessage());
+            mex.initCause(ex);
+            throw mex;
+        }
+    }
+
     public static String getRemotingContext(String application) {
         return application + "/remoting";
+    }
+
+    public static URL getRemotingUrl(URL serverUrl, String application) throws MalformedURLException {
+        return resolve(serverUrl, getRemotingContext(application));
     }
 
     private static boolean detectWindows() {
