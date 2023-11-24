@@ -1,10 +1,13 @@
 package apploader.common;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 public final class ConfigReader {
 
@@ -77,28 +80,26 @@ public final class ConfigReader {
         readProperties(props, new File(dir, APPLOADER_PROPERTIES));
     }
 
-    private static URL url(String url) {
-        try {
-            return new URI(url).parseServerAuthority().toURL();
-        } catch (Exception ex) {
-            // ignore
-        }
-        return null;
-    }
-
     public static URL toServerUrl(String serverUrl) throws IOException {
         if (serverUrl == null)
             return null;
+        String pre;
+        if (!Pattern.compile("[a-z]+://", Pattern.CASE_INSENSITIVE).matcher(serverUrl).lookingAt()) {
+            pre = "http://";
+        } else {
+            pre = "";
+        }
+        String post;
         if (!serverUrl.endsWith("/")) {
-            serverUrl += "/";
+            post = "/";
+        } else {
+            post = "";
         }
-        String[] urls = {serverUrl, "http://" + serverUrl};
-        for (String urlStr : urls) {
-            URL url = url(urlStr);
-            if (url != null)
-                return url;
+        try {
+            return new URI(pre + serverUrl + post).toURL();
+        } catch (URISyntaxException ex) {
+            throw new MalformedURLException(ex.getMessage());
         }
-        throw new IOException("Неправильно задан адрес " + serverUrl);
     }
 
     public static URL getServerUrl(Properties properties) throws IOException {
