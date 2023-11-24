@@ -47,7 +47,7 @@ public abstract class InstallServletBase extends AppServletBase {
             if (fullUrl.endsWith(path)) {
                 url = fullUrl.substring(0, fullUrl.length() - path.length()) + "/";
             } else {
-                url = req.getLocalName() + ":" + req.getLocalPort();
+                url = req.getScheme() + "://" + req.getLocalName() + ":" + req.getLocalPort() + "/";
             }
             InstallBuilder builder = InstallBuilder.create(
                 root, apps, profile, url, getLogger()::trace
