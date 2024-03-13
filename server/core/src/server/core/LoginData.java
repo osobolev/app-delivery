@@ -19,6 +19,10 @@ public final class LoginData {
         this.password = password;
     }
 
+    public LoginData(String url, String user, String password) {
+        this(null, url, user, password);
+    }
+
     public String getDriver() {
         return driver;
     }
