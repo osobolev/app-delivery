@@ -43,7 +43,7 @@ final class AppPropertiesLoader {
 
     private boolean addCoreJar(String right) {
         FileResult jarResult = fileLoader.receiveFile(right, true, false);
-        if (jarResult.isFailCopy) {
+        if (jarResult.isFailCopy || jarResult.updated) {
             gui.showWarning("Обновлен загрузчик приложения, перезапустите приложение");
             return false;
         }
