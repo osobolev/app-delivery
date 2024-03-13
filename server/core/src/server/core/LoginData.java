@@ -39,8 +39,4 @@ public final class LoginData {
         Connection connection = SingleConnectionManager.openConnection(driver, url, user, password);
         connection.close();
     }
-
-    public static String getDriver(String driver) {
-        return driver == null ? "oracle.jdbc.driver.OracleDriver" : driver;
-    }
 }

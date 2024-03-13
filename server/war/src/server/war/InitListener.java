@@ -21,9 +21,8 @@ public class InitListener implements ServletContextListener {
     private static final String DISPATCH_ATTR = "httpDispatch";
 
     private static LoginData getDbParameters(ServletContext ctx) {
-        String driver = LoginData.getDriver(ctx.getInitParameter("jdbcDriver"));
         return new LoginData(
-            driver,
+            ctx.getInitParameter("jdbcDriver"),
             ctx.getInitParameter("jdbcUrl"), ctx.getInitParameter("username"), ctx.getInitParameter("password")
         );
     }
