@@ -13,15 +13,19 @@ public final class LogFormatUtil {
         return TIMESTAMP_FORMAT.format(LocalDateTime.now());
     }
 
+    public static String getStartMessage() {
+        return "Log started: " + getTimestamp();
+    }
+
     private static PrintWriter pw(OutputStream os) {
         return new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
     }
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    public static PrintWriter open(String fileName) {
+    public static PrintWriter open(String fileName, String startMessage) {
         try {
             PrintWriter fileOutput = pw(new BufferedOutputStream(new FileOutputStream(fileName, true)));
-            start(fileOutput);
+            start(fileOutput, startMessage);
             return fileOutput;
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
@@ -29,14 +33,18 @@ public final class LogFormatUtil {
         }
     }
 
+    public static PrintWriter open(String fileName) {
+        return open(fileName, null);
+    }
+
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static PrintWriter getWriter(PrintWriter fileOutput) {
         return fileOutput == null ? pw(System.out) : fileOutput;
     }
 
-    public static void start(PrintWriter pw) {
-        String date = getTimestamp();
-        pw.println("------------------ Log started: " + date + " ------------------");
+    public static void start(PrintWriter pw, String message) {
+        String startMessage = message == null ? getStartMessage() : message;
+        pw.println("------------------ " + startMessage + " ------------------");
     }
 
     public static void printHeader(PrintWriter pw, String type) {
