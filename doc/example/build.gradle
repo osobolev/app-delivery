@@ -9,7 +9,9 @@ subprojects {
     group = "io.github.osobolev.app-delivery.sample"
     version = myVersion
 
-    sourceCompatibility = "8"
+    java {
+        sourceCompatibility = "8"
+    }
 
     compileJava.options.encoding = "UTF-8"
 
@@ -157,7 +159,7 @@ project(":sample_war") {
 
     war {
         archiveFileName = "sample_app.war"
-        webAppDirName = "webapp"
+        webAppDirectory.set(file("webapp"))
 
         from(configurations.webdistr) {
             into("distr")
