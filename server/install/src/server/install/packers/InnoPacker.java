@@ -54,6 +54,7 @@ public final class InnoPacker implements Packer {
                 return false;
             }
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             throw new IOException(ex);
         }
         File installer = new File(result.getParentFile(), "install.exe");

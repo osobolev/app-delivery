@@ -69,6 +69,7 @@ public final class RarPacker implements Packer {
         try {
             process.waitFor();
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             throw new IOException(ex);
         }
         return true;

@@ -61,6 +61,7 @@ public final class MakeselfPacker implements Packer {
         try {
             process.waitFor();
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             throw new IOException(ex);
         }
         return true;
