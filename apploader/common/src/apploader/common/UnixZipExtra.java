@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Reads UNIX permissions of ZIP file entries.
+ *
  * @see <a href="https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT">ZIP format specification</a>
  * @see <a href="https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html">ZIP structure with diagrams and examples</a>
  */
@@ -146,6 +148,9 @@ public final class UnixZipExtra {
         return null;
     }
 
+    /**
+     * @return the map of ZIP entry names to their UNIX permissions
+     */
     public static Map<String, UnixZipExtra> readExtras(File path) throws IOException {
         try (RandomAccessFile file = new RandomAccessFile(path, "r")) {
             Location location = findCentralDirectory(file);
