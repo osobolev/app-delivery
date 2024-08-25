@@ -46,6 +46,17 @@ final class LoaderConfig {
         ProxyConfig proxy = AppInfo.loadProxy();
         proxy.setLogin();
 
+        if (httpUrl == null) {
+            httpUrl = gui.askUrl(proxy);
+            if (httpUrl != null) {
+                try {
+                    ConfigReader.writeAppProperties(appProperties, httpUrl.toString());
+                } catch (Exception ex) {
+                    AppCommon.error(ex);
+                }
+            }
+        }
+
         return new LoaderConfig(httpUrl, doNotShow, proxy);
     }
 }
