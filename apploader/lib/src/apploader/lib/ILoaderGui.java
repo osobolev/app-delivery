@@ -21,4 +21,6 @@ public interface ILoaderGui {
     Result showWarning3(String message, FileLoader loader);
 
     void showProxyDialog(ProxyConfig proxy, URL url, FileLoader loader);
+
+    URL askUrl(ProxyConfig proxy);
 }

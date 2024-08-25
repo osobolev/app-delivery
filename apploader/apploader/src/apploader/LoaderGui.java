@@ -183,6 +183,12 @@ final class LoaderGui implements ILoaderGui {
         showProxyDialog(null, proxy, url, loader);
     }
 
+    public URL askUrl(ProxyConfig proxy) {
+        setLnF();
+        UrlDialog udlg = new UrlDialog(null, proxy, this::doShowError);
+        return udlg.getURL();
+    }
+
     static ILoaderGui create() {
         return GraphicsEnvironment.isHeadless() ? new HeadlessGui() : new LoaderGui();
     }

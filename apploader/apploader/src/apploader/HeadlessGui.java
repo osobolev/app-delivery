@@ -1,12 +1,17 @@
 package apploader;
 
+import apploader.common.AppStreamUtils;
+import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
 import apploader.lib.FileLoader;
 import apploader.lib.ILoaderGui;
 import apploader.lib.Result;
 
 import java.io.Console;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Scanner;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -99,5 +104,41 @@ final class HeadlessGui implements ILoaderGui {
 
     public void showProxyDialog(ProxyConfig proxy, URL url, FileLoader loader) {
         System.err.println("Proxy configuration not supported in headless mode");
+    }
+
+    static URL checkURL(ProxyConfig proxy, String urlStr) throws Exception {
+        URL serverUrl = ConfigReader.toServerUrl(urlStr.trim());
+        URLConnection conn = serverUrl.openConnection(proxy.proxy);
+        try (InputStream is = conn.getInputStream()) {
+            OutputStream consume = new OutputStream() {
+
+                @Override
+                public void write(int b) {
+                }
+
+                @Override
+                public void write(byte[] b, int off, int len) {
+                }
+            };
+            AppStreamUtils.copyStream(is, consume, -1);
+        }
+        return serverUrl;
+    }
+
+    public URL askUrl(ProxyConfig proxy) {
+        while (true) {
+            System.out.print("Enter server URL: ");
+            String line = readLine();
+            if (line == null)
+                return null;
+            String urlStr = line.trim();
+            if (urlStr.isEmpty())
+                return null;
+            try {
+                return checkURL(proxy, urlStr);
+            } catch (Exception ex) {
+                System.out.println("Error: " + ex);
+            }
+        }
     }
 }
