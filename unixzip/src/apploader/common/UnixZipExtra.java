@@ -11,7 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Reads UNIX permissions of ZIP file entries.
+ * Reads/restores UNIX permissions of ZIP file entries.
  *
  * @see <a href="https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT">ZIP format specification</a>
  * @see <a href="https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html">ZIP structure with diagrams and examples</a>
@@ -151,6 +151,8 @@ public final class UnixZipExtra {
     }
 
     /**
+     * Reads UNIX permissions of ZIP file entries.
+     *
      * @return the map of ZIP entry names to their UNIX permissions
      */
     public static Map<String, UnixZipExtra> readExtras(File path) throws IOException {
@@ -170,12 +172,13 @@ public final class UnixZipExtra {
     }
 
     /**
-     *  U  G  O
-     * rwxrwxrwx
-     * 876543210
+     * Converts integer UNIX permissions mask to set of {@link PosixFilePermission}
      */
     @SuppressWarnings("OctalInteger")
     public static Set<PosixFilePermission> fromMask(int mask) {
+        //  U  G  O
+        // rwxrwxrwx
+        // 876543210
         Set<PosixFilePermission> perms = EnumSet.noneOf(PosixFilePermission.class);
 
         if ((mask & 0400) != 0) {
@@ -221,8 +224,16 @@ public final class UnixZipExtra {
         }
     }
 
-    public static void copyEntry(ZipFile zipFile, Map<String, UnixZipExtra> extras,
-                                 ZipEntry entry, Path destDir) throws IOException {
+    /**
+     * Restores an entry from the ZIP file restoring its UNIX permissions (if any)
+     *
+     * @param zipFile ZIP file
+     * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(File)}).
+     * @param entry ZIP entry to restore
+     * @param destDir where to put the restored file/directory
+     */
+    public static void restoreEntry(ZipFile zipFile, Map<String, UnixZipExtra> extras,
+                                    ZipEntry entry, Path destDir) throws IOException {
         String name = entry.getName();
         UnixZipExtra extra = extras.get(name);
         Path dest = destDir.resolve(name);

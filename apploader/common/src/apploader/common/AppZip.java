@@ -39,7 +39,7 @@ public final class AppZip {
                 if (onEntry != null) {
                     onEntry.run();
                 }
-                UnixZipExtra.copyEntry(zipFile, extras, entry, destDir);
+                UnixZipExtra.restoreEntry(zipFile, extras, entry, destDir);
             }
         }
     }
