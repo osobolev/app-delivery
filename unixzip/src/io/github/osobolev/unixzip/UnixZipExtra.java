@@ -258,9 +258,8 @@ public final class UnixZipExtra {
         UnixZipExtra extra = extras.get(name);
         Path dest = destDir.resolve(name);
         if (extra != null && extra.symLink) {
-            InputStream is = getContent.getInputStream(entry);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            copyStream(is, bos);
+            copyStream(getContent.getInputStream(entry), bos);
             String link = bos.toString("UTF-8");
             Files.createDirectories(dest.getParent());
             Files.createSymbolicLink(dest, Paths.get(link));
