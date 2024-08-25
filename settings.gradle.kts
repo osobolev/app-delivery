@@ -10,6 +10,8 @@ fun add(name: String, path: String) {
     project(":${name}").projectDir = dir
 }
 
+add("unix-zip", "unixzip")
+
 add("apploader-common", "apploader/common")
 add("apploader-lib", "apploader/lib")
 add("apploader-client", "apploader/client")

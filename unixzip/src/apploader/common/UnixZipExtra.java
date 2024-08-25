@@ -1,12 +1,14 @@
 package apploader.common;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Reads UNIX permissions of ZIP file entries.
@@ -164,6 +166,82 @@ public final class UnixZipExtra {
                 parsed += parseEntry(file, header, extra);
             }
             return extra;
+        }
+    }
+
+    /**
+     *  U  G  O
+     * rwxrwxrwx
+     * 876543210
+     */
+    @SuppressWarnings("OctalInteger")
+    public static Set<PosixFilePermission> fromMask(int mask) {
+        Set<PosixFilePermission> perms = EnumSet.noneOf(PosixFilePermission.class);
+
+        if ((mask & 0400) != 0) {
+            perms.add(PosixFilePermission.OWNER_READ);
+        }
+        if ((mask & 0200) != 0) {
+            perms.add(PosixFilePermission.OWNER_WRITE);
+        }
+        if ((mask & 0100) != 0) {
+            perms.add(PosixFilePermission.OWNER_EXECUTE);
+        }
+
+        if ((mask & 040) != 0) {
+            perms.add(PosixFilePermission.GROUP_READ);
+        }
+        if ((mask & 020) != 0) {
+            perms.add(PosixFilePermission.GROUP_WRITE);
+        }
+        if ((mask & 010) != 0) {
+            perms.add(PosixFilePermission.GROUP_EXECUTE);
+        }
+
+        if ((mask & 04) != 0) {
+            perms.add(PosixFilePermission.OTHERS_READ);
+        }
+        if ((mask & 02) != 0) {
+            perms.add(PosixFilePermission.OTHERS_WRITE);
+        }
+        if ((mask & 01) != 0) {
+            perms.add(PosixFilePermission.OTHERS_EXECUTE);
+        }
+
+        return perms;
+    }
+
+    private static void copyStream(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[256];
+        while (true) {
+            int read = in.read(buffer);
+            if (read < 0)
+                break;
+            out.write(buffer, 0, read);
+        }
+    }
+
+    public static void copyEntry(ZipFile zipFile, Map<String, UnixZipExtra> extras,
+                                 ZipEntry entry, Path destDir) throws IOException {
+        String name = entry.getName();
+        UnixZipExtra extra = extras.get(name);
+        Path dest = destDir.resolve(name);
+        if (extra != null && extra.symLink) {
+            InputStream is = zipFile.getInputStream(entry);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            copyStream(is, bos);
+            String link = bos.toString("UTF-8");
+            Files.createSymbolicLink(dest, Paths.get(link));
+        } else {
+            if (entry.isDirectory()) {
+                Files.createDirectories(dest);
+            } else {
+                Files.copy(zipFile.getInputStream(entry), dest);
+            }
+        }
+        if (extra != null) {
+            Set<PosixFilePermission> perms = fromMask(extra.permissions);
+            Files.setPosixFilePermissions(dest, perms);
         }
     }
 }
