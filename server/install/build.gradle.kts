@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.apache.commons:commons-compress:1.26.2")
-    implementation("org.tukaani:xz:1.9")
+    implementation("org.apache.commons:commons-compress:1.27.1")
+    implementation("org.tukaani:xz:1.10")
     implementation(project(":apploader-common"))
 }
