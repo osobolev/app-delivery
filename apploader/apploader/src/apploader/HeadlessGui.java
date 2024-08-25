@@ -54,8 +54,8 @@ final class HeadlessGui implements ILoaderGui {
     }
 
     private static Integer readOption(int max) {
-        System.out.print("Choose an option: ");
         while (true) {
+            System.out.print("Choose an option: ");
             String line = readLine();
             if (line == null)
                 return null;
