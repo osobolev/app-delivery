@@ -6,7 +6,7 @@ group = "io.github.osobolev.app-delivery"
 version = "6.8"
 
 (publishing.publications["mavenJava"] as MavenPublication).pom {
-    name.set("app-delivery")
+    name.set("${project.group}:${project.name}")
     description.set("Framework for delivering desktop application updates")
     url.set("https://github.com/osobolev/app-delivery")
     licenses {
