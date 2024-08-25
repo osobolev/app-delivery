@@ -25,7 +25,8 @@ final class LoaderConfig {
 
     static LoaderConfig load(ILoaderGui gui) {
         Properties apploaderProperties = new Properties();
-        ConfigReader.readAppProperties(new File("."), apploaderProperties);
+        File appProperties = ConfigReader.getAppProperties(new File("."));
+        ConfigReader.readProperties(apploaderProperties, appProperties);
         String ignoreWarningsProp = "ignore.warnings";
         String ignoreWarnings = System.getProperty(ignoreWarningsProp);
         if (ignoreWarnings == null) {
