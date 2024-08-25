@@ -80,6 +80,12 @@ public final class ConfigReader {
         readProperties(props, new File(dir, APPLOADER_PROPERTIES));
     }
 
+    public static void writeAppProperties(File file, String url) throws IOException {
+        try (PrintWriter pw = new PrintWriter(file, CHARSET)) {
+            pw.println(HTTP_SERVER_PROPERTY + "=" + url);
+        }
+    }
+
     public static URL toServerUrl(String serverUrl) throws IOException {
         if (serverUrl == null)
             return null;
