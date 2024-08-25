@@ -34,21 +34,24 @@ final class HeadlessGui implements ILoaderGui {
         System.out.println(message);
     }
 
+    private static String readLine() {
+        Console console = System.console();
+        if (console != null) {
+            return console.readLine();
+        } else {
+            Scanner scanner = new Scanner(System.in);
+            if (scanner.hasNextLine()) {
+                return scanner.nextLine();
+            } else {
+                return null;
+            }
+        }
+    }
+
     private static Integer readOption(int max) {
         System.out.print("Choose an option: ");
-        Console console = System.console();
         while (true) {
-            String line;
-            if (console != null) {
-                line = console.readLine();
-            } else {
-                Scanner scanner = new Scanner(System.in);
-                if (scanner.hasNextLine()) {
-                    line = scanner.nextLine();
-                } else {
-                    line = null;
-                }
-            }
+            String line = readLine();
             if (line == null)
                 return null;
             try {
