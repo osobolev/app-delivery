@@ -12,6 +12,20 @@ import java.util.zip.ZipFile;
 
 /**
  * Reads/restores UNIX permissions of ZIP file entries.
+ * <p>
+ * Example:
+ * <code><pre>
+ * File file = ...; // ZIP file
+ * Path destDir = ...; // Directory to unzip to
+ * Map&lt;String, UnixZipExtra&gt; extras = UnixZipExtra.readExtras(file);
+ * try (ZipFile zipFile = new ZipFile(file)) {
+ *     Enumeration&lt;? extends ZipEntry&gt; entries = zipFile.entries();
+ *     while (entries.hasMoreElements()) {
+ *         ZipEntry entry = entries.nextElement();
+ *         UnixZipExtra.restoreEntry(zipFile, extras, entry, destDir);
+ *     }
+ * }
+ * </pre></code>
  *
  * @see <a href="https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT">ZIP format specification</a>
  * @see <a href="https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html">ZIP structure with diagrams and examples</a>
