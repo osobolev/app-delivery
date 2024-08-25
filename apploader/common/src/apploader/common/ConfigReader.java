@@ -76,8 +76,12 @@ public final class ConfigReader {
         }
     }
 
+    public static File getAppProperties(File dir) {
+        return new File(dir, APPLOADER_PROPERTIES);
+    }
+
     public static void readAppProperties(File dir, Properties props) {
-        readProperties(props, new File(dir, APPLOADER_PROPERTIES));
+        readProperties(props, getAppProperties(dir));
     }
 
     public static void writeAppProperties(File file, String url) throws IOException {
