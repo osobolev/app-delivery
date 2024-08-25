@@ -1,4 +1,4 @@
-package apploader.common;
+package io.github.osobolev.unixzip;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

@@ -1,5 +1,7 @@
 package apploader.common;
 
+import io.github.osobolev.unixzip.UnixZipExtra;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
