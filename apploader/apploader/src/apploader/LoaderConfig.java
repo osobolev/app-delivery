@@ -42,6 +42,9 @@ final class LoaderConfig {
             return null;
         }
 
-        return new LoaderConfig(httpUrl, doNotShow, AppInfo.loadProxy());
+        ProxyConfig proxy = AppInfo.loadProxy();
+        proxy.setLogin();
+
+        return new LoaderConfig(httpUrl, doNotShow, proxy);
     }
 }
