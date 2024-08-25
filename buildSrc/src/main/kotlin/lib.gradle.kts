@@ -5,9 +5,13 @@ plugins {
 group = "io.github.osobolev.app-delivery"
 version = "6.8"
 
+if (project.name == "unix-zip") {
+    description = "Library for reading/restoring UNIX permissions of ZIP file entries";
+}
+
 (publishing.publications["mavenJava"] as MavenPublication).pom {
     name.set("${project.group}:${project.name}")
-    description.set("Framework for delivering desktop application updates")
+    description.set(project.description ?: "Framework for delivering desktop application updates")
     url.set("https://github.com/osobolev/app-delivery")
     licenses {
         license {
