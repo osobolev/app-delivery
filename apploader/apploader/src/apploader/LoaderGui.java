@@ -116,11 +116,15 @@ final class LoaderGui implements ILoaderGui {
         }
     }
 
-    public void showError(String message) {
+    private void doShowError(Component parent, String message) {
         showDialogInternal(
-            null, message, ERROR, JOptionPane.ERROR_MESSAGE, new String[] {"OK"}, null,
+            parent, message, ERROR, JOptionPane.ERROR_MESSAGE, new String[] {"OK"}, null,
             null, null
         );
+    }
+
+    public void showError(String message) {
+        doShowError(null, message);
     }
 
     public void showWarning(String message) {
@@ -168,7 +172,7 @@ final class LoaderGui implements ILoaderGui {
 
     void showProxyDialog(Component owner, ProxyConfig proxy, URL url, FileLoader loader) {
         setLnF();
-        ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, this::showError);
+        ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, this::doShowError);
         ProxyConfig newProxy = pdlg.getProxy();
         if (newProxy != null && loader != null) {
             loader.setProxy(newProxy);

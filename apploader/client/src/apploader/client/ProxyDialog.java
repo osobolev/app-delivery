@@ -14,7 +14,7 @@ public final class ProxyDialog extends JDialog {
 
     public interface ErrorShow {
 
-        void showError(String message);
+        void showError(Component owner, String message);
     }
 
     private final ErrorShow error;
@@ -124,7 +124,7 @@ public final class ProxyDialog extends JDialog {
     }
 
     private void showError(String message) {
-        error.showError(message);
+        error.showError(this, message);
     }
 
     private void enableDisable() {
