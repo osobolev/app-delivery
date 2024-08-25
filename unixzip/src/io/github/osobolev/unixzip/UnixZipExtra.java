@@ -224,21 +224,27 @@ public final class UnixZipExtra {
         }
     }
 
+    public interface GetEntryContent {
+
+        InputStream getInputStream(ZipEntry entry) throws IOException;
+    }
+
     /**
-     * Restores an entry from the ZIP file restoring its UNIX permissions (if any)
+     * Restores an entry from the ZIP file restoring its UNIX permissions (if any).
+     * Can be used for {@link ZipFile} and {@link java.util.zip.ZipInputStream}.
      *
-     * @param zipFile ZIP file
      * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(File)}).
      * @param entry ZIP entry to restore
+     * @param getContent returns ZIP entry data
      * @param destDir where to put the restored file/directory
      */
-    public static void restoreEntry(ZipFile zipFile, Map<String, UnixZipExtra> extras,
-                                    ZipEntry entry, Path destDir) throws IOException {
+    public static void restoreEntry(Map<String, UnixZipExtra> extras,
+                                    ZipEntry entry, GetEntryContent getContent, Path destDir) throws IOException {
         String name = entry.getName();
         UnixZipExtra extra = extras.get(name);
         Path dest = destDir.resolve(name);
         if (extra != null && extra.symLink) {
-            InputStream is = zipFile.getInputStream(entry);
+            InputStream is = getContent.getInputStream(entry);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             copyStream(is, bos);
             String link = bos.toString("UTF-8");
@@ -247,12 +253,25 @@ public final class UnixZipExtra {
             if (entry.isDirectory()) {
                 Files.createDirectories(dest);
             } else {
-                Files.copy(zipFile.getInputStream(entry), dest);
+                Files.copy(getContent.getInputStream(entry), dest);
             }
         }
         if (extra != null) {
             Set<PosixFilePermission> perms = fromMask(extra.permissions);
             Files.setPosixFilePermissions(dest, perms);
         }
+    }
+
+    /**
+     * Restores an entry from the ZIP file restoring its UNIX permissions (if any).
+     *
+     * @param zipFile ZIP file
+     * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(File)}).
+     * @param entry ZIP entry to restore
+     * @param destDir where to put the restored file/directory
+     */
+    public static void restoreEntry(ZipFile zipFile, Map<String, UnixZipExtra> extras,
+                                    ZipEntry entry, Path destDir) throws IOException {
+        restoreEntry(extras, entry, zipFile::getInputStream, destDir);
     }
 }
