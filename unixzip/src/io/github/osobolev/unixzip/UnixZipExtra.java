@@ -248,11 +248,13 @@ public final class UnixZipExtra {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             copyStream(is, bos);
             String link = bos.toString("UTF-8");
+            Files.createDirectories(dest.getParent());
             Files.createSymbolicLink(dest, Paths.get(link));
         } else {
             if (entry.isDirectory()) {
                 Files.createDirectories(dest);
             } else {
+                Files.createDirectories(dest.getParent());
                 Files.copy(getContent.getInputStream(entry), dest);
             }
         }
