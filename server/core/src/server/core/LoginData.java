@@ -1,6 +1,6 @@
 package server.core;
 
-import sqlg3.runtime.SingleConnectionManager;
+import sqlg3.tx.runtime.SingleConnectionManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
