@@ -3,12 +3,9 @@ package server.service;
 import server.core.AppInit;
 import server.core.AppLogger;
 import server.embedded.*;
-import sqlg3.remote.server.SQLGLogger;
-import sqlg3.runtime.SqlTrace;
 
 import java.io.File;
 import java.util.List;
-import java.util.function.Function;
 
 public final class ServiceServer {
 
@@ -30,13 +27,13 @@ public final class ServiceServer {
         container.error(ex);
     }
 
-    public boolean runServer(Integer port, String context, File rootDir, AppLogin login, Function<SQLGLogger, SqlTrace> trace, List<AppServerComponent> comps) throws Exception {
+    public boolean runServer(Integer port, String context, File rootDir, AppLogin login, List<AppServerComponent> comps) throws Exception {
         for (AppServerComponent component : comps) {
             boolean inited = false;
             try {
                 AppInit appInit = component.getInit();
                 AppLogger logger = appInit.createLogger();
-                component.init(login, logger, trace.apply(logger));
+                component.init(login, logger);
                 container.addApplication(component);
                 inited = true;
             } finally {

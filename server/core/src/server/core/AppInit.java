@@ -1,7 +1,6 @@
 package server.core;
 
 import sqlg3.remote.server.SessionFactory;
-import sqlg3.runtime.SqlTrace;
 import sqlg3.tx.runtime.TransGlobalContext;
 
 import java.util.Set;
@@ -30,7 +29,7 @@ public interface AppInit {
         }
     }
 
-    InitData init(String application, LoginData login, SqlTrace trace);
+    InitData init(String application, LoginData login);
 
     void destroy();
 }

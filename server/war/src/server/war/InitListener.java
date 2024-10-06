@@ -6,7 +6,6 @@ import server.core.LoginData;
 import server.http.DefaultRequestFactory;
 import server.http.ServletRequestFactory;
 import sqlg3.remote.server.HttpDispatcher;
-import sqlg3.runtime.SqlTrace;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -88,7 +87,7 @@ public class InitListener implements ServletContextListener {
         }
 
         String application = SingleUtil.getApplication(ctx);
-        AppInit.InitData initData = init.init(application, data, SqlTrace.createDefault(logger::error));
+        AppInit.InitData initData = init.init(application, data);
         HttpDispatcher http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
         ctx.setAttribute(DISPATCH_ATTR, http);
     }

@@ -7,7 +7,6 @@ import server.http.ServletRequestFactory;
 import server.http.SessionUtil;
 import sqlg3.remote.server.HttpDispatcher;
 import sqlg3.remote.server.IHttpRequest;
-import sqlg3.runtime.SqlTrace;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,10 +60,10 @@ public final class AppServerComponent {
         }
     }
 
-    public void init(AppLogin login, AppLogger logger, SqlTrace trace) throws UserCancelException, ServerInitException {
+    public void init(AppLogin login, AppLogger logger) throws UserCancelException, ServerInitException {
         this.logger = logger;
         LoginData loginData = login.login(application);
-        AppInit.InitData initData = init.init(application, loginData, trace);
+        AppInit.InitData initData = init.init(application, loginData);
         this.http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
         this.blacklist = initData.blacklist;
         this.whitelist = initData.whitelist;
