@@ -1,6 +1,7 @@
 def dest = "$rootDir/distr"
-def myVersion = "6.1"
-def sqlgVersion = "2.3"
+def myVersion = "7.0"
+def sqlgVersion = "3.0"
+def txrpcVersion = "1.0"
 def h2 = "com.h2database:h2:2.1.214"
 
 subprojects {
@@ -54,7 +55,7 @@ project(":sample_dto") {
     }
 
     dependencies {
-        api("io.github.osobolev.sqlg3:sqlg3-core:$sqlgVersion")
+        api("io.github.osobolev.txrpc:txrpc-api:$txrpcVersion")
 
         sqlg("io.github.osobolev.sqlg3:sqlg3-preprocess-ant:$sqlgVersion")
         sqlg(h2)
@@ -85,15 +86,16 @@ project(":sample_db") {
 project(":sample_client") {
     dependencies {
         compileOnly("io.github.osobolev.app-delivery:apploader-client:$myVersion")
-        implementation("io.github.osobolev.sqlg3:sqlg3-remote-client:$sqlgVersion")
+        implementation("io.github.osobolev.txrpc:txrpc-remote-client:$txrpcVersion")
         implementation(project(":sample_dto"))
     }
 }
 
 project(":sample_server") {
     dependencies {
-        api("io.github.osobolev.sqlg3:sqlg3-remote-server:$sqlgVersion")
+        api("io.github.osobolev.txrpc:txrpc-remote-server:$txrpcVersion")
         api("io.github.osobolev.app-delivery:server-core:$myVersion")
+        implementation("io.github.osobolev.sqlg3:sqlg3-runtime:$sqlgVersion")
         runtimeOnly(project(":sample_db"))
     }
 }

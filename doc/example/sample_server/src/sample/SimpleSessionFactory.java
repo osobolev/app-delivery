@@ -1,10 +1,11 @@
 package sample;
 
-import sqlg3.remote.server.SQLGLogger;
-import sqlg3.remote.server.SessionFactory;
-import sqlg3.runtime.ConnectionManager;
-import sqlg3.runtime.SessionContext;
-import sqlg3.runtime.SingleConnectionManager;
+
+import txrpc.remote.server.SessionFactory;
+import txrpc.remote.server.TxRpcLogger;
+import txrpc.runtime.ConnectionManager;
+import txrpc.runtime.SessionContext;
+import txrpc.runtime.SingleConnectionManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ public class SimpleSessionFactory implements SessionFactory {
     }
 
     @Override
-    public SessionContext login(SQLGLogger logger, long sessionId, String login, String password) throws SQLException {
+    public SessionContext login(TxRpcLogger logger, long sessionId, String login, String password) throws SQLException {
         Connection connection = SingleConnectionManager.openConnection(jdbcDriver, jdbcUrl, login, password);
         ConnectionManager cman = new SingleConnectionManager(connection);
         return new SessionContext(cman, login, null);

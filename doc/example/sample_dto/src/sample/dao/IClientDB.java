@@ -1,9 +1,9 @@
 package sample.dao;
 
 // THIS FILE IS MACHINE-GENERATED, DO NOT EDIT
-@SuppressWarnings({"UnnecessaryInterfaceModifier", "UnnecessaryFullyQualifiedName", "RedundantSuppression"})
-@sqlg3.core.Impl("sample.dao.ClientDB")
-public interface IClientDB extends sqlg3.core.IDBCommon {
+@SuppressWarnings("UnnecessaryFullyQualifiedName")
+@txrpc.api.Impl("sample.dao.ClientDB")
+public interface IClientDB extends txrpc.api.IDBCommon {
 
     java.sql.Timestamp getTime() throws java.sql.SQLException;
 }

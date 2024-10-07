@@ -3,11 +3,11 @@ package sample;
 import apploader.client.AppInfo;
 import apploader.client.SimpleApp;
 import sample.dao.IClientDB;
-import sqlg3.remote.client.DefaultHttpClient;
-import sqlg3.remote.client.HttpConnectionFactory;
-import sqlg3.remote.client.IHttpClient;
-import sqlg3.remote.client.SafeDBInterface;
-import sqlg3.remote.common.IRemoteDBInterface;
+import txrpc.remote.client.DefaultHttpClient;
+import txrpc.remote.client.HttpConnectionFactory;
+import txrpc.remote.client.IHttpClient;
+import txrpc.remote.client.SafeDBInterface;
+import txrpc.remote.common.IRemoteDBInterface;
 
 import javax.swing.*;
 import java.awt.*;
