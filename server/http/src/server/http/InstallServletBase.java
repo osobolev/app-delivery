@@ -4,7 +4,7 @@ import apploader.common.Application;
 import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;
-import sqlg3.remote.server.SQLGLogger;
+import txrpc.remote.server.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -91,5 +91,5 @@ public abstract class InstallServletBase extends AppServletBase {
         }
     }
 
-    protected abstract SQLGLogger getLogger();
+    protected abstract TxRpcLogger getLogger();
 }

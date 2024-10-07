@@ -2,7 +2,7 @@ package server.war;
 
 import apploader.common.Application;
 import server.http.InstallServletBase;
-import sqlg3.remote.server.SQLGLogger;
+import txrpc.remote.server.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
@@ -22,7 +22,7 @@ public class InstallServlet extends InstallServletBase {
         return SingleUtil.getApplications(config);
     }
 
-    protected SQLGLogger getLogger() {
+    protected TxRpcLogger getLogger() {
         return InitListener.getLogger(getServletContext());
     }
 }

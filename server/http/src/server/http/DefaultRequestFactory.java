@@ -1,9 +1,9 @@
 package server.http;
 
-import sqlg3.remote.common.ISerializer;
-import sqlg3.remote.common.JavaSerializer;
-import sqlg3.remote.server.BodyHttpRequest;
-import sqlg3.remote.server.IHttpRequest;
+import txrpc.remote.common.ISerializer;
+import txrpc.remote.common.JavaSerializer;
+import txrpc.remote.server.BodyHttpRequest;
+import txrpc.remote.server.IHttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

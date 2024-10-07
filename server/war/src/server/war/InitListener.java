@@ -5,7 +5,7 @@ import server.core.AppLogger;
 import server.core.LoginData;
 import server.http.DefaultRequestFactory;
 import server.http.ServletRequestFactory;
-import sqlg3.remote.server.HttpDispatcher;
+import txrpc.remote.server.HttpDispatcher;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;

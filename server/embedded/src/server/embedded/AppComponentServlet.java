@@ -1,6 +1,6 @@
 package server.embedded;
 
-import sqlg3.remote.common.UnrecoverableRemoteException;
+import txrpc.remote.common.UnrecoverableRemoteException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

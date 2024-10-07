@@ -2,7 +2,7 @@ package server.embedded;
 
 import apploader.common.Application;
 import server.http.InstallServletBase;
-import sqlg3.remote.server.SQLGLogger;
+import txrpc.remote.server.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
@@ -10,11 +10,11 @@ import java.util.List;
 
 final class InstallServlet extends InstallServletBase {
 
-    private final SQLGLogger logger;
+    private final TxRpcLogger logger;
     private final File rootDir;
     private final List<Application> applications;
 
-    InstallServlet(SQLGLogger logger, File rootDir, List<Application> applications) {
+    InstallServlet(TxRpcLogger logger, File rootDir, List<Application> applications) {
         this.logger = logger;
         this.rootDir = rootDir;
         this.applications = applications;
@@ -28,7 +28,7 @@ final class InstallServlet extends InstallServletBase {
         return applications;
     }
 
-    protected SQLGLogger getLogger() {
+    protected TxRpcLogger getLogger() {
         return logger;
     }
 }

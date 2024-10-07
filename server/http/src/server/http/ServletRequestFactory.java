@@ -1,6 +1,6 @@
 package server.http;
 
-import sqlg3.remote.server.IHttpRequest;
+import txrpc.remote.server.IHttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

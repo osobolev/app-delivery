@@ -1,6 +1,6 @@
 package server.http;
 
-import sqlg3.remote.server.HttpDispatcher;
+import txrpc.remote.server.HttpDispatcher;
 
 import java.io.IOException;
 import java.io.OutputStream;

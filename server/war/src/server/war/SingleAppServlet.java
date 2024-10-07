@@ -2,8 +2,8 @@ package server.war;
 
 import server.http.ServletRequestFactory;
 import server.http.SessionUtil;
-import sqlg3.remote.server.HttpDispatcher;
-import sqlg3.remote.server.IHttpRequest;
+import txrpc.remote.server.HttpDispatcher;
+import txrpc.remote.server.IHttpRequest;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;

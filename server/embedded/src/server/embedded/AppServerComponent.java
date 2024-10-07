@@ -5,8 +5,8 @@ import server.core.AppLogger;
 import server.core.LoginData;
 import server.http.ServletRequestFactory;
 import server.http.SessionUtil;
-import sqlg3.remote.server.HttpDispatcher;
-import sqlg3.remote.server.IHttpRequest;
+import txrpc.remote.server.HttpDispatcher;
+import txrpc.remote.server.IHttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

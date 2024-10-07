@@ -1,8 +1,8 @@
 package server.core;
 
-import sqlg3.remote.server.SQLGLogger;
+import txrpc.remote.server.TxRpcLogger;
 
-public interface AppLogger extends SQLGLogger {
+public interface AppLogger extends TxRpcLogger {
 
     void close();
 }

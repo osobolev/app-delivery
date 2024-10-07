@@ -2,13 +2,13 @@ package server.jetty;
 
 import org.eclipse.jetty.util.log.AbstractLogger;
 import org.eclipse.jetty.util.log.Logger;
-import sqlg3.remote.server.SQLGLogger;
+import txrpc.remote.server.TxRpcLogger;
 
 public final class HttpLogger extends AbstractLogger {
 
-    private final SQLGLogger logger;
+    private final TxRpcLogger logger;
 
-    public HttpLogger(SQLGLogger logger) {
+    public HttpLogger(TxRpcLogger logger) {
         this.logger = logger;
     }
 
