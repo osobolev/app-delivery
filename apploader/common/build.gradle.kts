@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":unix-unzip"))
+    api(project(":unix-unzip"))
 }
