@@ -15,10 +15,10 @@ import java.util.zip.ZipFile;
  * <p>
  * Example:
  * <code><pre>
- * File file = ...; // ZIP file
+ * Path file = ...; // ZIP file
  * Path destDir = ...; // Directory to unzip to
  * Map&lt;String, UnixZipExtra&gt; extras = UnixZipExtra.readExtras(file);
- * try (ZipFile zipFile = new ZipFile(file)) {
+ * try (ZipFile zipFile = new ZipFile(file.toFile())) {
  *     Enumeration&lt;? extends ZipEntry&gt; entries = zipFile.entries();
  *     while (entries.hasMoreElements()) {
  *         ZipEntry entry = entries.nextElement();
@@ -169,8 +169,8 @@ public final class UnixZipExtra {
      *
      * @return the map of ZIP entry names to their UNIX permissions
      */
-    public static Map<String, UnixZipExtra> readExtras(File path) throws IOException {
-        try (RandomAccessFile file = new RandomAccessFile(path, "r")) {
+    public static Map<String, UnixZipExtra> readExtras(Path path) throws IOException {
+        try (RandomAccessFile file = new RandomAccessFile(path.toFile(), "r")) {
             Location location = findCentralDirectory(file);
             if (location == null)
                 return Collections.emptyMap();
@@ -247,7 +247,7 @@ public final class UnixZipExtra {
      * Restores an entry from the ZIP file restoring its UNIX permissions (if any).
      * Can be used for {@link ZipFile} and {@link java.util.zip.ZipInputStream}.
      *
-     * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(File)}).
+     * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(Path)}).
      * @param entry ZIP entry to restore
      * @param getContent returns ZIP entry data
      * @param destDir where to put the restored file/directory
@@ -281,7 +281,7 @@ public final class UnixZipExtra {
      * Restores an entry from the ZIP file restoring its UNIX permissions (if any).
      *
      * @param zipFile ZIP file
-     * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(File)}).
+     * @param extras the map of ZIP entry names to their UNIX permissions (can be read from the ZIP file by {@link #readExtras(Path)}).
      * @param entry ZIP entry to restore
      * @param destDir where to put the restored file/directory
      */
