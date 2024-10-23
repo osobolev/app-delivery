@@ -88,7 +88,7 @@ public class InitListener implements ServletContextListener {
 
         String application = SingleUtil.getApplication(ctx);
         AppInit.InitData initData = init.init(application, data);
-        HttpDispatcher http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
+        HttpDispatcher http = new HttpDispatcher(initData.sessionFactory, logger, initData.global);
         ctx.setAttribute(DISPATCH_ATTR, http);
     }
 
