@@ -1,3 +1,11 @@
+/*
+  Пример:
+  <a href="javascript:void(0)" onclick="downloadInstaller()">Скачать дистрибутив клиента</a><span id="prc"></span>
+  <a href="install">Альтернативная ссылка</a> (дождитесь начала загрузки, возможное время ожидания - несколько минут)
+
+  Для использования профиля вместо downloadInstaller() используйте downloadInstallerFor("profile", "prc") и ссылку "install/profile"
+ */
+
 function downloadInstaller() {
     downloadInstallerFor("", "prc");
 }
