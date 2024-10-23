@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api("io.github.osobolev.txrpc:txrpc-remote-server:1.0")
+    api(libs.txrpc.server)
 }
