@@ -20,7 +20,7 @@
     </context-param>
     <context-param>
         <param-name>requestFactory</param-name>
-        <param-value>server.http.DefaultRequestFactory</param-value>
+        <param-value>server.war.DefaultRequestFactory</param-value>
     </context-param>
     <context-param>
         <param-name>dbSpec</param-name>
