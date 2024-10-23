@@ -88,7 +88,7 @@ public final class AppServerComponent {
     public void dispatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         IHttpRequest request = requestFactory.newRequest(req, resp);
         if (!running) {
-            request.writeError(new IOException("Server not running"));
+            request.writeError(new IllegalStateException("Server not running"));
         } else {
             http.dispatch(request);
         }

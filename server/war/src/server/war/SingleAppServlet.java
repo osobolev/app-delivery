@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class SingleAppServlet extends HttpServlet {
 
@@ -23,7 +22,7 @@ public class SingleAppServlet extends HttpServlet {
         if (http == null) {
             String error = "Ошибка при инициализации сервера";
             InitListener.getLogger(ctx).error(error);
-            request.writeError(new SQLException(error));
+            request.writeError(new IllegalStateException(error));
         } else {
             http.dispatch(request);
         }
