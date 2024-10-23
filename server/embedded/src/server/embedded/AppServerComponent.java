@@ -4,14 +4,12 @@ import server.core.AppInit;
 import server.core.AppLogger;
 import server.core.LoginData;
 import server.http.ServletRequestFactory;
-import server.http.SessionUtil;
 import txrpc.remote.server.HttpDispatcher;
 import txrpc.remote.server.IHttpRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Set;
 
 public final class AppServerComponent {
@@ -64,7 +62,7 @@ public final class AppServerComponent {
         this.logger = logger;
         LoginData loginData = login.login(application);
         AppInit.InitData initData = init.init(application, loginData);
-        this.http = new HttpDispatcher(application, initData.sessionFactory, logger, initData.global);
+        this.http = new HttpDispatcher(initData.sessionFactory, logger, initData.global);
         this.blacklist = initData.blacklist;
         this.whitelist = initData.whitelist;
     }
@@ -94,10 +92,6 @@ public final class AppServerComponent {
         } else {
             http.dispatch(request);
         }
-    }
-
-    public void showSessions(OutputStream os) throws IOException {
-        SessionUtil.writeSessionInfo(os, http);
     }
 
     public void shutdown() {

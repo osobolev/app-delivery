@@ -1,5 +1,6 @@
 package server.embedded;
 
+import server.http.SessionUtil;
 import txrpc.remote.common.UnrecoverableRemoteException;
 
 import javax.servlet.http.HttpServlet;
@@ -32,6 +33,6 @@ final class AppComponentServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
-        component.showSessions(response.getOutputStream());
+        SessionUtil.writeSessionInfo(response.getOutputStream());
     }
 }
