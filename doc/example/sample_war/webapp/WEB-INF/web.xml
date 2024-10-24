@@ -62,11 +62,11 @@
 
     <servlet-mapping>
         <servlet-name>AppServlet</servlet-name>
-        <url-pattern>/remoting</url-pattern>
+        <url-pattern>/remoting/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InstallServlet</servlet-name>
-        <url-pattern>/install</url-pattern>
+        <url-pattern>/install/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListServlet</servlet-name>
