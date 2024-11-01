@@ -5,7 +5,6 @@ import txrpc.remote.common.body.ISerializer;
 import txrpc.remote.common.body.JavaSerializer;
 import txrpc.remote.server.IHttpRequest;
 import txrpc.remote.server.body.BodyHttpRequest;
-import txrpc.remote.server.body.ServerBodyInteraction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,8 +24,6 @@ public final class DefaultRequestFactory implements ServletRequestFactory {
 
     @Override
     public IHttpRequest newRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        return new BodyHttpRequest(req.getRemoteHost(), new ServerBodyInteraction(
-            serializer, req.getInputStream(), resp.getOutputStream()
-        ));
+        return new BodyHttpRequest(serializer, req.getRemoteHost(), req.getInputStream(), resp.getOutputStream());
     }
 }
