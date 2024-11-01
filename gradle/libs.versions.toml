@@ -2,15 +2,8 @@
 txrpc = "2.0"
 
 [libraries]
-txrpc-api     = { module = "io.github.osobolev.txrpc:txrpc-api", version.ref = "txrpc" }
-txrpc-runtime = { module = "io.github.osobolev.txrpc:txrpc-runtime", version.ref = "txrpc" }
-
-txrpc-common  = { module = "io.github.osobolev.txrpc:txrpc-remote-common", version.ref = "txrpc" }
-txrpc-client  = { module = "io.github.osobolev.txrpc:txrpc-remote-client", version.ref = "txrpc" }
-txrpc-server  = { module = "io.github.osobolev.txrpc:txrpc-remote-server", version.ref = "txrpc" }
-
+txrpc-server      = { module = "io.github.osobolev.txrpc:txrpc-remote-server", version.ref = "txrpc" }
 txrpc-body-server = { module = "io.github.osobolev.txrpc:txrpc-body-server", version.ref = "txrpc" }
-txrpc-body-kryo   = { module = "io.github.osobolev.txrpc:txrpc-body-kryo", version.ref = "txrpc" }
 
 servlet-api = "javax.servlet:javax.servlet-api:3.1.0"
 jetty = "org.eclipse.jetty:jetty-servlet:9.4.56.v20240826"
