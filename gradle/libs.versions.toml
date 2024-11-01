@@ -14,6 +14,6 @@ txrpc-body-kryo   = { module = "io.github.osobolev.txrpc:txrpc-body-kryo", versi
 
 servlet-api = "javax.servlet:javax.servlet-api:3.1.0"
 jetty = "org.eclipse.jetty:jetty-servlet:9.4.56.v20240826"
-tomcat = "org.apache.tomcat.embed:tomcat-embed-core:9.0.95"
+tomcat = "org.apache.tomcat.embed:tomcat-embed-core:9.0.96"
 commons-compress = "org.apache.commons:commons-compress:1.27.1"
 xz = "org.tukaani:xz:1.10"
