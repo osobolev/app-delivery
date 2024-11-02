@@ -1,7 +1,7 @@
 def dest = "$rootDir/distr"
-def myVersion = "7.0"
-def sqlgVersion = "3.0"
-def txrpcVersion = "1.0"
+def myVersion = "8.1"
+def txrpcVersion = "2.1"
+def sqlgVersion = "3.1"
 def h2 = "com.h2database:h2:2.1.214"
 
 subprojects {
@@ -86,7 +86,7 @@ project(":sample_db") {
 project(":sample_client") {
     dependencies {
         compileOnly("io.github.osobolev.app-delivery:apploader-client:$myVersion")
-        implementation("io.github.osobolev.txrpc:txrpc-remote-client:$txrpcVersion")
+        implementation("io.github.osobolev.txrpc:txrpc-body-client:$txrpcVersion")
         implementation(project(":sample_dto"))
     }
 }
@@ -104,6 +104,7 @@ project(":sample_server_jar") {
     
     dependencies {
         implementation(project(":sample_server"))
+        implementation("io.github.osobolev.txrpc:txrpc-body-server:$txrpcVersion")
         implementation("io.github.osobolev.app-delivery:server-jetty:$myVersion")
     }
 
