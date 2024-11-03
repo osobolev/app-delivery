@@ -1,5 +1,5 @@
 [versions]
-txrpc = "2.1"
+txrpc = "2.2"
 
 [libraries]
 txrpc-server      = { module = "io.github.osobolev.txrpc:txrpc-remote-server", version.ref = "txrpc" }
