@@ -11,6 +11,9 @@ subprojects {
     version = myVersion
 
     java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
         sourceCompatibility = "8"
     }
 
