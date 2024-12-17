@@ -61,6 +61,8 @@ final class UrlDialog extends JDialog {
         butt.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
         add(butt, BorderLayout.SOUTH);
 
+        getRootPane().setDefaultButton(btnOk);
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
