@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "io.github.osobolev.app-delivery"
-version = "8.2"
+version = "8.3"
 
 if (project.name == "unix-unzip") {
     description = "Library for reading/restoring UNIX permissions of ZIP file entries";
