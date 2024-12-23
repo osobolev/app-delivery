@@ -1,6 +1,6 @@
 package server.core;
 
-import txrpc.remote.server.SessionFactory;
+import txrpc.runtime.SessionFactory;
 import txrpc.runtime.TxRpcGlobalContext;
 
 import java.util.Set;

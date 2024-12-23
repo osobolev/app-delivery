@@ -4,7 +4,7 @@ import apploader.common.Application;
 import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;
-import txrpc.remote.server.TxRpcLogger;
+import txrpc.runtime.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

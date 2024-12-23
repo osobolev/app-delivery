@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(libs.txrpc.server)
+    api(libs.txrpc.runtime)
 }

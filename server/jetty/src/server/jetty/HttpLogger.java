@@ -2,7 +2,7 @@ package server.jetty;
 
 import org.eclipse.jetty.util.log.AbstractLogger;
 import org.eclipse.jetty.util.log.Logger;
-import txrpc.remote.server.TxRpcLogger;
+import txrpc.runtime.TxRpcLogger;
 
 public final class HttpLogger extends AbstractLogger {
 

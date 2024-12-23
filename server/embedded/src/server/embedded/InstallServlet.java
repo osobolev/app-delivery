@@ -2,7 +2,7 @@ package server.embedded;
 
 import apploader.common.Application;
 import server.http.InstallServletBase;
-import txrpc.remote.server.TxRpcLogger;
+import txrpc.runtime.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import java.io.File;

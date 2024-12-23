@@ -1,6 +1,6 @@
 package server.core;
 
-import txrpc.remote.server.TxRpcLogger;
+import txrpc.runtime.TxRpcLogger;
 
 public interface AppLogger extends TxRpcLogger {
 

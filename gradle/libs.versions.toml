@@ -1,7 +1,8 @@
 [versions]
-txrpc = "2.2"
+txrpc = "2.3"
 
 [libraries]
+txrpc-runtime     = { module = "io.github.osobolev.txrpc:txrpc-runtime", version.ref = "txrpc" }
 txrpc-server      = { module = "io.github.osobolev.txrpc:txrpc-remote-server", version.ref = "txrpc" }
 txrpc-body-server = { module = "io.github.osobolev.txrpc:txrpc-body-server", version.ref = "txrpc" }
 
