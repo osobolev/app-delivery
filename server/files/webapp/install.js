@@ -90,9 +90,7 @@ function downloadInstallerFor(prof, percentId) {
                         waiting = false;
                         if (ok) {
                             var installUrl = "install" + profile;
-                            if (!window.open(installUrl)) {
-                                window.location.href = installUrl;
-                            }
+                            window.location.href = installUrl;
                         } else {
                             alert("Ошибка при создании установочного файла: " + error);
                         }
