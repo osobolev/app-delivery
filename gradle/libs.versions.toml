@@ -7,7 +7,7 @@ txrpc-server      = { module = "io.github.osobolev.txrpc:txrpc-remote-server", v
 txrpc-body-server = { module = "io.github.osobolev.txrpc:txrpc-body-server", version.ref = "txrpc" }
 
 servlet-api = "javax.servlet:javax.servlet-api:3.1.0"
-jetty = "org.eclipse.jetty:jetty-servlet:9.4.56.v20240826"
-tomcat = "org.apache.tomcat.embed:tomcat-embed-core:9.0.98"
+jetty = "org.eclipse.jetty:jetty-servlet:9.4.57.v20241219"
+tomcat = "org.apache.tomcat.embed:tomcat-embed-core:9.0.99"
 commons-compress = "org.apache.commons:commons-compress:1.27.1"
 xz = "org.tukaani:xz:1.10"
