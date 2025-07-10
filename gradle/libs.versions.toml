@@ -1,5 +1,5 @@
 [versions]
-txrpc = "2.4"
+txrpc = "2.6"
 
 [libraries]
 txrpc-runtime     = { module = "io.github.osobolev.txrpc:txrpc-runtime", version.ref = "txrpc" }
