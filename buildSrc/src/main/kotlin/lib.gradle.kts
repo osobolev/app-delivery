@@ -1,5 +1,9 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
 plugins {
     id("base-lib")
+    id("com.vanniktech.maven.publish")
 }
 
 group = "io.github.osobolev.app-delivery"
@@ -9,7 +13,18 @@ if (project.name == "unix-unzip") {
     description = "Library for reading/restoring UNIX permissions of ZIP file entries";
 }
 
-(publishing.publications["mavenJava"] as MavenPublication).pom {
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+
+    coordinates("${project.group}", "${project.name}", "${project.version}")
+    configure(JavaLibrary(
+        javadocJar = JavadocJar.Javadoc(),
+        sourcesJar = true
+    ))
+}
+
+mavenPublishing.pom {
     name.set("${project.group}:${project.name}")
     description.set(project.description ?: "Framework for delivering desktop application updates")
     url.set("https://github.com/osobolev/app-delivery")
