@@ -4,11 +4,14 @@ import apploader.common.ProxyConfig;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class ProxyDialog extends JDialog {
 
@@ -27,11 +30,13 @@ public final class ProxyDialog extends JDialog {
 
     private ProxyConfig resultProxy = null;
 
-    public ProxyDialog(Component owner, ProxyConfig proxy, ErrorShow error) {
-        this(owner, proxy, AppInfo.httpServerUrl, error);
+    public ProxyDialog(Component owner, ProxyConfig proxy,
+                       Consumer<Throwable> logError, ErrorShow error) {
+        this(owner, proxy, AppInfo.httpServerUrl, logError, error);
     }
 
-    public ProxyDialog(Component owner, ProxyConfig proxy, URL url, ErrorShow error) {
+    public ProxyDialog(Component owner, ProxyConfig proxy, URL url,
+                       Consumer<Throwable> logError, ErrorShow error) {
         super(owner == null ? null : SwingUtilities.getWindowAncestor(owner), "Настройки прокси", ModalityType.DOCUMENT_MODAL);
         this.error = error;
 
@@ -98,7 +103,7 @@ public final class ProxyDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 resultProxy = parseProxy();
                 if (resultProxy != null) {
-                    AppInfo.storeProxy(resultProxy);
+                    AppInfo.storeProxy(resultProxy, logError);
                     dispose();
                 }
             }

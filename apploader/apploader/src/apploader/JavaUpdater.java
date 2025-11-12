@@ -161,7 +161,7 @@ final class JavaUpdater {
             gui.showWarning("Обновлена Java, перезапустите приложение");
             return false;
         } catch (Exception ex) {
-            AppCommon.error(ex);
+            gui.logError(ex);
             return false;
         }
     }

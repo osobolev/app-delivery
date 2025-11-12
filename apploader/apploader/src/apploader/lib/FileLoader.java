@@ -187,7 +187,7 @@ public final class FileLoader extends IFileLoader {
                     }
                 } catch (IOException ex) {
                     if (!noTrace) {
-                        AppCommon.error(ex);
+                        gui.logError(ex);
                         if (ex instanceof ConnectException) {
                             connectionProblem = true;
                         }
@@ -269,7 +269,7 @@ public final class FileLoader extends IFileLoader {
                 try {
                     return loadApplicationsAttempt(file);
                 } catch (IOException ex) {
-                    AppCommon.error(ex);
+                    gui.logError(ex);
                     if (ex instanceof ConnectException) {
                         connectionProblem = true;
                     }

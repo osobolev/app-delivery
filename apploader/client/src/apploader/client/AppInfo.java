@@ -1,6 +1,5 @@
 package apploader.client;
 
-import apploader.common.AppCommon;
 import apploader.common.Application;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
@@ -13,6 +12,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 public final class AppInfo {
 
@@ -89,7 +89,7 @@ public final class AppInfo {
         }
     }
 
-    static void storeProxy(ProxyConfig proxy) {
+    static void storeProxy(ProxyConfig proxy, Consumer<Throwable> logError) {
         File file = new File(PROXY_PROPERTIES);
         try (PrintWriter pw = new PrintWriter(file, ConfigReader.CHARSET)) {
             if (proxy.proxy.type() != Proxy.Type.DIRECT) {
@@ -99,7 +99,7 @@ public final class AppInfo {
                 pw.println(PPASS_PROPERTY + "=" + proxy.password);
             }
         } catch (IOException ex) {
-            AppCommon.error(ex);
+            logError.accept(ex);
         }
     }
 }

@@ -24,6 +24,11 @@ final class LoaderGui implements ILoaderGui {
     private boolean lnfSet = false;
 
     @Override
+    public void logError(Throwable error) {
+        error.printStackTrace(System.err);
+    }
+
+    @Override
     public void showStatus(String status) {
         SplashStatus.setStatus(status);
     }
@@ -172,7 +177,7 @@ final class LoaderGui implements ILoaderGui {
 
     void showProxyDialog(Component owner, ProxyConfig proxy, URL url, FileLoader loader) {
         setLnF();
-        ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, this::doShowError);
+        ProxyDialog pdlg = new ProxyDialog(owner, proxy, url, this::logError, this::doShowError);
         ProxyConfig newProxy = pdlg.getProxy();
         if (newProxy != null && loader != null) {
             loader.setProxy(newProxy);
@@ -185,7 +190,7 @@ final class LoaderGui implements ILoaderGui {
 
     public URL askUrl(ProxyConfig proxy) {
         setLnF();
-        UrlDialog udlg = new UrlDialog(null, proxy, this::doShowError);
+        UrlDialog udlg = new UrlDialog(null, proxy, this::logError, this::doShowError);
         return udlg.getURL();
     }
 

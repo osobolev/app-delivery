@@ -74,7 +74,7 @@ final class TZUpdater {
             }
             success = ok;
         } catch (Exception ex) {
-            AppCommon.error(ex);
+            gui.logError(ex);
         }
         if (!success) {
             successFile.delete();

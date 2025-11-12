@@ -1,14 +1,16 @@
 package apploader;
 
-import apploader.common.AppCommon;
 import apploader.common.ProxyConfig;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.function.Consumer;
 
 final class UrlDialog extends JDialog {
 
@@ -18,14 +20,16 @@ final class UrlDialog extends JDialog {
     }
 
     private final ProxyConfig proxy;
+    private final Consumer<Throwable> logError;
     private final ErrorShow error;
     private final JTextField tfUrl = new JTextField(30);
 
     private URL resultURL = null;
 
-    UrlDialog(Component owner, ProxyConfig proxy, ErrorShow error) {
+    UrlDialog(Component owner, ProxyConfig proxy, Consumer<Throwable> logError, ErrorShow error) {
         super(owner == null ? null : SwingUtilities.getWindowAncestor(owner), "Адрес сервера", ModalityType.DOCUMENT_MODAL);
         this.proxy = proxy;
+        this.logError = logError;
         this.error = error;
 
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close");
@@ -81,7 +85,7 @@ final class UrlDialog extends JDialog {
         try {
             return HeadlessGui.checkURL(proxy, urlStr);
         } catch (Exception ex) {
-            AppCommon.error(ex);
+            logError.accept(ex);
             showError("Введите корректный адрес сервера");
             return null;
         }

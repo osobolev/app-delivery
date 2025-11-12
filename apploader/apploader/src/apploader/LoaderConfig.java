@@ -1,7 +1,6 @@
 package apploader;
 
 import apploader.client.AppInfo;
-import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
 import apploader.lib.ILoaderGui;
@@ -38,7 +37,7 @@ final class LoaderConfig {
         try {
             httpUrl = ConfigReader.getServerUrl(apploaderProperties);
         } catch (IOException ex) {
-            AppCommon.error(ex);
+            gui.logError(ex);
             gui.showError(ex.getMessage());
             return null;
         }
@@ -52,7 +51,7 @@ final class LoaderConfig {
                 try {
                     ConfigReader.writeAppProperties(appProperties, httpUrl.toString());
                 } catch (Exception ex) {
-                    AppCommon.error(ex);
+                    gui.logError(ex);
                 }
             }
         }

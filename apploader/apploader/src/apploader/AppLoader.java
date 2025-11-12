@@ -46,14 +46,14 @@ public final class AppLoader implements AppInfo.AppClassLoader {
         return buf.toString();
     }
 
-    private static void generateBatFile(String app) {
+    private void generateBatFile(String app) {
         if (AppCommon.isWindows()) {
             File batFile = new File(app + "-client.bat");
             if (!batFile.exists()) {
                 try {
                     AppCommon.generateBatFile(batFile, app);
                 } catch (IOException ex) {
-                    AppCommon.error(ex);
+                    gui.logError(ex);
                 }
             }
         } else {
@@ -62,7 +62,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 try {
                     AppCommon.generateShellFile(shellFile, app);
                 } catch (IOException ex) {
-                    AppCommon.error(ex);
+                    gui.logError(ex);
                 }
             }
         }
@@ -148,7 +148,7 @@ public final class AppLoader implements AppInfo.AppClassLoader {
                 return false;
             }
         } catch (Exception ex) {
-            AppCommon.error(ex);
+            gui.logError(ex);
             gui.showError(ex.toString());
             return false;
         }

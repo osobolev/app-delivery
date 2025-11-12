@@ -6,6 +6,8 @@ import java.net.URL;
 
 public interface ILoaderGui {
 
+    void logError(Throwable error);
+
     void showStatus(String status);
 
     void showSuccess(String message);
