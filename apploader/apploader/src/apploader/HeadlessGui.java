@@ -1,5 +1,6 @@
 package apploader;
 
+import apploader.common.AppCommon;
 import apploader.common.AppStreamUtils;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
@@ -113,7 +114,7 @@ final class HeadlessGui implements ILoaderGui {
     }
 
     static URL checkURL(ProxyConfig proxy, String urlStr) throws Exception {
-        URL serverUrl = ConfigReader.toServerUrl(urlStr.trim());
+        URL serverUrl = ConfigReader.toServerUrl(urlStr.trim(), AppCommon.GLOBAL_APP_LIST);
         URLConnection conn = serverUrl.openConnection(proxy.proxy);
         try (InputStream is = conn.getInputStream()) {
             OutputStream consume = new OutputStream() {

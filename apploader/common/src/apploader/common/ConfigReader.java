@@ -91,7 +91,7 @@ public final class ConfigReader {
         }
     }
 
-    public static URL toServerUrl(String serverUrl) throws IOException {
+    public static URL toServerUrl(String serverUrl, String path) throws IOException {
         if (serverUrl == null)
             return null;
         String pre;
@@ -107,7 +107,11 @@ public final class ConfigReader {
             post = "";
         }
         try {
-            return new URI(pre + serverUrl + post).toURL();
+            URI uri = new URI(pre + serverUrl + post);
+            if (path != null) {
+                uri = uri.resolve(path);
+            }
+            return uri.toURL();
         } catch (URISyntaxException ex) {
             throw new MalformedURLException(ex.getMessage());
         }
@@ -115,6 +119,6 @@ public final class ConfigReader {
 
     public static URL getServerUrl(Properties properties) throws IOException {
         String serverUrl = properties.getProperty(HTTP_SERVER_PROPERTY);
-        return toServerUrl(serverUrl);
+        return toServerUrl(serverUrl, null);
     }
 }
