@@ -3,6 +3,7 @@ package apploader;
 import apploader.client.AppInfo;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
+import apploader.lib.HttpInteraction;
 import apploader.lib.ILoaderGui;
 
 import java.io.File;
@@ -46,7 +47,7 @@ final class LoaderConfig {
         proxy.setLogin();
 
         if (httpUrl == null) {
-            httpUrl = gui.askUrl(proxy);
+            httpUrl = gui.askUrl(new HttpInteraction(proxy));
             if (httpUrl != null) {
                 try {
                     ConfigReader.writeAppProperties(appProperties, httpUrl.toString());

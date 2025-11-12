@@ -7,14 +7,28 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-public final class HttpUtil {
+public final class HttpInteraction {
 
     public interface HttpHandler<T> {
 
         T handle(URLConnection conns) throws IOException;
     }
 
-    public static <T> T interact(URL url, ProxyConfig proxy, HttpHandler<T> handler) throws IOException {
+    private ProxyConfig proxy;
+
+    public HttpInteraction(ProxyConfig proxy) {
+        this.proxy = proxy;
+    }
+
+    public ProxyConfig getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(ProxyConfig proxy) {
+        this.proxy = proxy;
+    }
+
+    public <T> T interact(URL url, HttpHandler<T> handler) throws IOException {
         URLConnection conn = url.openConnection(proxy.proxy);
         try {
             return handler.handle(conn);

@@ -1,6 +1,6 @@
 package apploader;
 
-import apploader.common.ProxyConfig;
+import apploader.lib.HttpInteraction;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
@@ -19,16 +19,16 @@ final class UrlDialog extends JDialog {
         void showError(Component owner, String message);
     }
 
-    private final ProxyConfig proxy;
+    private final HttpInteraction http;
     private final Consumer<Throwable> logError;
     private final ErrorShow error;
     private final JTextField tfUrl = new JTextField(30);
 
     private URL resultURL = null;
 
-    UrlDialog(Component owner, ProxyConfig proxy, Consumer<Throwable> logError, ErrorShow error) {
+    UrlDialog(Component owner, HttpInteraction http, Consumer<Throwable> logError, ErrorShow error) {
         super(owner == null ? null : SwingUtilities.getWindowAncestor(owner), "Адрес сервера", ModalityType.DOCUMENT_MODAL);
-        this.proxy = proxy;
+        this.http = http;
         this.logError = logError;
         this.error = error;
 
@@ -83,7 +83,7 @@ final class UrlDialog extends JDialog {
             return null;
         }
         try {
-            return HeadlessGui.checkURL(proxy, urlStr);
+            return HeadlessGui.checkURL(http, urlStr);
         } catch (Exception ex) {
             logError.accept(ex);
             showError("Введите корректный адрес сервера");

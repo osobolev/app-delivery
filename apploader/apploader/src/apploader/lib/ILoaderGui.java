@@ -35,5 +35,5 @@ public interface ILoaderGui {
 
     void showProxyDialog(ProxyConfig proxy, URL url, FileLoader loader);
 
-    URL askUrl(ProxyConfig proxy);
+    URL askUrl(HttpInteraction http);
 }

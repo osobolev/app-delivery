@@ -20,7 +20,7 @@ public final class FileLoader extends IFileLoader {
     private final File root;
 
     private boolean doNotShow;
-    private ProxyConfig proxy;
+    private final HttpInteraction http;
     private boolean connectionProblem = false;
 
     public FileLoader(ILoaderGui gui, URL base, File root, boolean doNotShow, ProxyConfig proxy) {
@@ -28,7 +28,7 @@ public final class FileLoader extends IFileLoader {
         this.base = base;
         this.root = root;
         this.doNotShow = doNotShow;
-        this.proxy = proxy;
+        this.http = new HttpInteraction(proxy);
     }
 
     public void setDoNotShow(boolean doNotShow) {
@@ -36,11 +36,11 @@ public final class FileLoader extends IFileLoader {
     }
 
     public ProxyConfig getProxy() {
-        return proxy;
+        return http.getProxy();
     }
 
     public void setProxy(ProxyConfig proxy) {
-        this.proxy = proxy;
+        http.setProxy(proxy);
         proxy.setLogin();
     }
 
@@ -80,7 +80,7 @@ public final class FileLoader extends IFileLoader {
             }
             return head;
         }
-        return HttpUtil.interact(url, proxy, urlConn -> {
+        return http.interact(url, urlConn -> {
             HttpURLConnection conn = (HttpURLConnection) urlConn;
             conn.setRequestMethod("HEAD");
             conn.connect();
@@ -102,7 +102,7 @@ public final class FileLoader extends IFileLoader {
     }
 
     private void transferFile(URL url, File to, HeadResult head) throws IOException {
-        HttpUtil.interact(url, proxy, conn -> {
+        http.interact(url, conn -> {
             conn.connect();
             to.delete();
             try (InputStream in = conn.getInputStream();
@@ -218,7 +218,7 @@ public final class FileLoader extends IFileLoader {
     }
 
     private List<Application> transferApplications(URL url) throws IOException {
-        return HttpUtil.interact(url, proxy, conn -> {
+        return http.interact(url, conn -> {
             try (InputStream in = conn.getInputStream()) {
                 List<Application> applications = new ArrayList<>();
                 ConfigReader.readConfig(in, (left, right) -> {

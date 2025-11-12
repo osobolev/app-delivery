@@ -5,7 +5,7 @@ import apploader.common.AppStreamUtils;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
 import apploader.lib.FileLoader;
-import apploader.lib.HttpUtil;
+import apploader.lib.HttpInteraction;
 import apploader.lib.ILoaderGui;
 import apploader.lib.Result;
 
@@ -108,9 +108,9 @@ final class HeadlessGui implements ILoaderGui {
         System.err.println("Proxy configuration not supported in headless mode");
     }
 
-    static URL checkURL(ProxyConfig proxy, String urlStr) throws IOException {
+    static URL checkURL(HttpInteraction http, String urlStr) throws IOException {
         URL serverUrl = ConfigReader.toServerUrl(urlStr.trim(), AppCommon.GLOBAL_APP_LIST);
-        return HttpUtil.interact(serverUrl, proxy, conn -> {
+        return http.interact(serverUrl, conn -> {
             try (InputStream is = conn.getInputStream()) {
                 OutputStream consume = new OutputStream() {
 
@@ -128,7 +128,7 @@ final class HeadlessGui implements ILoaderGui {
         });
     }
 
-    public URL askUrl(ProxyConfig proxy) {
+    public URL askUrl(HttpInteraction http) {
         while (true) {
             System.out.print("Enter server URL: ");
             String line = readLine();
@@ -138,7 +138,7 @@ final class HeadlessGui implements ILoaderGui {
             if (urlStr.isEmpty())
                 return null;
             try {
-                return checkURL(proxy, urlStr);
+                return checkURL(http, urlStr);
             } catch (Exception ex) {
                 System.out.println("Error: " + ex);
             }

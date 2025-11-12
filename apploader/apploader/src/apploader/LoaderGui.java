@@ -4,6 +4,7 @@ import apploader.client.ProxyDialog;
 import apploader.client.SplashStatus;
 import apploader.common.ProxyConfig;
 import apploader.lib.FileLoader;
+import apploader.lib.HttpInteraction;
 import apploader.lib.ILoaderGui;
 import apploader.lib.Result;
 
@@ -186,9 +187,9 @@ final class LoaderGui implements ILoaderGui {
         showProxyDialog(null, proxy, url, loader);
     }
 
-    public URL askUrl(ProxyConfig proxy) {
+    public URL askUrl(HttpInteraction http) {
         setLnF();
-        UrlDialog udlg = new UrlDialog(null, proxy, this::logError, this::doShowError);
+        UrlDialog udlg = new UrlDialog(null, http, this::logError, this::doShowError);
         return udlg.getURL();
     }
 
