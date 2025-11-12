@@ -5,13 +5,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class BuildInfo {
 
-    private final Consumer<String> logger;
+    private final InstallLogger logger;
     /**
      * Папка с исходными файлами для инсталлятора (корневая папка веб-приложения)
      */
@@ -23,7 +22,7 @@ public final class BuildInfo {
     public final List<String> apps;
     private final Properties profileProps;
 
-    public BuildInfo(Consumer<String> logger, File root, File buildDir, List<String> apps, Properties profileProps) {
+    public BuildInfo(InstallLogger logger, File root, File buildDir, List<String> apps, Properties profileProps) {
         this.logger = logger;
         this.root = root;
         this.buildDir = buildDir;
@@ -109,6 +108,6 @@ public final class BuildInfo {
     }
 
     public void log(String message) {
-        logger.accept(message);
+        logger.trace(message);
     }
 }

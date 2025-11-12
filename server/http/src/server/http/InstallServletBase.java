@@ -1,10 +1,10 @@
 package server.http;
 
 import apploader.common.Application;
+import server.core.AppLogger;
 import server.install.BuildException;
 import server.install.IOUtils;
 import server.install.InstallBuilder;
-import txrpc.runtime.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -50,7 +50,7 @@ public abstract class InstallServletBase extends AppServletBase {
                 url = req.getScheme() + "://" + req.getLocalName() + ":" + req.getLocalPort() + "/";
             }
             InstallBuilder builder = InstallBuilder.create(
-                root, apps, profile, url, getLogger()::trace
+                root, apps, profile, url, getLogger()
             );
             state = new InstallState(builder);
             map.put(profile, state);
@@ -91,5 +91,5 @@ public abstract class InstallServletBase extends AppServletBase {
         }
     }
 
-    protected abstract TxRpcLogger getLogger();
+    protected abstract AppLogger getLogger();
 }

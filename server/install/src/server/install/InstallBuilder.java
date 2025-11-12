@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Consumer;
 
 public final class InstallBuilder {
 
@@ -17,10 +16,10 @@ public final class InstallBuilder {
 
     private final List<String> apps;
     private final Properties profileProps;
-    private final Consumer<String> logger;
+    private final InstallLogger logger;
     private final PercentCell percentCell;
 
-    private InstallBuilder(SourceFiles src, List<String> apps, Properties profileProps, Consumer<String> logger) {
+    private InstallBuilder(SourceFiles src, List<String> apps, Properties profileProps, InstallLogger logger) {
         this.root = src.root;
         this.baseDir = src.baseDir;
         this.buildDir = new File(baseDir, "install");
@@ -34,7 +33,7 @@ public final class InstallBuilder {
         this.percentCell = new PercentCell(logger);
     }
 
-    public static InstallBuilder create(File root, List<String> apps, String profileStr, String url, Consumer<String> logger) {
+    public static InstallBuilder create(File root, List<String> apps, String profileStr, String url, InstallLogger logger) {
         Profile profile = Profile.create(profileStr);
         Properties profileProps = profile.loadProfileProps(root);
         SourceFiles src = new SourceFiles(root, apps, profile, url, profileProps);
@@ -100,9 +99,9 @@ public final class InstallBuilder {
         BuildInfo info = new BuildInfo(logger, root, buildDir, apps, profileProps);
         for (Packer packer : packers) {
             File result = getResultFile(packer);
-            logger.accept("Trying packer " + packer.getClass().getSimpleName());
+            logger.trace("Trying packer " + packer.getClass().getSimpleName());
             if (packer.buildResultFile(info, percentCell, countFiles, result)) {
-                logger.accept("Packer success");
+                logger.trace("Packer success");
                 percentCell.setPercent(100);
                 return result;
             }

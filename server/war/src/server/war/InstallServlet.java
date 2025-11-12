@@ -1,8 +1,8 @@
 package server.war;
 
 import apploader.common.Application;
+import server.core.AppLogger;
 import server.http.InstallServletBase;
-import txrpc.runtime.TxRpcLogger;
 
 import javax.servlet.ServletConfig;
 import java.io.File;
@@ -22,7 +22,7 @@ public class InstallServlet extends InstallServletBase {
         return SingleUtil.getApplications(config);
     }
 
-    protected TxRpcLogger getLogger() {
+    protected AppLogger getLogger() {
         return InitListener.getLogger(getServletContext());
     }
 }
