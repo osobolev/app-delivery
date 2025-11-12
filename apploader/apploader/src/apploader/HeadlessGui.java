@@ -5,15 +5,15 @@ import apploader.common.AppStreamUtils;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
 import apploader.lib.FileLoader;
+import apploader.lib.HttpUtil;
 import apploader.lib.ILoaderGui;
 import apploader.lib.Result;
 
 import java.io.Console;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Scanner;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -108,27 +108,24 @@ final class HeadlessGui implements ILoaderGui {
         System.err.println("Proxy configuration not supported in headless mode");
     }
 
-    static URL checkURL(ProxyConfig proxy, String urlStr) throws Exception {
+    static URL checkURL(ProxyConfig proxy, String urlStr) throws IOException {
         URL serverUrl = ConfigReader.toServerUrl(urlStr.trim(), AppCommon.GLOBAL_APP_LIST);
-        URLConnection conn = serverUrl.openConnection(proxy.proxy);
-        try (InputStream is = conn.getInputStream()) {
-            OutputStream consume = new OutputStream() {
+        return HttpUtil.interact(serverUrl, proxy, conn -> {
+            try (InputStream is = conn.getInputStream()) {
+                OutputStream consume = new OutputStream() {
 
-                @Override
-                public void write(int b) {
-                }
+                    @Override
+                    public void write(int b) {
+                    }
 
-                @Override
-                public void write(byte[] b, int off, int len) {
-                }
-            };
-            AppStreamUtils.copyStream(is, consume, -1);
-        } finally {
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).disconnect();
+                    @Override
+                    public void write(byte[] b, int off, int len) {
+                    }
+                };
+                AppStreamUtils.copyStream(is, consume, -1);
             }
-        }
-        return serverUrl;
+            return serverUrl;
+        });
     }
 
     public URL askUrl(ProxyConfig proxy) {

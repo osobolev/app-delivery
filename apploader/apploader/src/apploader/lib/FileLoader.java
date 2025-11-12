@@ -80,9 +80,8 @@ public final class FileLoader extends IFileLoader {
             }
             return head;
         }
-        HttpURLConnection conn = null;
-        try {
-            conn = (HttpURLConnection) url.openConnection(proxy.proxy);
+        return HttpUtil.interact(url, proxy, urlConn -> {
+            HttpURLConnection conn = (HttpURLConnection) urlConn;
             conn.setRequestMethod("HEAD");
             conn.connect();
             int code = conn.getResponseCode();
@@ -99,17 +98,11 @@ public final class FileLoader extends IFileLoader {
                     throw new IOException("Ошибка " + code);
                 }
             }
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
+        });
     }
 
     private void transferFile(URL url, File to, HeadResult head) throws IOException {
-        URLConnection conn = null;
-        try {
-            conn = url.openConnection(proxy.proxy);
+        HttpUtil.interact(url, proxy, conn -> {
             conn.connect();
             to.delete();
             try (InputStream in = conn.getInputStream();
@@ -117,11 +110,8 @@ public final class FileLoader extends IFileLoader {
                 AppStreamUtils.copyStream(in, out, head.length);
             }
             to.setLastModified(head.lastModified);
-        } finally {
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).disconnect();
-            }
-        }
+            return null;
+        });
     }
 
     private URL url(String file) throws MalformedURLException {
@@ -228,10 +218,7 @@ public final class FileLoader extends IFileLoader {
     }
 
     private List<Application> transferApplications(URL url) throws IOException {
-        URLConnection conn = null;
-        try {
-            conn = url.openConnection(proxy.proxy);
-            conn.connect();
+        return HttpUtil.interact(url, proxy, conn -> {
             try (InputStream in = conn.getInputStream()) {
                 List<Application> applications = new ArrayList<>();
                 ConfigReader.readConfig(in, (left, right) -> {
@@ -240,11 +227,7 @@ public final class FileLoader extends IFileLoader {
                 });
                 return applications;
             }
-        } finally {
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).disconnect();
-            }
-        }
+        });
     }
 
     private List<Application> loadApplicationsAttempt(String file) throws IOException {
