@@ -25,7 +25,7 @@ final class LoaderConfig {
     static LoaderConfig load(ILoaderGui gui) {
         Properties apploaderProperties = new Properties();
         File appProperties = ConfigReader.getAppProperties(new File("."));
-        ConfigReader.readProperties(apploaderProperties, appProperties);
+        ConfigReader.readProperties(apploaderProperties, appProperties, gui::logError);
         String ignoreWarningsProp = "ignore.warnings";
         String ignoreWarnings = System.getProperty(ignoreWarningsProp);
         if (ignoreWarnings == null) {
@@ -42,7 +42,7 @@ final class LoaderConfig {
             return null;
         }
 
-        ProxyConfig proxy = AppInfo.loadProxy();
+        ProxyConfig proxy = AppInfo.loadProxy(gui::logError);
         proxy.setLogin();
 
         if (httpUrl == null) {

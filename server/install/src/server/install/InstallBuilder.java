@@ -35,7 +35,7 @@ public final class InstallBuilder {
 
     public static InstallBuilder create(File root, List<String> apps, String profileStr, String url, InstallLogger logger) {
         Profile profile = Profile.create(profileStr);
-        Properties profileProps = profile.loadProfileProps(root);
+        Properties profileProps = profile.loadProfileProps(logger, root);
         SourceFiles src = new SourceFiles(root, apps, profile, url, profileProps);
         return new InstallBuilder(src, apps, profileProps, logger);
     }

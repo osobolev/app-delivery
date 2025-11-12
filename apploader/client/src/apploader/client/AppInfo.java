@@ -63,9 +63,9 @@ public final class AppInfo {
     private static final String PUSER_PROPERTY = "ProxyLogin";
     private static final String PPASS_PROPERTY = "ProxyPassword";
 
-    public static ProxyConfig loadProxy() {
+    public static ProxyConfig loadProxy(Consumer<Throwable> logError) {
         Properties props = new Properties();
-        ConfigReader.readProperties(props, new File(PROXY_PROPERTIES));
+        ConfigReader.readProperties(props, new File(PROXY_PROPERTIES), logError);
         String ptype = props.getProperty(PTYPE_PROPERTY);
         String paddr = props.getProperty(PADDR_PROPERTY);
         if (ptype != null && paddr != null) {

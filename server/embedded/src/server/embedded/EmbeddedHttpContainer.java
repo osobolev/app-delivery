@@ -134,7 +134,7 @@ public final class EmbeddedHttpContainer {
         if (maybePort != null && maybeContext != null)
             return new PortAndContext(maybePort.intValue(), maybeContext);
         Properties props = new Properties();
-        ConfigReader.readAppProperties(rootDir, props);
+        ConfigReader.readAppProperties(rootDir, props, mainLogger::error);
         URL serverUrl = null;
         try {
             serverUrl = ConfigReader.getServerUrl(props);

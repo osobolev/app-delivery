@@ -34,24 +34,24 @@ final class Profile {
         return null;
     }
 
-    private static Properties loadProps(File root, String profileName) {
+    private static Properties loadProps(InstallLogger logger, File root, String profileName) {
         Properties props = new Properties();
         File propFile = getPropFile(root, profileName, "install");
         if (propFile != null) {
-            ConfigReader.readProperties(props, propFile);
+            ConfigReader.readProperties(props, propFile, logger::error);
         }
         return props;
     }
 
-    Properties loadProfileProps(File root) {
+    Properties loadProfileProps(InstallLogger logger, File root) {
         // Loading install.properties:
-        Properties installProps = loadProps(root, null);
+        Properties installProps = loadProps(logger, root, null);
         if (name != null) {
             // Override install.properties only if there is a  profile
             Properties profileProps = new Properties();
             profileProps.putAll(installProps);
             // Loading install_<profile>.properties:
-            Properties props = loadProps(root, name);
+            Properties props = loadProps(logger, root, name);
             for (String name : props.stringPropertyNames()) {
                 String value = props.getProperty(name);
                 if (value == null || value.trim().isEmpty()) {

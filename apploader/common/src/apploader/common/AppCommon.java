@@ -63,11 +63,6 @@ public final class AppCommon {
         });
     }
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    public static void error(Throwable ex) {
-        ex.printStackTrace(System.err);
-    }
-
     public static URL resolve(URL base, String file) throws MalformedURLException {
         try {
             return base.toURI().resolve(file).toURL();

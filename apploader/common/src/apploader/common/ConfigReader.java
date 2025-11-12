@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Properties;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public final class ConfigReader {
@@ -63,7 +64,7 @@ public final class ConfigReader {
         return true;
     }
 
-    public static void readProperties(Properties props, File file) {
+    public static void readProperties(Properties props, File file, Consumer<Throwable> logError) {
         try {
             if (!file.exists())
                 return;
@@ -72,7 +73,7 @@ public final class ConfigReader {
                 return true;
             });
         } catch (IOException ex) {
-            AppCommon.error(ex);
+            logError.accept(ex);
         }
     }
 
@@ -80,8 +81,8 @@ public final class ConfigReader {
         return new File(dir, APPLOADER_PROPERTIES);
     }
 
-    public static void readAppProperties(File dir, Properties props) {
-        readProperties(props, getAppProperties(dir));
+    public static void readAppProperties(File dir, Properties props, Consumer<Throwable> logError) {
+        readProperties(props, getAppProperties(dir), logError);
     }
 
     public static void writeAppProperties(File file, String url) throws IOException {
