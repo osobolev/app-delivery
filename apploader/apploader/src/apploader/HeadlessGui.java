@@ -10,6 +10,7 @@ import apploader.lib.Result;
 import java.io.Console;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
@@ -126,6 +127,10 @@ final class HeadlessGui implements ILoaderGui {
                 }
             };
             AppStreamUtils.copyStream(is, consume, -1);
+        } finally {
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).disconnect();
+            }
         }
         return serverUrl;
     }
