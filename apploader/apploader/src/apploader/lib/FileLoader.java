@@ -23,12 +23,12 @@ public final class FileLoader extends IFileLoader {
     private final HttpInteraction http;
     private boolean connectionProblem = false;
 
-    public FileLoader(ILoaderGui gui, URL base, File root, boolean doNotShow, ProxyConfig proxy) {
+    public FileLoader(ILoaderGui gui, URL base, File root, boolean doNotShow, HttpInteraction http) {
         this.gui = gui;
         this.base = base;
         this.root = root;
         this.doNotShow = doNotShow;
-        this.http = new HttpInteraction(proxy);
+        this.http = http;
     }
 
     public void setDoNotShow(boolean doNotShow) {

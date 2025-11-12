@@ -166,14 +166,14 @@ public final class AppLoader implements AppInfo.AppClassLoader {
             if (config == null)
                 return false;
             if ("proxyConfig".equals(app)) {
-                gui.showProxyDialog(config.proxy, config.httpUrl, null);
+                gui.showProxyDialog(config.http.getProxy(), config.httpUrl, null);
                 System.exit(0);
                 return true;
             } else if (config.httpUrl == null) {
                 gui.showError("Не задан адрес сервера");
                 return false;
             }
-            fileLoader = new FileLoader(gui, config.httpUrl, null, config.doNotShow, config.proxy);
+            fileLoader = new FileLoader(gui, config.httpUrl, null, config.doNotShow, config.http);
             AppInfo.httpServerUrl = config.httpUrl;
         }
         AppLoader loader = new AppLoader(gui, fileLoader, offline);

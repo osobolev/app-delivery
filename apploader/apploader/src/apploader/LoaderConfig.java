@@ -15,12 +15,12 @@ final class LoaderConfig {
 
     final URL httpUrl;
     final boolean doNotShow;
-    final ProxyConfig proxy;
+    final HttpInteraction http;
 
-    private LoaderConfig(URL httpUrl, boolean doNotShow, ProxyConfig proxy) {
+    private LoaderConfig(URL httpUrl, boolean doNotShow, HttpInteraction http) {
         this.httpUrl = httpUrl;
         this.doNotShow = doNotShow;
-        this.proxy = proxy;
+        this.http = http;
     }
 
     static LoaderConfig load(ILoaderGui gui) {
@@ -45,9 +45,10 @@ final class LoaderConfig {
 
         ProxyConfig proxy = AppInfo.loadProxy(gui::logError);
         proxy.setLogin();
+        HttpInteraction http = new HttpInteraction(proxy);
 
         if (httpUrl == null) {
-            httpUrl = gui.askUrl(new HttpInteraction(proxy));
+            httpUrl = gui.askUrl(http);
             if (httpUrl != null) {
                 try {
                     ConfigReader.writeAppProperties(appProperties, httpUrl.toString());
@@ -57,6 +58,6 @@ final class LoaderConfig {
             }
         }
 
-        return new LoaderConfig(httpUrl, doNotShow, proxy);
+        return new LoaderConfig(httpUrl, doNotShow, http);
     }
 }
