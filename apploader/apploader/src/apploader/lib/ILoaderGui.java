@@ -1,12 +1,23 @@
 package apploader.lib;
 
+import apploader.common.LogFormatUtil;
 import apploader.common.ProxyConfig;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 
 public interface ILoaderGui {
 
-    void logError(Throwable error);
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    default void logError(Throwable error) {
+        try (PrintWriter pw = LogFormatUtil.openRaw("apploader.log")) {
+            LogFormatUtil.printStackTrace(pw, error);
+        } catch (IOException ex) {
+            // ignore
+        }
+        error.printStackTrace(System.err);
+    }
 
     void showStatus(String status);
 

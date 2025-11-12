@@ -21,10 +21,14 @@ public final class LogFormatUtil {
         return new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
     }
 
+    public static PrintWriter openRaw(String fileName) throws IOException {
+        return pw(new BufferedOutputStream(new FileOutputStream(fileName, true)));
+    }
+
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static PrintWriter open(String fileName, String startMessage) {
         try {
-            PrintWriter fileOutput = pw(new BufferedOutputStream(new FileOutputStream(fileName, true)));
+            PrintWriter fileOutput = openRaw(fileName);
             start(fileOutput, startMessage);
             return fileOutput;
         } catch (IOException ex) {

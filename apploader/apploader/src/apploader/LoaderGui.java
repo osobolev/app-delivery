@@ -9,7 +9,10 @@ import apploader.lib.Result;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -22,11 +25,6 @@ final class LoaderGui implements ILoaderGui {
     private static final String ERROR = "Ошибка";
 
     private boolean lnfSet = false;
-
-    @Override
-    public void logError(Throwable error) {
-        error.printStackTrace(System.err);
-    }
 
     @Override
     public void showStatus(String status) {

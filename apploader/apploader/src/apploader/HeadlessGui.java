@@ -23,11 +23,6 @@ final class HeadlessGui implements ILoaderGui {
     private static final String ERROR = "Ошибка";
 
     @Override
-    public void logError(Throwable error) {
-        error.printStackTrace(System.err);
-    }
-
-    @Override
     public void showStatus(String status) {
         if (!status.isEmpty()) {
             System.out.println(status);
