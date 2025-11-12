@@ -16,7 +16,6 @@ add("apploader-common", "apploader/common")
 add("apploader-client", "apploader/client")
 add("apploader", "apploader/apploader")
 
-add("server-core", "server/core")
 add("server-install", "server/install")
 add("server-http", "server/http")
 add("server-embedded", "server/embedded")
