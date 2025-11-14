@@ -26,6 +26,7 @@ final class SourceFiles {
         boolean windowsClient = profile.isWindows(profileProps);
 
         addRequired("apploader.jar");
+        addIfExists(AppCommon.HTTPS_CERT);
         if (windowsClient) {
             addRequired("checknew.bat");
             addRequired("proxy-config.bat");

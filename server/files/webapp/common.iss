@@ -35,6 +35,7 @@ Source: setjava.bat; DestDir: {app};
 Source: apploader.jar; DestDir: {app};
 Source: apploader.properties; DestDir: {app};
 Source: proxy.properties; DestDir: {app}; Flags: skipifsourcedoesntexist
+Source: https.crt; DestDir: {app}; Flags: skipifsourcedoesntexist
 Source: "{#apId}_splash.jpg"; DestDir: {app}; Flags: skipifsourcedoesntexist
 Source: "{#apId}.ico"; DestDir: {app}; Flags: skipifsourcedoesntexist
 Source: "uninst_{#apId}.ico"; DestDir: {app}; Flags: skipifsourcedoesntexist
