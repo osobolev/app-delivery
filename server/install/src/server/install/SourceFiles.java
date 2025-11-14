@@ -1,5 +1,7 @@
 package server.install;
 
+import apploader.common.AppCommon;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ final class SourceFiles {
                 root, app + "-client", windowsClient,
                 name -> new ClientLauncherResource(name, app, windowsClient)
             ));
-            addIfExists(app + "_splash.jpg");
+            addIfExists(AppCommon.getSplashName(app));
         }
 
         this.javaSource = JavaSource.create(root, profileProps);
