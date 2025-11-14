@@ -16,7 +16,7 @@ public final class PercentCell {
         if (newPercent > oldPercent) {
             int percent = Math.min(newPercent, 100);
             percentCell.set(percent);
-            logger.trace(percent + "%");
+            logger.traceProgress(percent + "%");
         }
     }
 
