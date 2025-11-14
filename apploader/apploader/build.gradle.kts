@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":apploader-client"))
+    compileOnly(project(":apploader-ssl"))
 }
 
 tasks.jar {

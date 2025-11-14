@@ -1,11 +1,15 @@
 package apploader;
 
 import apploader.client.AppInfo;
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
 import apploader.lib.HttpInteraction;
 import apploader.lib.ILoaderGui;
+import apploader.ssl.SSLBuilder;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -45,6 +49,21 @@ final class LoaderConfig {
 
         ProxyConfig proxy = AppInfo.loadProxy(gui::logError);
         proxy.setLogin();
+
+        File httpsCert = new File(AppCommon.HTTPS_CERT);
+        if (httpsCert.exists()) {
+            SSLContext sslContext = null;
+            try {
+                SSLBuilder builder = new SSLBuilder();
+                builder.addTrustCertificate(httpsCert.toPath());
+                sslContext = builder.buildSSLContext();
+            } catch (Exception ex) {
+                gui.logError(ex);
+            }
+            if (sslContext != null) {
+                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            }
+        }
         HttpInteraction http = new HttpInteraction(proxy);
 
         if (httpUrl == null) {

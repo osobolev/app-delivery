@@ -18,6 +18,7 @@ public final class AppCommon {
      * Name of the server resource containing list of all available server applications
      */
     public static final String GLOBAL_APP_LIST = "global_app.list";
+    public static final String HTTPS_CERT = "https.crt";
 
     public static String getSplashName(String application) {
         return application + "_splash.jpg";
