@@ -4,6 +4,7 @@ import server.core.LoginData;
 import server.embedded.AppLogin;
 import server.embedded.AppServerComponent;
 import server.embedded.EmbeddedHttpContainer;
+import server.embedded.ServerConfig;
 import server.http.ServletRequestFactory;
 import server.jetty.JettyEmbeddedServer;
 import txrpc.remote.common.body.JavaSerializer;
@@ -26,7 +27,7 @@ public final class ConsoleServer {
         container.addApplication(component);
         int port = 8080;
         File root = new File("root");
-        container.init(port, "/", root);
+        container.init(new ServerConfig("/", root, port, null, null, null));
         container.start();
         component.start();
         System.out.printf("Started server on port %d, root %s\n", port, root);

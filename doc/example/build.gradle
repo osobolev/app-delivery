@@ -1,7 +1,7 @@
 def dest = "$rootDir/distr"
 def sqlgVersion = "3.2"
 def txrpcVersion = "2.6"
-def myVersion = "8.5"
+def myVersion = "8.6"
 def h2 = "com.h2database:h2:2.1.214"
 
 subprojects {
@@ -97,7 +97,7 @@ project(":sample_client") {
 project(":sample_server") {
     dependencies {
         api("io.github.osobolev.txrpc:txrpc-remote-server:$txrpcVersion")
-        api("io.github.osobolev.app-delivery:server-core:$myVersion")
+        api("io.github.osobolev.app-delivery:server-http:$myVersion")
         implementation("io.github.osobolev.sqlg3:sqlg3-runtime:$sqlgVersion")
         runtimeOnly(project(":sample_db"))
     }
