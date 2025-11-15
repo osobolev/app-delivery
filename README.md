@@ -3,6 +3,7 @@
 - `<app>-client.bat`/`<app>-client.sh` - скрипт запуска приложения
 - `<app>_jars.list` - см. ниже
 - `<app>_splash.jpg` - splash-скрин для запуска приложения (обновляется на клиенте автоматически)
+- `https.crt` - https-сертификат сервера (необязательный файл)
 - `apploader.properties`/`apploader_<profile>.properties` - см. ниже
 - `install.properties`/`install_<profile>.properties` - см. ниже
 - `index.html` + `install.js` - страница скачивания дистрибутива клиента
