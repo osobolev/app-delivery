@@ -3,6 +3,9 @@ package apploader.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public final class AppStreamUtils {
 
@@ -32,6 +35,21 @@ public final class AppStreamUtils {
                     break;
                 out.write(buffer, 0, read);
             }
+        }
+    }
+
+    public static void deleteAll(Path path) {
+        try {
+            if (Files.isDirectory(path)) {
+                try (DirectoryStream<Path> paths = Files.newDirectoryStream(path)) {
+                    for (Path child : paths) {
+                        deleteAll(child);
+                    }
+                }
+            }
+            Files.deleteIfExists(path);
+        } catch (IOException ex) {
+            // ignore
         }
     }
 }

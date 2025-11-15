@@ -1,13 +1,13 @@
 package apploader;
 
 import apploader.common.AppCommon;
+import apploader.common.AppStreamUtils;
 import apploader.common.AppZip;
 import apploader.lib.IFileLoader;
 import apploader.lib.ILoaderGui;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -155,7 +155,7 @@ final class JavaUpdater {
 
             Path newJreDir = Paths.get("jre.new");
             if (Files.exists(newJreDir)) {
-                deleteAll(newJreDir);
+                AppStreamUtils.deleteAll(newJreDir);
             }
             Files.move(tmpDir, newJreDir);
             gui.showWarning("Обновлена Java, перезапустите приложение");
@@ -168,20 +168,5 @@ final class JavaUpdater {
 
     private static void unzip(File file, Path destDir) throws IOException {
         AppZip.create(file).unpackWithExtra(destDir, null);
-    }
-
-    private static void deleteAll(Path path) {
-        try {
-            if (Files.isDirectory(path)) {
-                try (DirectoryStream<Path> paths = Files.newDirectoryStream(path)) {
-                    for (Path child : paths) {
-                        deleteAll(child);
-                    }
-                }
-            }
-            Files.deleteIfExists(path);
-        } catch (IOException ex) {
-            // ignore
-        }
     }
 }
