@@ -4,8 +4,8 @@ public interface InstallLogger {
 
     void trace(String message);
 
-    default void traceProgress(String message) {
-        trace(message);
+    default void traceProgress(int percent) {
+        trace(percent + "%");
     }
 
     void error(Throwable error);
