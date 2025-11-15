@@ -7,5 +7,5 @@ repositories {
 }
 
 dependencies {
-    implementation("com.vanniktech:gradle-maven-publish-plugin:0.33.0")
+    implementation("com.vanniktech:gradle-maven-publish-plugin:0.35.0")
 }
