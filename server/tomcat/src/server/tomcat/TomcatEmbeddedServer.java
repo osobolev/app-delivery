@@ -1,13 +1,15 @@
 package server.tomcat;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.Service;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
 import server.core.AppLogger;
 import server.embedded.EmbeddedServer;
+import server.embedded.ServerConfig;
 
 import javax.servlet.http.HttpServlet;
-import java.io.File;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -52,15 +54,30 @@ public final class TomcatEmbeddedServer implements EmbeddedServer {
         });
     }
 
-    @Override
-    public void setPort(int port) {
-        tomcat.setPort(port);
-        tomcat.getConnector();
+    private void setupServer(ServerConfig config) {
+        Service service = tomcat.getService();
+        if (config.httpPort != null) {
+            Connector http = new Connector();
+            http.setPort(config.httpPort.intValue());
+            service.addConnector(http);
+        }
+        if (config.httpsPort != null) {
+            Connector https = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+            https.setPort(config.httpsPort.intValue());
+            https.setSecure(true);
+            https.setScheme("https");
+            https.setProperty("SSLEnabled", "true");
+            https.setProperty("keystoreFile", config.keyStoreFile.getAbsolutePath());
+            https.setProperty("keystorePass", config.keyStorePassword);
+            service.addConnector(https);
+        }
     }
 
     @Override
-    public EmbeddedContext initContext(String contextPath, File rootDir) {
-        Context ctx = tomcat.addContext("/".equals(contextPath) ? "" : contextPath, rootDir.getAbsolutePath());
+    public EmbeddedContext initContext(ServerConfig config) {
+        setupServer(config);
+
+        Context ctx = tomcat.addContext("/".equals(config.contextPath) ? "" : config.contextPath, config.rootDir.getAbsolutePath());
         ctx.setSessionTimeout(30);
         Tomcat.addDefaultMimeTypeMappings(ctx);
         ctx.addWelcomeFile("index.html");

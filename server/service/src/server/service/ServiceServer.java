@@ -4,7 +4,6 @@ import server.core.AppInit;
 import server.core.AppLogger;
 import server.embedded.*;
 
-import java.io.File;
 import java.util.List;
 
 public final class ServiceServer {
@@ -27,7 +26,7 @@ public final class ServiceServer {
         container.error(ex);
     }
 
-    public boolean runServer(Integer port, String context, File rootDir, AppLogin login, List<AppServerComponent> comps) throws Exception {
+    public boolean runServer(ServerConfig config, AppLogin login, List<AppServerComponent> comps) throws Exception {
         for (AppServerComponent component : comps) {
             boolean inited = false;
             try {
@@ -46,7 +45,7 @@ public final class ServiceServer {
             container.error("Нет ни одного серверного компонента");
             return false;
         } else {
-            container.init(port, context, rootDir);
+            container.init(config);
             container.start();
             for (AppServerComponent component : comps) {
                 component.start();
