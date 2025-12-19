@@ -8,6 +8,6 @@ txrpc-body-server = { module = "io.github.osobolev.txrpc:txrpc-body-server", ver
 
 servlet-api = "javax.servlet:javax.servlet-api:3.1.0"
 jetty = "org.eclipse.jetty:jetty-servlet:9.4.58.v20250814"
-tomcat = "org.apache.tomcat.embed:tomcat-embed-core:9.0.112"
+tomcat = "org.apache.tomcat.embed:tomcat-embed-core:9.0.113"
 commons-compress = "org.apache.commons:commons-compress:1.28.0"
 xz = "org.tukaani:xz:1.11"
