@@ -12,9 +12,9 @@ fun getMajor(version: String, majorDepth: Int): String {
 }
 
 fun getMajorDepth(mod: ModuleComponentIdentifier): Int {
-    if (mod.group == "javax.servlet") return 1
-    if (mod.group == "org.apache.tomcat.embed") return 1
-    if (mod.group == "org.eclipse.jetty") return 1
+    if (mod.group == "javax.servlet") return 1 // версия >= 4 использует jakarta namespace
+    if (mod.group == "org.apache.tomcat.embed") return 1 // версия >= 10 использует jakarta namespace
+    if (mod.group == "org.eclipse.jetty") return 1 // версия >= 10 требует Java 11
     return 0
 }
 
