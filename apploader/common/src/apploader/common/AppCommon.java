@@ -99,4 +99,36 @@ public final class AppCommon {
     public static boolean isWindows() {
         return IS_WINDOWS;
     }
+
+    public static int currentJavaBits() {
+        String model = System.getProperty("sun.arch.data.model");
+        if (model != null) {
+            if ("64".equals(model)) {
+                return 64;
+            } else if ("32".equals(model)) {
+                return 32;
+            }
+        }
+        String arch = System.getProperty("os.arch");
+        if (arch != null) {
+            if (arch.endsWith("64")) {
+                return 64;
+            } else if ("x86".equals(arch) || arch.matches("i\\d86")) {
+                return 32;
+            }
+        }
+        return 0;
+    }
+
+    public static int getOSBits() {
+        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
+        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
+        if (wow64Arch != null) {
+            return wow64Arch.endsWith("64") ? 64 : 32;
+        } else if (arch != null) {
+            return arch.endsWith("64") ? 64 : 32;
+        } else {
+            return currentJavaBits();
+        }
+    }
 }

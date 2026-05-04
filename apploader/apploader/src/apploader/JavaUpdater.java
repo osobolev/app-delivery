@@ -67,7 +67,7 @@ final class JavaUpdater {
         JavaZip javaZip;
         int javaBits;
         if (jre64 != null) {
-            if (canRun64Bits()) {
+            if (AppCommon.getOSBits() == 64) {
                 javaZip = jre64;
                 javaBits = 64;
             } else {
@@ -85,38 +85,6 @@ final class JavaUpdater {
         File javaHome = new File(System.getProperty("java.home")).getAbsoluteFile();
         File jreDir = fileLoader.getLocalFile("jre");
         return jreDir.equals(javaHome) ? javaHome : null;
-    }
-
-    private static int currentJavaBits() {
-        String model = System.getProperty("sun.arch.data.model");
-        if (model != null) {
-            if ("64".equals(model)) {
-                return 64;
-            } else if ("32".equals(model)) {
-                return 32;
-            }
-        }
-        String arch = System.getProperty("os.arch");
-        if (arch != null) {
-            if ("amd64".equals(arch) || "x86_64".equals(arch)) {
-                return 64;
-            } else if ("x86".equals(arch) || arch.matches("i\\d86")) {
-                return 32;
-            }
-        }
-        return 0;
-    }
-
-    private static boolean canRun64Bits() {
-        String arch = System.getenv("PROCESSOR_ARCHITECTURE");
-        String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
-        if (wow64Arch != null) {
-            return wow64Arch.endsWith("64");
-        } else if (arch != null) {
-            return arch.endsWith("64");
-        } else {
-            return currentJavaBits() == 64;
-        }
     }
 
     private static boolean sameBitness(int bits1, int bits2) {
@@ -141,7 +109,7 @@ final class JavaUpdater {
         }
         String remoteVersion = matcher.group(1).trim();
         String javaVersion = System.getProperty("java.vm.version");
-        if (Objects.equals(remoteVersion, javaVersion) && sameBitness(remoteJavaBits, currentJavaBits())) {
+        if (Objects.equals(remoteVersion, javaVersion) && sameBitness(remoteJavaBits, AppCommon.currentJavaBits())) {
             // We already have this version, skip update
             return true;
         }
