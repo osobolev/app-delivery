@@ -1,5 +1,6 @@
 package apploader;
 
+import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
 import apploader.lib.FileResult;
 import apploader.lib.IFileLoader;
@@ -87,7 +88,11 @@ final class AppPropertiesLoader {
         return true;
     }
 
-    private boolean addFile(String left, String right) {
+    private boolean addFile(String left, String right, Boolean windowsOnly) {
+        if (windowsOnly != null) {
+            if (windowsOnly.booleanValue() != AppCommon.isWindows())
+                return true;
+        }
         boolean optional = optional(left);
         FileResult fileResult = fileLoader.receiveFile(right, optional);
         File file = fileResult.file;
@@ -115,7 +120,11 @@ final class AppPropertiesLoader {
             } else if (match(left, "localdll")) {
                 return addLocalLib(left, right, dllList);
             } else if (match(left, "file")) {
-                return addFile(left, right);
+                return addFile(left, right, null);
+            } else if (match(left, "file.win")) {
+                return addFile(left, right, true);
+            } else if (match(left, "file.lin")) {
+                return addFile(left, right, false);
             } else if ("mainClass".equalsIgnoreCase(left)) {
                 mainClass = right;
                 return true;
