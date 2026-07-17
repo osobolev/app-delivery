@@ -11,3 +11,5 @@ del apploader.jar
 ren apploader.jar.new apploader.jar
 
 :cont2
+
+if exist options.bat call options.bat

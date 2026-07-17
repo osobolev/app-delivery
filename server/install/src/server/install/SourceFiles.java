@@ -31,10 +31,12 @@ final class SourceFiles {
             addRequired("checknew.bat");
             addRequired("proxy-config.bat");
             addIfExists("install.bat");
+            addIfExists("options.bat");
         } else {
             addRequired("checknew.sh");
             addRequired("proxy-config.sh");
             addIfExists("install.sh");
+            addIfExists("options.sh");
         }
         depends.add(InstallerResource.apploaderProperties(root, profile, url, profileProps));
         depends.add(InstallerResource.osScript(

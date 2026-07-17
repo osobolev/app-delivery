@@ -22,6 +22,7 @@ final class AppPropertiesLoader {
     private String mainClass = null;
     private final TZUpdater tzUpdater = new TZUpdater();
     private final JavaUpdater javaUpdater = new JavaUpdater();
+    private boolean optionsUpdated = false;
 
     AppPropertiesLoader(ILoaderGui gui, IFileLoader fileLoader) {
         this.gui = gui;
@@ -93,6 +94,9 @@ final class AppPropertiesLoader {
         if (file == null) {
             return optional;
         } else {
+            if (fileResult.updated && ("options.bat".equals(right) || "options.sh".equals(right))) {
+                optionsUpdated = true;
+            }
             tzUpdater.add(right, fileResult);
             return true;
         }
@@ -126,6 +130,10 @@ final class AppPropertiesLoader {
             return null;
         if (!tzUpdater.update(gui, fileLoader))
             return null;
+        if (optionsUpdated) {
+            gui.showWarning("Обновлены настройки приложения, перезапустите приложение");
+            return null;
+        }
         return new AppProperties(jarList, dllList, mainClass);
     }
 }
