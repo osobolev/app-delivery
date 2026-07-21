@@ -98,7 +98,8 @@ final class Profile {
     }
 
     File getBaseDir(File clientRoot) {
-        return name == null ? clientRoot : new File(clientRoot, name);
+        String base = "install";
+        return new File(clientRoot, name == null ? base : base + "." + name);
     }
 
     File findPropFile(File root, String baseName) {

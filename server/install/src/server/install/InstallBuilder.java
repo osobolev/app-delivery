@@ -22,7 +22,7 @@ public final class InstallBuilder {
     private InstallBuilder(SourceFiles src, List<String> apps, Properties profileProps, InstallLogger logger) {
         this.root = src.root;
         this.baseDir = src.baseDir;
-        this.buildDir = new File(baseDir, "install");
+        this.buildDir = new File(baseDir, "build");
         this.depends = src.depends;
         this.javaSource = src.javaSource;
         this.packers = src.packers;
