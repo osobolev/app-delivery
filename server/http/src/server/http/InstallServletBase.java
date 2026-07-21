@@ -102,15 +102,31 @@ public abstract class InstallServletBase extends AppServletBase {
             done = true;
             ok = state.builder.getReadyInstaller() != null;
         }
-        String json =
-            "{" +
-            "\"percent\": \"" + state.builder.getPercentCell().get() + "%\", " +
-            "\"done\": " + done + ", " +
-            "\"ok\": " + ok + ", " +
-            "\"error\": \"" + state.error.replace('"', '\'') + "\"" +
-            "}";
+        int percent = state.builder.getPercentCell().get();
         resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().println(json);
+        String accept = req.getHeader("Accept");
+        if (accept != null && accept.contains("text/plain") && !accept.contains("json")) {
+            String text;
+            if (done) {
+                if (ok) {
+                    text = "OK";
+                } else {
+                    text = "ERR " + state.error;
+                }
+            } else {
+                text = "PRC " + percent;
+            }
+            resp.getWriter().println(text);
+        } else {
+            String json =
+                "{" +
+                "\"percent\": \"" + percent + "%\", " +
+                "\"done\": " + done + ", " +
+                "\"ok\": " + ok + ", " +
+                "\"error\": \"" + state.error.replace('"', '\'') + "\"" +
+                "}";
+            resp.getWriter().println(json);
+        }
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
