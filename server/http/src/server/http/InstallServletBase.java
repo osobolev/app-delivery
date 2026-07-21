@@ -97,5 +97,18 @@ public abstract class InstallServletBase extends AppServletBase {
         }
     }
 
+    @Override
+    protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        InstallState state = getBuilder(req);
+        File installer = state.builder.getReadyInstaller();
+        if (installer != null) {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentLengthLong(installer.length());
+            resp.setDateHeader("Last-Modified", installer.lastModified());
+        } else {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
     protected abstract AppLogger getLogger();
 }
