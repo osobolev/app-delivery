@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 public abstract class ProfileServletBase extends HttpServlet {
 
@@ -24,10 +24,10 @@ public abstract class ProfileServletBase extends HttpServlet {
     protected abstract File getRoot(ServletConfig config);
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<String> profiles = ListProfiles.listProfiles(root, null, getLogger());
+        Map<String, String> profiles = ListProfiles.listProfiles(root, null, getLogger());
         resp.setCharacterEncoding("UTF-8");
-        for (String profile : profiles) {
-            resp.getWriter().println(profile);
+        for (Map.Entry<String, String> entry : profiles.entrySet()) {
+            resp.getWriter().println(entry.getKey() + "=" + entry.getValue());
         }
     }
 
