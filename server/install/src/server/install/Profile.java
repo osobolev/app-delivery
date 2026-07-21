@@ -97,8 +97,8 @@ final class Profile {
         return AppCommon.isWindows();
     }
 
-    File getBaseDir(File clientRoot) {
-        String base = "install";
+    File getBaseDir(File clientRoot, boolean zip) {
+        String base = zip ? "zip" : "install";
         return new File(clientRoot, name == null ? base : base + "." + name);
     }
 

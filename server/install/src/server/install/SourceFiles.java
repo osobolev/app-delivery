@@ -1,6 +1,7 @@
 package server.install;
 
 import apploader.common.AppCommon;
+import server.install.packers.ZipPacker;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,10 +19,10 @@ final class SourceFiles {
     final JavaSource javaSource;
     final List<Packer> packers = new ArrayList<>();
 
-    SourceFiles(File root, List<String> apps, Profile profile, String url, Properties profileProps) {
+    SourceFiles(File root, List<String> apps, Profile profile, boolean zip, String url, Properties profileProps) {
         this.root = root;
         File clientRoot = new File(root, "client");
-        this.baseDir = profile.getBaseDir(clientRoot);
+        this.baseDir = profile.getBaseDir(clientRoot, zip);
 
         boolean windowsClient = profile.isWindows(profileProps);
 
@@ -54,11 +55,15 @@ final class SourceFiles {
 
         this.javaSource = JavaSource.create(root, profileProps);
 
-        String packerStr = profileProps.getProperty("packers");
-        if (packerStr != null) {
-            Packer.parsePackers(packers, packerStr, windowsClient);
+        if (zip) {
+            packers.add(new ZipPacker());
         } else {
-            Packer.addPackers(packers, windowsClient);
+            String packerStr = profileProps.getProperty("packers");
+            if (packerStr != null) {
+                Packer.parsePackers(packers, packerStr, windowsClient);
+            } else {
+                Packer.addPackers(packers, windowsClient);
+            }
         }
     }
 

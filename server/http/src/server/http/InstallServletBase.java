@@ -13,15 +13,43 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class InstallServletBase extends AppServletBase {
 
+    private static final class InstallKey {
+
+        final String profile;
+        final boolean zip;
+
+        InstallKey(String profile, boolean zip) {
+            this.profile = profile;
+            this.zip = zip;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof InstallKey) {
+                InstallKey that = (InstallKey) obj;
+                return Objects.equals(this.profile, that.profile) && this.zip == that.zip;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return profile.hashCode() + (zip ? 1 : 0);
+        }
+
+        @Override
+        public String toString() {
+            return (zip ? "Zip " : "") + profile;
+        }
+    }
+
     private volatile File root = new File(".");
-    private final Map<String, InstallState> map = new HashMap<>();
+    private final Map<InstallKey, InstallState> map = new HashMap<>();
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -33,7 +61,9 @@ public abstract class InstallServletBase extends AppServletBase {
     private synchronized InstallState getBuilder(HttpServletRequest req) {
         String pathInfo = req.getPathInfo();
         String profile = pathInfo == null || pathInfo.isEmpty() ? "" : pathInfo.substring(1);
-        InstallState state = map.get(profile);
+        boolean zip = Boolean.parseBoolean(req.getParameter("zip"));
+        InstallKey key = new InstallKey(profile, zip);
+        InstallState state = map.get(key);
 
         if (state == null) {
             List<String> apps = new ArrayList<>();
@@ -50,10 +80,10 @@ public abstract class InstallServletBase extends AppServletBase {
                 url = req.getScheme() + "://" + req.getLocalName() + ":" + req.getLocalPort() + "/";
             }
             InstallBuilder builder = InstallBuilder.create(
-                root, apps, profile, url, getLogger()
+                root, apps, key.profile, key.zip, url, getLogger()
             );
             state = new InstallState(builder);
-            map.put(profile, state);
+            map.put(key, state);
         }
         return state;
     }
