@@ -11,11 +11,7 @@ import java.util.List;
 public class InstallServlet extends InstallServletBase {
 
     protected File getRoot(ServletConfig config) {
-        String path = config.getServletContext().getRealPath(".");
-        if (path == null) {
-            path = ".";
-        }
-        return new File(path);
+        return SingleUtil.getRoot(config);
     }
 
     protected List<Application> loadApplications(ServletConfig config) {

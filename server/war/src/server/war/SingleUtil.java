@@ -4,6 +4,7 @@ import apploader.common.Application;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,5 +24,13 @@ final class SingleUtil {
             appName = application;
         }
         return Collections.singletonList(new Application(application, appName));
+    }
+
+    static File getRoot(ServletConfig config) {
+        String path = config.getServletContext().getRealPath(".");
+        if (path == null) {
+            path = ".";
+        }
+        return new File(path);
     }
 }
