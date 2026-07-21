@@ -14,11 +14,6 @@ import java.util.function.Consumer;
 
 final class UrlDialog extends JDialog {
 
-    interface ErrorShow {
-
-        void showError(Component owner, String message);
-    }
-
     private final HttpInteraction http;
     private final Consumer<Throwable> logError;
     private final ErrorShow error;
