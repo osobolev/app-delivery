@@ -6,10 +6,11 @@ import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.LongConsumer;
 
 public final class AppStreamUtils {
 
-    public static void copyStream(InputStream in, OutputStream out, long length) throws IOException {
+    public static void copyStream(InputStream in, OutputStream out, long length, LongConsumer progress) throws IOException {
         byte[] buffer = new byte[8192];
         if (length >= 0) {
             long totalRead = 0;
@@ -27,6 +28,9 @@ public final class AppStreamUtils {
                     break;
                 out.write(buffer, 0, read);
                 totalRead += read;
+                if (progress != null) {
+                    progress.accept(totalRead);
+                }
             }
         } else {
             while (true) {

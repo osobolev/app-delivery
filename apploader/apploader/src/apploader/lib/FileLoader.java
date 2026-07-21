@@ -103,13 +103,13 @@ public final class FileLoader extends IFileLoader {
         });
     }
 
-    private void transferFile(URL url, File to, HeadResult head) throws IOException {
+    private void transferFile(URL url, File to, HeadResult head, LongConsumer progress) throws IOException {
         http.interact(url, conn -> {
             conn.connect();
             to.delete();
             try (InputStream in = conn.getInputStream();
                  OutputStream out = Files.newOutputStream(to.toPath())) {
-                AppStreamUtils.copyStream(in, out, head.length);
+                AppStreamUtils.copyStream(in, out, head.length, progress);
             }
             to.setLastModified(head.lastModified);
             return null;
@@ -132,7 +132,7 @@ public final class FileLoader extends IFileLoader {
             IOException lastError = null;
             for (int i = 0; i < 3; i++) {
                 try {
-                    transferFile(url, neo, head);
+                    transferFile(url, neo, head, null);
                     ok = true;
                     break;
                 } catch (IOException ex) {

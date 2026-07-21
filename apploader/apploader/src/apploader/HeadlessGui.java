@@ -122,7 +122,7 @@ final class HeadlessGui implements ILoaderGui {
                     public void write(byte[] b, int off, int len) {
                     }
                 };
-                AppStreamUtils.copyStream(is, consume, -1);
+                AppStreamUtils.copyStream(is, consume, -1, null);
             }
             return serverUrl;
         });
