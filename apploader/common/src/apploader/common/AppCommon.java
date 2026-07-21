@@ -23,6 +23,10 @@ public final class AppCommon {
      */
     public static final String PROFILE_LIST = "profile.list";
     /**
+     * Name of the server resource containing the major version of client (changing it requires full reinstall)
+     */
+    public static final String MAJOR_VERSION = "major.version";
+    /**
      * Profile list query parameter to filter profiles by OS
      */
     public static final String PROFILE_WINDOWS = "windows";

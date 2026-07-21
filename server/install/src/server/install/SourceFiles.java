@@ -45,6 +45,7 @@ final class SourceFiles {
             name -> new SetJavaResource(name, windowsClient)
         ));
         addIfExists("proxy.properties");
+        addIfExists(AppCommon.MAJOR_VERSION);
         for (String app : apps) {
             depends.add(InstallerResource.osScript(
                 root, app + "-client", windowsClient,

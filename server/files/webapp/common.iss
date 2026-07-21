@@ -30,6 +30,7 @@ Name: ru; MessagesFile: compiler:Default.isl
 Source: jre\*; DestDir: {app}\jre\; flags: recursesubdirs
 Source: checknew.bat; DestDir: {app};
 Source: options.bat; DestDir: {app}; Flags: skipifsourcedoesntexist
+Source: major.version; DestDir: {app}; Flags: skipifsourcedoesntexist
 Source: "{#apId}-client.bat"; DestDir: {app};
 Source: proxy-config.bat; DestDir: {app};
 Source: setjava.bat; DestDir: {app};
