@@ -3,8 +3,6 @@ package server.embedded;
 import apploader.common.AppCommon;
 import apploader.common.Application;
 import server.core.AppLogger;
-import server.http.InstallServletBase;
-import server.http.ListServletBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +43,10 @@ public final class EmbeddedHttpContainer {
             ctx.addServlet(application, "/" + AppCommon.getRemotingContext(application) + "/*", appServlet);
         }
 
-        InstallServletBase installServlet = new InstallServlet(mainLogger, config.rootDir, applications);
+        InstallServlet installServlet = new InstallServlet(mainLogger, config.rootDir, applications);
         ctx.addServlet("install", "/install/*", installServlet);
 
-        ListServletBase listServlet = new ListServlet(applications);
+        ListServlet listServlet = new ListServlet(applications);
         ctx.addServlet("list", "/" + AppCommon.GLOBAL_APP_LIST, listServlet);
 
         ctx.addStaticServlet("/");
