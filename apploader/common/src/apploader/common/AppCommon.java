@@ -22,6 +22,14 @@ public final class AppCommon {
      * Name of the server resource containing list of all available client profiles
      */
     public static final String PROFILE_LIST = "profile.list";
+    /**
+     * Profile list query parameter to filter profiles by OS
+     */
+    public static final String PROFILE_WINDOWS = "windows";
+    /**
+     * Profile list query parameter to filter profiles by bitness
+     */
+    public static final String PROFILE_BITS = "bits";
     public static final String HTTPS_CERT = "https.crt";
 
     public static String getSplashName(String application) {

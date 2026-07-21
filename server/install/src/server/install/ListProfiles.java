@@ -1,5 +1,7 @@
 package server.install;
 
+import apploader.common.AppCommon;
+
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,7 +9,22 @@ import java.util.Properties;
 
 public final class ListProfiles {
 
-    public static Map<String, String> listProfiles(File rootDir, Boolean windowsClient, InstallLogger logger) {
+    private static boolean supportsBitness(Properties profileProps, int clientBits) {
+        String bits = profileProps.getProperty("java.bits");
+        int serverBits;
+        if (bits == null) {
+            serverBits = AppCommon.getOSBits();
+        } else {
+            try {
+                serverBits = Integer.parseInt(bits);
+            } catch (NumberFormatException ex) {
+                serverBits = 0;
+            }
+        }
+        return serverBits <= clientBits;
+    }
+
+    public static Map<String, String> listProfiles(File rootDir, Boolean windowsClient, int clientBits, InstallLogger logger) {
         Map<String, String> profiles = new LinkedHashMap<>();
         rootDir.listFiles((dir, fileName) -> {
             String profileName = Profile.getFileProfile(fileName);
@@ -17,6 +34,10 @@ public final class ListProfiles {
             Properties profileProps = profile.loadProfileProps(logger, dir);
             if (windowsClient != null) {
                 if (profile.isWindows(profileProps) != windowsClient.booleanValue())
+                    return false;
+            }
+            if (clientBits != 0) {
+                if (!supportsBitness(profileProps, clientBits))
                     return false;
             }
             String profileDescription = profileProps.getProperty("name", profileName);
