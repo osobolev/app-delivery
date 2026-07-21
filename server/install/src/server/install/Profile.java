@@ -8,6 +8,8 @@ import java.util.Properties;
 
 final class Profile {
 
+    private static final String PROFILE_BASE = "install";
+
     private final String name;
 
     private Profile(String name) {
@@ -26,6 +28,19 @@ final class Profile {
         return profileName == null ? baseName : baseName + "_" + profileName;
     }
 
+    static String getFileProfile(String fileName) {
+        if (!fileName.startsWith(PROFILE_BASE))
+            return null;
+        if (!fileName.endsWith(ConfigReader.PROPERTIES))
+            return null;
+        String mid = fileName.substring(PROFILE_BASE.length(), fileName.length() - ConfigReader.PROPERTIES.length());
+        if (mid.isEmpty())
+            return "";
+        if (mid.startsWith("_"))
+            return mid.substring(1);
+        return null;
+    }
+
     private static File getPropFile(File root, String profileName, String baseName) {
         String fileName = getPropFileName(profileName, baseName) + ConfigReader.PROPERTIES;
         File file = new File(root, fileName);
@@ -36,7 +51,7 @@ final class Profile {
 
     private static Properties loadProps(InstallLogger logger, File root, String profileName) {
         Properties props = new Properties();
-        File propFile = getPropFile(root, profileName, "install");
+        File propFile = getPropFile(root, profileName, PROFILE_BASE);
         if (propFile != null) {
             ConfigReader.readProperties(props, propFile, logger::error);
         }

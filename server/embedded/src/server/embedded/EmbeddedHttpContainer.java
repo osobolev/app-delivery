@@ -46,6 +46,9 @@ public final class EmbeddedHttpContainer {
         InstallServlet installServlet = new InstallServlet(mainLogger, config.rootDir, applications);
         ctx.addServlet("install", "/install/*", installServlet);
 
+        ProfileServlet profileServlet = new ProfileServlet(mainLogger, config.rootDir);
+        ctx.addServlet("profiles", "/" + AppCommon.PROFILE_LIST, profileServlet);
+
         ListServlet listServlet = new ListServlet(applications);
         ctx.addServlet("list", "/" + AppCommon.GLOBAL_APP_LIST, listServlet);
 

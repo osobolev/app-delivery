@@ -52,6 +52,10 @@
         <servlet-class>server.war.InstallServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>server.war.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>ListServlet</servlet-name>
         <servlet-class>server.war.ListServlet</servlet-class>
     </servlet>
@@ -67,6 +71,10 @@
     <servlet-mapping>
         <servlet-name>InstallServlet</servlet-name>
         <url-pattern>/install/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile.list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListServlet</servlet-name>
