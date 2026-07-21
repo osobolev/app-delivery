@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public final class AppZip {
 
@@ -32,7 +35,7 @@ public final class AppZip {
         return new AppZip(path, extras);
     }
 
-    public void unpackWithExtra(Path destDir, Runnable onEntry) throws IOException {
-        UnixUnzip.unzip(file, destDir, extras, entry -> onEntry.run());
+    public void unpackWithExtra(Path destDir, Consumer<ZipFile> onFile, Consumer<ZipEntry> onEntry) throws IOException {
+        UnixUnzip.unzip(file, destDir, extras, onFile, onEntry);
     }
 }

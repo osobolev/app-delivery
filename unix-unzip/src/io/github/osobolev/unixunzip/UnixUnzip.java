@@ -22,8 +22,11 @@ import java.util.zip.ZipFile;
 public final class UnixUnzip {
 
     public static void unzip(Path zipFile, Path destDir, Map<String, UnixZipExtra> extras,
-                             Consumer<ZipEntry> onEntry) throws IOException {
+                             Consumer<ZipFile> onFile, Consumer<ZipEntry> onEntry) throws IOException {
         try (ZipFile zip = new ZipFile(zipFile.toFile())) {
+            if (onFile != null) {
+                onFile.accept(zip);
+            }
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
@@ -36,6 +39,6 @@ public final class UnixUnzip {
     }
 
     public static void unzip(Path zipFile, Path destDir, Map<String, UnixZipExtra> extras) throws IOException {
-        unzip(zipFile, destDir, extras, null);
+        unzip(zipFile, destDir, extras, null, null);
     }
 }

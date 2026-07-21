@@ -135,6 +135,6 @@ final class JavaUpdater {
     }
 
     private static void unzip(File file, Path destDir) throws IOException {
-        AppZip.create(file).unpackWithExtra(destDir, null);
+        AppZip.create(file).unpackWithExtra(destDir, null, null);
     }
 }
