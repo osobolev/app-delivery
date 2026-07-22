@@ -39,6 +39,7 @@ final class SourceFiles {
             addIfExists("install.sh");
             addIfExists("options.sh");
         }
+        addIfExists("shared.vmoptions");
         depends.add(InstallerResource.apploaderProperties(root, profile, url, profileProps));
         depends.add(InstallerResource.osScript(
             root, "setjava", windowsClient,

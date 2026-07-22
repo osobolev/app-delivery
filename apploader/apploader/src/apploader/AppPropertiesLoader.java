@@ -95,7 +95,7 @@ final class AppPropertiesLoader {
         if (file == null) {
             return optional;
         } else {
-            if (fileResult.updated && ("options.bat".equals(right) || "options.sh".equals(right))) {
+            if (fileResult.updated && ("options.bat".equals(right) || "options.sh".equals(right) || "shared.vmoptions".equals(right))) {
                 optionsUpdated = true;
             }
             return true;
