@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.BiConsumer;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 final class HeadlessGui implements ILoaderGui {
@@ -144,9 +143,9 @@ final class HeadlessGui implements ILoaderGui {
         }
     }
 
-    private static String chooseProfile(List<ClientProfile> profiles) {
+    public ClientProfile chooseProfile(List<ClientProfile> profiles) {
         if (profiles.size() == 1)
-            return profiles.get(0).id;
+            return profiles.get(0);
         StringBuilder buf = new StringBuilder();
         int i = 0;
         for (ClientProfile profile : profiles) {
@@ -167,35 +166,24 @@ final class HeadlessGui implements ILoaderGui {
             try {
                 int n = Integer.parseInt(str);
                 if (n >= 1 && n <= profiles.size())
-                    return profiles.get(n - 1).id;
+                    return profiles.get(n - 1);
             } catch (NumberFormatException ex) {
                 // ignore
             }
         }
     }
 
-    public boolean updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
-        String profile = chooseProfile(profiles);
-        if (profile == null)
-            return false;
-        boolean[] result = {true};
-        IUpdateProgress progress = new IUpdateProgress() {
+    public IUpdateProgress clientUpdateProgress(boolean hasProfileChoice) {
+        System.out.println("Обновление приложения");
+        return new IUpdateProgress() {
 
             public void setPercent(int percent) {
                 System.out.print(percent + "%\r");
             }
 
-            public void done(String error) {
-                if (error != null) {
-                    result[0] = false;
-                    System.out.println();
-                    System.out.println("Error: " + error);
-                } else {
-                    System.out.println("100%");
-                }
+            public void close() {
+                System.out.println();
             }
         };
-        action.accept(profile, progress);
-        return result[0];
     }
 }

@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.IntConsumer;
 import java.util.function.LongConsumer;
 
 public final class FileLoader extends IFileLoader {
@@ -274,56 +276,86 @@ public final class FileLoader extends IFileLoader {
         return gui.showError2(message, this);
     }
 
-    public boolean updateClient() {
-        File majorVersionFile = getLocalFile(AppCommon.MAJOR_VERSION);
-        String newMajorVersion = ClientUpdater.needsUpdate(base, http, majorVersionFile);
-        if (newMajorVersion == null)
-            return false;
+    private String doUpdateClient(String profile, String newMajorVersion, IntConsumer progress) throws IOException {
+        URL zipURL = AppCommon.resolve(base, "install/" + profile + "?zip=true");
+        // 0% - 50%:
+        String error = ClientUpdater.createClientZip(
+            http, zipURL, percent -> progress.accept(percent / 2)
+        );
+        if (error != null)
+            return error;
+        File tmpDir = getLocalFile("client.new.tmp");
+        File zip = getLocalFile("new.client.zip");
+        try {
+            HeadResult head = isNeedUpdate(zipURL);
+            // 50% - 75%:
+            transferFile(zipURL, zip, head, read -> {
+                int percent = Math.round((float) read / head.length * 100f);
+                progress.accept(50 + percent / 4);
+            });
+            // 75% - 100%:
+            ClientUpdater.unzipClient(
+                tmpDir, zip, percent -> progress.accept(75 + percent / 4)
+            );
+        } finally {
+            zip.delete();
+        }
+        ClientUpdater.prepareUpdate(tmpDir, getLocalFile("client.new"), newMajorVersion);
+        progress.accept(100);
+        return null;
+    }
+
+    private void doUpdateClient(String newMajorVersion) {
         List<ClientProfile> profiles;
         try {
             profiles = ClientUpdater.listProfiles(base, http);
         } catch (IOException ex) {
             gui.logError(ex);
             gui.showError(ex.toString());
-            return true;
+            return;
         }
-        boolean ok = gui.updateClient(profiles, (profile, progress) -> {
+        boolean hasProfileChoice = profiles.size() != 1;
+        ClientProfile profile;
+        if (hasProfileChoice) {
+            profile = gui.chooseProfile(profiles);
+        } else {
+            profile = profiles.get(0);
+        }
+        if (profile == null)
+            return;
+        AtomicReference<String> errorRef = new AtomicReference<>();
+        Thread thread = new Thread(() -> {
+            String error;
             try {
-                URL zipURL = AppCommon.resolve(base, "install/" + profile + "?zip=true");
-                // 0% - 50%:
-                String error = ClientUpdater.createClientZip(
-                    http, zipURL, percent -> progress.setPercent(percent / 2)
-                );
-                if (error != null) {
-                    progress.done(error);
-                    return;
+                try (IUpdateProgress progress = gui.clientUpdateProgress(hasProfileChoice)) {
+                    error = doUpdateClient(profile.id, newMajorVersion, progress::setPercent);
                 }
-                File tmpDir = getLocalFile("client.new.tmp");
-                File zip = getLocalFile("new.client.zip");
-                try {
-                    HeadResult head = isNeedUpdate(zipURL);
-                    // 50% - 75%:
-                    transferFile(zipURL, zip, head, read -> {
-                        int percent = Math.round((float) read / head.length * 100f);
-                        progress.setPercent(50 + percent / 4);
-                    });
-                    // 75% - 100%:
-                    ClientUpdater.unzipClient(
-                        tmpDir, zip, percent -> progress.setPercent(75 + percent / 4)
-                    );
-                } finally {
-                    zip.delete();
-                }
-                ClientUpdater.prepareUpdate(tmpDir, getLocalFile("client.new"), newMajorVersion);
-                progress.done(null);
             } catch (Exception ex) {
                 gui.logError(ex);
-                progress.done(ex.toString());
+                error = ex.toString();
             }
+            errorRef.set(error);
         });
-        if (ok) {
-            gui.showWarning("Приложение обновлено, перезапустите приложение");
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException ex) {
+            return;
         }
+        String error = errorRef.get();
+        if (error == null) {
+            gui.showWarning("Приложение обновлено, перезапустите приложение");
+        } else {
+            gui.showError(error);
+        }
+    }
+
+    public boolean updateClient() {
+        File majorVersionFile = getLocalFile(AppCommon.MAJOR_VERSION);
+        String newMajorVersion = ClientUpdater.needsUpdate(base, http, majorVersionFile);
+        if (newMajorVersion == null)
+            return false;
+        doUpdateClient(newMajorVersion);
         return true;
     }
 }

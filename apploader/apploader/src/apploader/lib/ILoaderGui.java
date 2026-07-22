@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public interface ILoaderGui {
 
@@ -39,8 +38,7 @@ public interface ILoaderGui {
 
     URL askUrl(HttpInteraction http);
 
-    /**
-     * @return true, если обновление успешно; false, если были ошибки
-     */
-    boolean updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action);
+    ClientProfile chooseProfile(List<ClientProfile> profiles);
+
+    IUpdateProgress clientUpdateProgress(boolean hasProfileChoice);
 }

@@ -17,7 +17,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 final class LoaderGui implements ILoaderGui {
 
@@ -192,10 +191,70 @@ final class LoaderGui implements ILoaderGui {
         return udlg.getURL();
     }
 
-    public boolean updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
+    public ClientProfile chooseProfile(List<ClientProfile> profiles) {
         setLnF();
-        ProfileDialog dlg = new ProfileDialog(null, this::doShowError, profiles, action);
-        return dlg.isCreated();
+        ProfileDialog dlg = new ProfileDialog(null, profiles);
+        return dlg.getProfile();
+    }
+
+    public IUpdateProgress clientUpdateProgress(boolean hasProfileChoice) {
+        return new UIProgress(hasProfileChoice);
+    }
+
+    private static final class ProgressWindow extends JFrame {
+
+        final JProgressBar bar = new JProgressBar(0, 100);
+
+        ProgressWindow() {
+            super("Обновление приложения");
+
+            bar.setStringPainted(true);
+            bar.setPreferredSize(new Dimension(300, bar.getPreferredSize().height));
+
+            JPanel main = new JPanel(new BorderLayout());
+            main.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+            main.add(new JLabel("Обновление приложения:"), BorderLayout.NORTH);
+            main.add(bar, BorderLayout.CENTER);
+            add(main, BorderLayout.CENTER);
+
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            pack();
+            setLocationRelativeTo(null);
+            setVisible(true);
+        }
+    }
+
+    private static final class UIProgress implements IUpdateProgress {
+
+        private final boolean useWindow;
+        private ProgressWindow window = null;
+
+        UIProgress(boolean useWindow) {
+            this.useWindow = useWindow;
+        }
+
+        public void setPercent(int percent) {
+            SwingUtilities.invokeLater(() -> {
+                if (useWindow) {
+                    if (window == null) {
+                        window = new ProgressWindow();
+                    }
+                    window.bar.setValue(percent);
+                    window.bar.setString(percent + "%");
+                } else {
+                    SplashStatus.setStatus("Обновление приложения: " + percent + "%");
+                }
+            });
+        }
+
+        public void close() {
+            SwingUtilities.invokeLater(() -> {
+                if (window != null) {
+                    window.dispose();
+                    window = null;
+                }
+            });
+        }
     }
 
     static ILoaderGui create() {
