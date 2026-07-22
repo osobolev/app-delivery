@@ -17,5 +17,8 @@ public abstract class IFileLoader {
 
     public abstract List<Application> loadApplications(String file, String app);
 
-    public abstract ClientUpdated updateClient();
+    /**
+     * @return true, если есть новая версия клиента
+     */
+    public abstract boolean updateClient();
 }

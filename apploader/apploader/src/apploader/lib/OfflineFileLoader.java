@@ -34,7 +34,7 @@ public final class OfflineFileLoader extends IFileLoader {
         return Collections.singletonList(new Application(app, app));
     }
 
-    public ClientUpdated updateClient() {
-        return ClientUpdated.UP_TO_DATE;
+    public boolean updateClient() {
+        return false;
     }
 }

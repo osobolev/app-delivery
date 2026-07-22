@@ -39,5 +39,8 @@ public interface ILoaderGui {
 
     URL askUrl(HttpInteraction http);
 
-    ClientUpdated updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action);
+    /**
+     * @return true, если обновление успешно; false, если были ошибки
+     */
+    boolean updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action);
 }

@@ -274,20 +274,20 @@ public final class FileLoader extends IFileLoader {
         return gui.showError2(message, this);
     }
 
-    public ClientUpdated updateClient() {
+    public boolean updateClient() {
         File majorVersionFile = getLocalFile(AppCommon.MAJOR_VERSION);
         String newMajorVersion = ClientUpdater.needsUpdate(base, http, majorVersionFile);
         if (newMajorVersion == null)
-            return ClientUpdated.UP_TO_DATE;
+            return false;
         List<ClientProfile> profiles;
         try {
             profiles = ClientUpdater.listProfiles(base, http);
         } catch (IOException ex) {
             gui.logError(ex);
             gui.showError(ex.toString());
-            return ClientUpdated.UPDATE_FAILED;
+            return true;
         }
-        return gui.updateClient(profiles, (profile, progress) -> {
+        boolean ok = gui.updateClient(profiles, (profile, progress) -> {
             try {
                 URL zipURL = AppCommon.resolve(base, "install/" + profile + "?zip=true");
                 // 0% - 50%:
@@ -321,5 +321,9 @@ public final class FileLoader extends IFileLoader {
                 progress.done(ex.toString());
             }
         });
+        if (ok) {
+            gui.showWarning("Приложение обновлено, перезапустите приложение");
+        }
+        return true;
     }
 }

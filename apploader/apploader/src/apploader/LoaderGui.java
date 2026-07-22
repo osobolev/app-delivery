@@ -192,10 +192,10 @@ final class LoaderGui implements ILoaderGui {
         return udlg.getURL();
     }
 
-    public ClientUpdated updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
+    public boolean updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
         setLnF();
         ProfileDialog dlg = new ProfileDialog(null, this::doShowError, profiles, action);
-        return dlg.isCreated() ? ClientUpdated.UPDATE_REQUIRED : ClientUpdated.UPDATE_FAILED;
+        return dlg.isCreated();
     }
 
     static ILoaderGui create() {

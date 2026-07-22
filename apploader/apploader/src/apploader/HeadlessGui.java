@@ -174,11 +174,11 @@ final class HeadlessGui implements ILoaderGui {
         }
     }
 
-    public ClientUpdated updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
+    public boolean updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
         String profile = chooseProfile(profiles);
         if (profile == null)
-            return ClientUpdated.UPDATE_FAILED;
-        ClientUpdated[] result = {ClientUpdated.UPDATE_REQUIRED};
+            return false;
+        boolean[] result = {true};
         IUpdateProgress progress = new IUpdateProgress() {
 
             public void setPercent(int percent) {
@@ -187,7 +187,7 @@ final class HeadlessGui implements ILoaderGui {
 
             public void done(String error) {
                 if (error != null) {
-                    result[0] = ClientUpdated.UPDATE_FAILED;
+                    result[0] = false;
                     System.out.println();
                     System.out.println("Error: " + error);
                 } else {
