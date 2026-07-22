@@ -28,7 +28,6 @@ public final class ClientProfile {
         return id.isEmpty() ? "<default>" : id;
     }
 
-    @Override
     public String toString() {
         return getDisplay();
     }

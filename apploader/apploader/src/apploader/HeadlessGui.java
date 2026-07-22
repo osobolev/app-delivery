@@ -20,7 +20,6 @@ final class HeadlessGui implements ILoaderGui {
     private static final String WARNING = "Предупреждение";
     private static final String ERROR = "Ошибка";
 
-    @Override
     public void showStatus(String status) {
         if (!status.isEmpty()) {
             System.out.println(status);
@@ -112,11 +111,9 @@ final class HeadlessGui implements ILoaderGui {
             try (InputStream is = conn.getInputStream()) {
                 OutputStream consume = new OutputStream() {
 
-                    @Override
                     public void write(int b) {
                     }
 
-                    @Override
                     public void write(byte[] b, int off, int len) {
                     }
                 };

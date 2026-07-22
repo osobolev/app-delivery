@@ -25,7 +25,6 @@ final class LoaderGui implements ILoaderGui {
 
     private boolean lnfSet = false;
 
-    @Override
     public void showStatus(String status) {
         SplashStatus.setStatus(status);
     }

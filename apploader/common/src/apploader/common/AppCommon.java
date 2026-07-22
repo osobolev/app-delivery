@@ -44,7 +44,6 @@ public final class AppCommon {
         String encoding = windows ? "Cp1251" : "UTF-8";
         String systemLineSeparator = windows ? "\r\n" : "\n";
         try (PrintWriter pw = new PrintWriter(file, encoding) {
-            @Override
             public void println() {
                 try {
                     out.write(systemLineSeparator);
