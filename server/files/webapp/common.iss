@@ -64,4 +64,5 @@ Type: files; Name: "{app}\*.bat";
 Type: files; Name: "{app}\*.list";
 Type: files; Name: "{app}\*.log";
 Type: files; Name: "{app}\*.properties";
+Type: files; Name: "{app}\*.zip";
 Type: dirifempty; Name: "{app}";
