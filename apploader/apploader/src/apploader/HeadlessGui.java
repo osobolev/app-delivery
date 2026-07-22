@@ -182,7 +182,7 @@ final class HeadlessGui implements ILoaderGui {
         IUpdateProgress progress = new IUpdateProgress() {
 
             public void setPercent(int percent) {
-                System.out.print("\r" + percent + "%");
+                System.out.print(percent + "%\r");
             }
 
             public void done(String error) {
