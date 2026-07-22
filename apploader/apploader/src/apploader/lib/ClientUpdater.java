@@ -67,6 +67,8 @@ final class ClientUpdater {
                     return true;
                 if (name.startsWith("unins000."))
                     return true;
+                if ("options.local.bat".equals(name) || "options.local.sh".equals(name) || "local.vmoptions".equals(name))
+                    return true;
                 return false;
             });
 
