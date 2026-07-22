@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static apploader.JavaUpdater.match;
-
 final class AppPropertiesLoader {
 
     private final ILoaderGui gui;
@@ -22,8 +20,6 @@ final class AppPropertiesLoader {
     private final List<File> jarList = new ArrayList<>();
     private final List<File> dllList = new ArrayList<>();
     private String mainClass = null;
-    private final TZUpdater tzUpdater = new TZUpdater();
-    private final JavaUpdater javaUpdater = new JavaUpdater();
     private boolean optionsUpdated = false;
 
     AppPropertiesLoader(ILoaderGui gui, IFileLoader fileLoader) {
@@ -103,9 +99,12 @@ final class AppPropertiesLoader {
             if (fileResult.updated && ("options.bat".equals(right) || "options.sh".equals(right))) {
                 optionsUpdated = true;
             }
-            tzUpdater.add(right, fileResult);
             return true;
         }
+    }
+
+    private static boolean match(String left, String mask) {
+        return mask.equalsIgnoreCase(left) || ("?" + mask).equalsIgnoreCase(left);
     }
 
     AppProperties load(File list) throws IOException {
@@ -130,7 +129,6 @@ final class AppPropertiesLoader {
                 mainClass = right;
                 return true;
             } else {
-                javaUpdater.add(left, right);
                 return true;
             }
         });
@@ -143,10 +141,6 @@ final class AppPropertiesLoader {
             }
             return null;
         }
-        if (!javaUpdater.update(gui, fileLoader))
-            return null;
-        if (!tzUpdater.update(gui, fileLoader))
-            return null;
         if (optionsUpdated) {
             gui.showWarning("Обновлены настройки приложения, перезапустите приложение");
             return null;
