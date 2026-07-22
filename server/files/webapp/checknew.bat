@@ -1,7 +1,6 @@
-if not exist jre.new goto cont1
+if not exist client.new goto cont1
 
-rmdir /s /q jre
-ren jre.new jre
+call client.new\client.update.bat 2>nul
 
 :cont1
 

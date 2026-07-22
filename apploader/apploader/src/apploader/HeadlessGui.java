@@ -4,17 +4,16 @@ import apploader.common.AppCommon;
 import apploader.common.AppStreamUtils;
 import apploader.common.ConfigReader;
 import apploader.common.ProxyConfig;
-import apploader.lib.FileLoader;
-import apploader.lib.HttpInteraction;
-import apploader.lib.ILoaderGui;
-import apploader.lib.Result;
+import apploader.lib.*;
 
 import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
+import java.util.function.BiConsumer;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 final class HeadlessGui implements ILoaderGui {
@@ -143,5 +142,60 @@ final class HeadlessGui implements ILoaderGui {
                 System.out.println("Error: " + ex);
             }
         }
+    }
+
+    private static String chooseProfile(List<ClientProfile> profiles) {
+        if (profiles.size() == 1)
+            return profiles.get(0).id;
+        StringBuilder buf = new StringBuilder();
+        int i = 0;
+        for (ClientProfile profile : profiles) {
+            if (i > 0) {
+                buf.append(", ");
+            }
+            buf.append((i + 1) + ": " + profile.getId());
+            i++;
+        }
+        while (true) {
+            System.out.print("Choose profile (" + buf + "): ");
+            String line = readLine();
+            if (line == null)
+                return null;
+            String str = line.trim();
+            if (str.isEmpty())
+                return null;
+            try {
+                int n = Integer.parseInt(str);
+                if (n >= 1 && n <= profiles.size())
+                    return profiles.get(n - 1).id;
+            } catch (NumberFormatException ex) {
+                // ignore
+            }
+        }
+    }
+
+    public ClientUpdated updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
+        String profile = chooseProfile(profiles);
+        if (profile == null)
+            return ClientUpdated.UPDATE_FAILED;
+        ClientUpdated[] result = {ClientUpdated.UPDATE_REQUIRED};
+        IUpdateProgress progress = new IUpdateProgress() {
+
+            public void setPercent(int percent) {
+                System.out.print("\r" + percent + "%");
+            }
+
+            public void done(String error) {
+                if (error != null) {
+                    result[0] = ClientUpdated.UPDATE_FAILED;
+                    System.out.println();
+                    System.out.println("Error: " + error);
+                } else {
+                    System.out.println("100%");
+                }
+            }
+        };
+        action.accept(profile, progress);
+        return result[0];
     }
 }

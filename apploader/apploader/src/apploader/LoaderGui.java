@@ -3,10 +3,7 @@ package apploader;
 import apploader.client.ProxyDialog;
 import apploader.client.SplashStatus;
 import apploader.common.ProxyConfig;
-import apploader.lib.FileLoader;
-import apploader.lib.HttpInteraction;
-import apploader.lib.ILoaderGui;
-import apploader.lib.Result;
+import apploader.lib.*;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
@@ -19,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 final class LoaderGui implements ILoaderGui {
 
@@ -191,6 +190,12 @@ final class LoaderGui implements ILoaderGui {
         setLnF();
         UrlDialog udlg = new UrlDialog(null, http, this::logError, this::doShowError);
         return udlg.getURL();
+    }
+
+    public ClientUpdated updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action) {
+        setLnF();
+        ProfileDialog dlg = new ProfileDialog(null, this::doShowError, profiles, action);
+        return dlg.isCreated() ? ClientUpdated.UPDATE_REQUIRED : ClientUpdated.UPDATE_FAILED;
     }
 
     static ILoaderGui create() {

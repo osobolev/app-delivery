@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.LongConsumer;
 
 public final class FileLoader extends IFileLoader {
@@ -273,5 +272,54 @@ public final class FileLoader extends IFileLoader {
     private Result showAppError(String file, String error) {
         String message = "Ошибка обновления файла " + file + ":\n" + error;
         return gui.showError2(message, this);
+    }
+
+    public ClientUpdated updateClient() {
+        File majorVersionFile = getLocalFile(AppCommon.MAJOR_VERSION);
+        String newMajorVersion = ClientUpdater.needsUpdate(base, http, majorVersionFile);
+        if (newMajorVersion == null)
+            return ClientUpdated.UP_TO_DATE;
+        List<ClientProfile> profiles;
+        try {
+            profiles = ClientUpdater.listProfiles(base, http);
+        } catch (IOException ex) {
+            gui.logError(ex);
+            gui.showError(ex.toString());
+            return ClientUpdated.UPDATE_FAILED;
+        }
+        return gui.updateClient(profiles, (profile, progress) -> {
+            try {
+                URL zipURL = AppCommon.resolve(base, "install/" + profile + "?zip=true");
+                // 0% - 50%:
+                String error = ClientUpdater.createClientZip(
+                    http, zipURL, percent -> progress.setPercent(percent / 2)
+                );
+                if (error != null) {
+                    progress.done(error);
+                    return;
+                }
+                File tmpDir = getLocalFile("client.new.tmp");
+                File zip = getLocalFile("new.client.zip");
+                try {
+                    HeadResult head = isNeedUpdate(zipURL);
+                    // 50% - 75%:
+                    transferFile(zipURL, zip, head, read -> {
+                        int percent = Math.round((float) read / head.length * 100f);
+                        progress.setPercent(50 + percent / 4);
+                    });
+                    // 75% - 100%:
+                    ClientUpdater.unzipClient(
+                        tmpDir, zip, percent -> progress.setPercent(75 + percent / 4)
+                    );
+                } finally {
+                    zip.delete();
+                }
+                ClientUpdater.prepareUpdate(tmpDir, getLocalFile("client.new"), newMajorVersion);
+                progress.done(null);
+            } catch (Exception ex) {
+                gui.logError(ex);
+                progress.done(ex.toString());
+            }
+        });
     }
 }

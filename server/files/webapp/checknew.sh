@@ -1,8 +1,7 @@
 #!/usr/bin/env sh
 
-if [ -d jre.new ]; then
-  rm -rf jre
-  mv -f jre.new jre
+if [ -d client.new ]; then
+  . ./client.new/client.update.sh
 fi
 
 if [ -f apploader.jar.new ]; then

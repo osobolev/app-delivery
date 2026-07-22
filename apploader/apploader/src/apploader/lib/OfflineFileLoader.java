@@ -33,4 +33,8 @@ public final class OfflineFileLoader extends IFileLoader {
     public List<Application> loadApplications(String file, String app) {
         return Collections.singletonList(new Application(app, app));
     }
+
+    public ClientUpdated updateClient() {
+        return ClientUpdated.UP_TO_DATE;
+    }
 }

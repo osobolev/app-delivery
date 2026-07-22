@@ -6,6 +6,8 @@ import apploader.common.ProxyConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 public interface ILoaderGui {
 
@@ -36,4 +38,6 @@ public interface ILoaderGui {
     void showProxyDialog(ProxyConfig proxy, URL url, FileLoader loader);
 
     URL askUrl(HttpInteraction http);
+
+    ClientUpdated updateClient(List<ClientProfile> profiles, BiConsumer<String, IUpdateProgress> action);
 }

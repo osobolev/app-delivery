@@ -16,4 +16,6 @@ public abstract class IFileLoader {
     public abstract FileResult receiveFile(String file, boolean silent, boolean noTrace);
 
     public abstract List<Application> loadApplications(String file, String app);
+
+    public abstract ClientUpdated updateClient();
 }

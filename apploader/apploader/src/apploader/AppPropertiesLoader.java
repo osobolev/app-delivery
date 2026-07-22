@@ -2,6 +2,7 @@ package apploader;
 
 import apploader.common.AppCommon;
 import apploader.common.ConfigReader;
+import apploader.lib.ClientUpdated;
 import apploader.lib.FileResult;
 import apploader.lib.IFileLoader;
 import apploader.lib.ILoaderGui;
@@ -135,6 +136,13 @@ final class AppPropertiesLoader {
         });
         if (!ok)
             return null;
+        ClientUpdated clientUpdated = fileLoader.updateClient();
+        if (clientUpdated != ClientUpdated.UP_TO_DATE) {
+            if (clientUpdated == ClientUpdated.UPDATE_REQUIRED) {
+                gui.showWarning("Приложение обновлено, перезапустите приложение");
+            }
+            return null;
+        }
         if (!javaUpdater.update(gui, fileLoader))
             return null;
         if (!tzUpdater.update(gui, fileLoader))
