@@ -87,7 +87,7 @@ public final class TomcatEmbeddedServer implements EmbeddedServer {
             @Override
             public void addServlet(String name, String path, HttpServlet servlet) {
                 Tomcat.addServlet(ctx, name, servlet);
-                ctx.addServletMappingDecoded(path, name);
+                ctx.addServletMapping(path, name);
             }
 
             @Override
