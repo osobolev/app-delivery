@@ -58,8 +58,10 @@ public final class FileLoader extends IFileLoader {
     private String translate(IOException ex) {
         if (ex instanceof ConnectException) {
             return connectionErrorMessage();
-        } else {
+        } else if (ex.getClass() == IOException.class && ex.getMessage() != null) {
             return ex.getMessage();
+        } else {
+            return ex.toString();
         }
     }
 
