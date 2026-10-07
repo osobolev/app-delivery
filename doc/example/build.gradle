@@ -1,7 +1,7 @@
 def dest = "$rootDir/distr"
 def sqlgVersion = "3.2"
 def txrpcVersion = "2.6"
-def myVersion = "8.6"
+def myVersion = "9.0"
 def h2 = "com.h2database:h2:2.1.214"
 
 subprojects {
