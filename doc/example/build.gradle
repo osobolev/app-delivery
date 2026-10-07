@@ -165,7 +165,7 @@ project(":sample_war") {
 
     war {
         archiveFileName = "sample_app.war"
-        webAppDirectory.set(file("webapp"))
+        webAppDirectory = file("webapp")
 
         from(configurations.webdistr) {
             into("distr")

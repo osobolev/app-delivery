@@ -26,24 +26,24 @@ mavenPublishing {
 }
 
 mavenPublishing.pom {
-    name.set("${project.group}:${project.name}")
-    description.set(project.description ?: "Framework for delivering desktop application updates")
-    url.set("https://github.com/osobolev/app-delivery")
+    name = "${project.group}:${project.name}"
+    description = project.description ?: "Framework for delivering desktop application updates"
+    url = "https://github.com/osobolev/app-delivery"
     licenses {
         license {
-            name.set("The Apache License, Version 2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
         }
     }
     developers {
         developer {
-            name.set("Oleg Sobolev")
-            organizationUrl.set("https://github.com/osobolev")
+            name = "Oleg Sobolev"
+            organizationUrl = "https://github.com/osobolev"
         }
     }
     scm {
-        connection.set("scm:git:https://github.com/osobolev/app-delivery.git")
-        developerConnection.set("scm:git:https://github.com/osobolev/app-delivery.git")
-        url.set("https://github.com/osobolev/app-delivery")
+        connection = "scm:git:https://github.com/osobolev/app-delivery.git"
+        developerConnection = "scm:git:https://github.com/osobolev/app-delivery.git"
+        url = "https://github.com/osobolev/app-delivery"
     }
 }
