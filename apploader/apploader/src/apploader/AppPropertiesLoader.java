@@ -19,6 +19,7 @@ final class AppPropertiesLoader {
     private final List<File> jarList = new ArrayList<>();
     private final List<File> dllList = new ArrayList<>();
     private String mainClass = null;
+    private boolean loaderUpdated = false;
     private boolean optionsUpdated = false;
 
     AppPropertiesLoader(ILoaderGui gui, IFileLoader fileLoader) {
@@ -42,8 +43,8 @@ final class AppPropertiesLoader {
     private boolean addCoreJar(String right) {
         FileResult jarResult = fileLoader.receiveFile(right, true, false);
         if (jarResult.isFailCopy || jarResult.updated) {
-            gui.showWarning("Обновлен загрузчик приложения, перезапустите приложение");
-            return false;
+            loaderUpdated = true;
+            return true;
         }
         File file = jarResult.file;
         if (file == null) {
@@ -55,6 +56,8 @@ final class AppPropertiesLoader {
     }
 
     private boolean addLib(String left, String right, List<File> addTo) {
+        if (loaderUpdated)
+            return true;
         boolean optional = optional(left);
         File file = fileLoader.receiveFile(right, optional).file;
         if (file == null) {
@@ -66,6 +69,8 @@ final class AppPropertiesLoader {
     }
 
     private boolean addLocalLib(String left, String right, List<File> addTo) {
+        if (loaderUpdated)
+            return true;
         String expanded = expand(right);
         if (expanded == null)
             return true;
@@ -85,21 +90,32 @@ final class AppPropertiesLoader {
     }
 
     private boolean addFile(String left, String right, Boolean windowsOnly) {
+        boolean isOptions = "options.bat".equals(right) || "options.sh".equals(right) || "shared.vmoptions".equals(right);
+        if (loaderUpdated && !isOptions)
+            return true;
         if (windowsOnly != null) {
             if (windowsOnly.booleanValue() != AppCommon.isWindows())
                 return true;
         }
-        boolean optional = optional(left);
-        FileResult fileResult = fileLoader.receiveFile(right, optional);
-        File file = fileResult.file;
-        if (file == null) {
-            return optional;
-        } else {
-            if (fileResult.updated && ("options.bat".equals(right) || "options.sh".equals(right) || "shared.vmoptions".equals(right))) {
-                optionsUpdated = true;
+        FileResult fileResult;
+        if (loaderUpdated) {
+            fileResult = fileLoader.receiveFile(right, true);
+            File file = fileResult.file;
+            if (file == null) {
+                return true;
             }
-            return true;
+        } else {
+            boolean optional = optional(left);
+            fileResult = fileLoader.receiveFile(right, optional);
+            File file = fileResult.file;
+            if (file == null) {
+                return optional;
+            }
         }
+        if (fileResult.updated && isOptions) {
+            optionsUpdated = true;
+        }
+        return true;
     }
 
     private static boolean match(String left, String mask) {
@@ -135,8 +151,20 @@ final class AppPropertiesLoader {
             return null;
         if (fileLoader.updateClient())
             return null;
-        if (optionsUpdated) {
-            gui.showWarning("Обновлены настройки приложения, перезапустите приложение");
+        if (loaderUpdated || optionsUpdated) {
+            String message;
+            if (optionsUpdated) {
+                String what;
+                if (loaderUpdated) {
+                    what = "загрузчик и настройки приложения";
+                } else {
+                    what = "настройки приложения";
+                }
+                message = "Обновлены " + what;
+            } else {
+                message = "Обновлен загрузчик приложения";
+            }
+            gui.showWarning(message + ", перезапустите приложение");
             return null;
         }
         return new AppProperties(jarList, dllList, mainClass);
