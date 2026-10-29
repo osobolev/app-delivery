@@ -23,11 +23,6 @@ public final class SSLBuilder {
 
     private CertificateFactory cf = null;
     private final List<X509Certificate> certs = new ArrayList<>();
-    private boolean hasTrustAll = false;
-
-    public void trustAll() {
-        this.hasTrustAll = true;
-    }
 
     public void addTrustCertificate(X509Certificate cert) {
         certs.add(cert);
@@ -53,38 +48,32 @@ public final class SSLBuilder {
         return ks;
     }
 
+    public static X509TrustManager trustAllManager() {
+        return new CombinedTrustManager(Collections.emptyList());
+    }
+
+    private static TrustManager[] trustManagers(KeyStore trustStore) throws NoSuchAlgorithmException, KeyStoreException {
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(trustStore);
+        return tmf.getTrustManagers();
+    }
+
     public X509TrustManager buildTrustManager() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        if (certs.isEmpty()) {
-            if (hasTrustAll) {
-                return new CombinedTrustManager(Collections.emptyList());
-            } else {
-                return null;
-            }
-        }
-
-        String algorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManager[] myManagers;
-        {
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
-            tmf.init(storeWithCertificates(certs));
-            myManagers = tmf.getTrustManagers();
-        }
-        TrustManager[] defManagers;
-        {
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
-            tmf.init((KeyStore) null);
-            defManagers = tmf.getTrustManagers();
-        }
-
+        TrustManager[] myManagers = certs.isEmpty() ? new TrustManager[0] : trustManagers(storeWithCertificates(certs));
+        TrustManager[] defManagers = trustManagers(null);
         return CombinedTrustManager.combine(defManagers, myManagers);
     }
 
-    public SSLContext buildSSLContext() throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, KeyManagementException {
-        TrustManager tm = buildTrustManager();
-        if (tm == null)
-            return null;
+    public static SSLContext createSSLContext(TrustManager tm) throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[] {tm}, null);
         return sslContext;
+    }
+
+    public SSLContext buildSSLContext() throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException, KeyManagementException {
+        if (certs.isEmpty())
+            return null;
+        TrustManager tm = buildTrustManager();
+        return createSSLContext(tm);
     }
 }
