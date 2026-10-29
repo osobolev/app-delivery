@@ -3,7 +3,6 @@ package apploader.ssl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -43,6 +42,16 @@ public final class SSLBuilder {
         }
     }
 
+    public static KeyStore storeWithCertificates(List<X509Certificate> certs) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        ks.load(null, null);
+        for (int i = 0; i < certs.size(); i++) {
+            X509Certificate cert = certs.get(i);
+            ks.setCertificateEntry("ca-" + i, cert);
+        }
+        return ks;
+    }
+
     public TrustManager buildTrustManager() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         if (certs.isEmpty()) {
             if (hasTrustAll) {
@@ -55,15 +64,8 @@ public final class SSLBuilder {
         String algorithm = TrustManagerFactory.getDefaultAlgorithm();
         TrustManager[] myManagers;
         {
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(null, null);
-            for (X509Certificate cert : certs) {
-                String name = cert.getSubjectX500Principal().getName(X500Principal.RFC1779);
-                ks.setCertificateEntry(name, cert);
-            }
-
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(algorithm);
-            tmf.init(ks);
+            tmf.init(storeWithCertificates(certs));
             myManagers = tmf.getTrustManagers();
         }
         TrustManager[] defManagers;
