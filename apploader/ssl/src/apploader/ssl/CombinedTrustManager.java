@@ -66,7 +66,7 @@ final class CombinedTrustManager implements X509TrustManager {
         return all.toArray(new X509Certificate[0]);
     }
 
-    static TrustManager combine(TrustManager[]... tmArrays) {
+    static X509TrustManager combine(TrustManager[]... tmArrays) {
         List<X509TrustManager> xtms = new ArrayList<>();
         for (TrustManager[] tmArray : tmArrays) {
             for (TrustManager tm : tmArray) {

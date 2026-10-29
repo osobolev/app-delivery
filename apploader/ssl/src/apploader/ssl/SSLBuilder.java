@@ -3,6 +3,7 @@ package apploader.ssl;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -52,7 +53,7 @@ public final class SSLBuilder {
         return ks;
     }
 
-    public TrustManager buildTrustManager() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+    public X509TrustManager buildTrustManager() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         if (certs.isEmpty()) {
             if (hasTrustAll) {
                 return new CombinedTrustManager(Collections.emptyList());
