@@ -12,7 +12,7 @@ final class CombinedTrustManager implements X509TrustManager {
 
     private final List<X509TrustManager> tms;
 
-    CombinedTrustManager(List<X509TrustManager> tms) {
+    private CombinedTrustManager(List<X509TrustManager> tms) {
         this.tms = tms;
     }
 
