@@ -49,7 +49,21 @@ public final class SSLBuilder {
     }
 
     public static X509TrustManager trustAllManager() {
-        return new CombinedTrustManager(Collections.emptyList());
+        return new X509TrustManager() {
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
     }
 
     private static TrustManager[] trustManagers(KeyStore trustStore) throws NoSuchAlgorithmException, KeyStoreException {

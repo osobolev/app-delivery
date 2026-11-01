@@ -18,8 +18,6 @@ final class CombinedTrustManager implements X509TrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (tms.isEmpty())
-            return;
         CertificateException error = null;
         for (X509TrustManager tm : tms) {
             try {
@@ -33,13 +31,13 @@ final class CombinedTrustManager implements X509TrustManager {
                 }
             }
         }
-        throw error;
+        if (error != null) {
+            throw error;
+        }
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (tms.isEmpty())
-            return;
         CertificateException error = null;
         for (X509TrustManager tm : tms) {
             try {
@@ -53,7 +51,9 @@ final class CombinedTrustManager implements X509TrustManager {
                 }
             }
         }
-        throw error;
+        if (error != null) {
+            throw error;
+        }
     }
 
     @Override
